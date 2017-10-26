@@ -17,10 +17,12 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.views.generic.base import TemplateView
 from django.conf.urls import include, url
+from backend import views as backend_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', TemplateView.as_view(template_name='index.html')), # NEW
-    #url(r'^api/', include('backend.urls', namespace='api')) # NEW
+    url(r'^$', backend_views.home, name='home'),
+    url(r'^course/$', backend_views.course, name='course'),
+    url(r'^contact/$', backend_views.contact, name='contact'),
 
 ]
