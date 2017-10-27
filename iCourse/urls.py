@@ -22,7 +22,7 @@ from backend import views as backend_views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', backend_views.home, name='home'),
-    url(r'^course/$', backend_views.course, name='course'),
-    url(r'^contact/$', backend_views.contact, name='contact'),
+   # url(r'^course/$', backend_views.course, name='course'),
+   # url(r'^contact/$', backend_views.contact, name='contact'),
 
 ]
