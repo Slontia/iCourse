@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'iCourse.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'hotCode5',  # MySQL中Schema名字
+        'NAME': 'iCourse',  # MySQL中Schema名字
         'USER':'icourse',
         'PASSWORD':'Hotcode@1506',  # MySQL的密码
         #'USER':'root',

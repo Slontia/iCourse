@@ -24,7 +24,7 @@ def getLinkById(rid):
 def addResource(resId, resName="name", resPath="", resIntroduction=""):
     if (os.path.exists(resPath) == False):
         return "找不到文件！"
-    fsize = round(os.path.getsize(resPath)/float(1024*1024), 2)   
+    fsize = str(round(os.path.getsize(resPath)/float(1024*1024), 2))+'MB'   
     curTime=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
     temp=Resource(resourceId=resId, name=resName, link=resPath, introduce=resIntroduction, size=fsize, uploadTime=curTime)
     temp.save()
