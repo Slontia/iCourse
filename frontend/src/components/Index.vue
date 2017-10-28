@@ -26,15 +26,6 @@
       </el-dropdown>
     </el-col>
   </el-col>
-  <el-col :span="24" class="navigator">
-    <aside>
-      <!-- the navigator menu -->
-      <el-menu class="el-menu-vertical-demo">
-        <el-submenu index="1">
-          <template slot = "title">
-            <span>课程类别</span>
-          </template>
-          <el-menu-item
 </el-row>
   <!-- 登录界面  -->
   <el-dialog title="登录" :visible="login_form_visible">
