@@ -16,11 +16,12 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.views.generic.base import TemplateView
-from django.conf.urls import include, url
+#from iCourse import testdb
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', TemplateView.as_view(template_name='index.html')), # NEW
     #url(r'^api/', include('backend.urls', namespace='api')) # NEW
-
+    #url( r'^testdb$', testdb.test ),
 ]
