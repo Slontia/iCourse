@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '@/components/Index'
 import Personal from '@/components/Personal'
-import PersonalData from '@/components/Personal_data'
+import PersonalData from '@/components/PersonalData'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 
