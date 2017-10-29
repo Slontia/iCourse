@@ -76,7 +76,7 @@ export default {
   data () {
     return {
       logo_name: 'BUAA-iCourse',
-      is_login: true,
+      is_login: false,
       login_form_visible: false,
       register_form_visible: false,
       form_label_width: '120px',
@@ -96,7 +96,7 @@ export default {
   methods: {
     handle_select: function () {},
     login: function () { this.login_form_visible = true },
-    personal_space: function () {},
+    personal_space: function () { this.$router.push({ path: '/personal' }) },
     register: function () { this.register_form_visible = true },
     logout: function () {},
     login_confirm_clicked: function () { this.login_form_visible = false },
