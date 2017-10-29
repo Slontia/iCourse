@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '@/components/Index'
 import Course from '@/components/course/Course'
+import Personal from '@/components/Personal'
+import PersonalData from '@/components/Personal_data'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 
@@ -24,6 +26,18 @@ export default new Router({
       path: '/course',
       name: 'course',
       component: Course
+    },
+    {
+      path: '/personal',
+      name: 'personal',
+      component: Personal,
+      children: [
+        {
+          path: '/personalData',
+          name: 'personalData',
+          component: PersonalData
+        }
+      ]
     }
   ]
 })
