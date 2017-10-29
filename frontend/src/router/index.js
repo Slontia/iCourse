@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '@/components/Index'
+import Course from '@/components/course/Course'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 
@@ -18,6 +19,11 @@ export default new Router({
     {
       path: '/',
       component: Index
+    },
+    {
+      path: '/course',
+      name: 'course',
+      component: Course
     }
   ]
 })
