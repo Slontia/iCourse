@@ -1,5 +1,6 @@
 import Index from './components/Index.vue'
 import Login from './components/Login.vue'
+import Personal from './components/Personal.vue'
 
 const routers = [
 	{
@@ -23,6 +24,11 @@ const routers = [
 				component: Login
 			}
 		]
+	},
+	{
+	path: '/personal',
+	name: 'personal',
+	component: Personal
 	}
 ]
 export default routers

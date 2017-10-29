@@ -76,7 +76,7 @@ export default {
   data () {
     return {
       logo_name: 'BUAA-iCourse',
-      is_login: false,
+      is_login: true,
       login_form_visible: false,
       register_form_visible: false,
       form_label_width: '120px',
