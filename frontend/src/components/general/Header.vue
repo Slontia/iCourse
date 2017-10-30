@@ -30,7 +30,7 @@
   <!-- 登录界面  -->
   <el-dialog title="登录" :visible="login_form_visible">
     <el-form :model="login_form" label-position="left">
-      <el-form-item tyep="text" label="用户名" :label-width="form_label_width">
+      <el-form-item type="text" label="用户名" :label-width="form_label_width">
         <el-input v-model="login_form.name" auto_complete="off"></el-input>
       </el-form-item>
       <el-form-item label="密码" :label-width="form_label_width">
@@ -44,25 +44,30 @@
   </el-dialog>
   <!-- 注册页面 -->
   <el-dialog title="注册" :visible="register_form_visible">
-    <el-form :model="register_form" label-position="left" :rules="rules">
-      <el-form-item tyep="text" label="用户名" :label-width="form_label_width">
-        <el-input v-model="register_form.name" auto_complete="off"></el-input>
+    <el-form :model="register_form" label-position="left" :rules="rules" ref="register_form">
+      <el-form-item tyep="text" label="用户名" :label-width="form_label_width" prop="username">
+        <el-input v-model="register_form.username" auto_complete="off" placeholder="唯一的用户名,由字母/数字/下划线组成，大小写不敏感，20字符以内"></el-input>
       </el-form-item>
-      <el-form-item tyep="text" label="姓名" :label-width="form_label_width">
-        <el-input v-model="register_form.nickname" auto_complete="off"></el-input>
+      <el-form-item type="text" label="昵称" :label-width="form_label_width" prop="nickname">
+        <el-input v-model="register_form.nickname" auto_complete="off" placeholder="昵称,20字符以内,支持中文"></el-input>
       </el-form-item>
-      <el-form-item label="密码" :label-width="form_label_width">
-        <el-input type="password" v-model="register_form.password" auto_complete="off"></el-input>
+      <el-form-item type="select" label="性别" :label-width="form_label_width" prop="gender">
+        <el-select v-model="register_form.gender" placeholder="请选择性别">
+          <el-option v-for="item in gender_options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item label="确认密码" :label-width="form_label_width">
-        <el-input type="password" v-model="register_form.confirmed_password" auto_complete="off"></el-input>
+      <el-form-item label="密码" :label-width="form_label_width" prop="password">
+        <el-input type="password" v-model="register_form.password" auto_complete="off" placeholder="8-20位,大小写敏感"></el-input>
+      </el-form-item>
+      <el-form-item label="确认密码" :label-width="form_label_width" prop="confirmed_password">
+        <el-input type="password" v-model="register_form.confirmed_password" auto_complete="off" placeholder="确认密码"></el-input>
       </el-form-item>
       <el-form-item type="text" label="北航邮箱" :label-width="form_label_width" prop="email">
-        <el-input v-model="register_form.email" auto_complete="off"></el-input>
+        <el-input v-model="register_form.email" auto_complete="off" placeholder="合法的北航邮箱"></el-input>
       </el-form-item>
     </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click.native="register_confirm_clicked">确 定</el-button>
+        <el-button type="primary" @click.native="register_confirm_clicked('register_form')">确 定</el-button>
         <el-button @click.native="register_form_visible=false">取 消</el-button>
       </span>
   </el-dialog>
@@ -75,16 +80,88 @@
 export default {
   name: 'Header',
   data () {
+    var check_username = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('用户名不能为空'))
+      }
+      setTimeout(() => {
+        value = value.toLowerCase()
+        var pattern = new RegExp(/^[a-z0-9_]{1,20}$/)
+        if (pattern.test(value)) {
+          callback()
+        }
+        else {
+          callback(new Error('用户名格式错误'))
+        }
+      }, 500)
+    }
+    var check_nickname = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('昵称不能为空'))
+      }
+      setTimeout(() => {
+        var l = value.length
+        var rl = 0
+        for (var i = 0; i < l; i++) {
+          if ((value.charCodeAt(i) & 0xff00) !== 0) {
+            rl++
+          }
+          rl++
+        }
+        if (rl >= 1 && rl <= 20) {
+          callback()
+        }
+        else {
+          callback(new Error('昵称长度必须在20位及以下'))
+        }
+      }, 500)
+    }
+    var check_gender = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('性别不能为空'))
+      }
+      callback()
+    }
+    var check_password = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('密码不能为空'))
+      }
+      setTimeout(() => {
+        var pattern = new RegExp(/^.{8,20}$/)
+        if (pattern.test(value)) {
+          callback()
+        }
+        else {
+          callback(new Error('密码长度必须在8-20位'))
+        }
+      }, 500)
+    }
+    var check_confirmed_password = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请再次输入密码'))
+      }
+      setTimeout(() => {
+        if (value === this.register_form.password) {
+          callback()
+        }
+        else {
+          callback(new Error('两次输入密码不一致'))
+        }
+      }, 500)
+    }
     var check_email = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('邮箱不能为空'))
+      }
       setTimeout(() => {
         var pattern = new RegExp(/^[a-zA-Z0-9_-]+@buaa.edu.cn$/)
         if (pattern.test(value)) {
           callback()
         }
         else {
-          callback(new Error('亲你填的不是北航邮箱啊?'))
+          callback(new Error('非法邮箱，邮箱必须是北航邮箱'))
         }
-      }, 1000)
+      }, 500)
     }
     return {
       logo_name: 'BUAA-iCourse',
@@ -97,13 +174,39 @@ export default {
         password: ''
       },
       register_form: {
-        name: '',
+        username: '',
         nickname: '',
+        gender: '',
         password: '',
         confirmed_password: '',
         email: ''
       },
+      gender_options: [{
+        value: '1',
+        label: '男'
+      }, {
+        value: '2',
+        label: '女'
+      }, {
+        value: '0',
+        label: '保密'
+      }],
       rules: {
+        username: [
+          { validator: check_username, trigger: 'blur' }
+        ],
+        nickname: [
+          { validator: check_nickname, trigger: 'blur' }
+        ],
+        gender: [
+          { validator: check_gender, trigger: 'blur' }
+        ],
+        password: [
+          { validator: check_password, trigger: 'blur' }
+        ],
+        confirmed_password: [
+          { validator: check_confirmed_password, trigger: 'blur' }
+        ],
         email: [
           { validator: check_email, trigger: 'blur' }
         ]
@@ -124,7 +227,14 @@ export default {
     register: function () { this.register_form_visible = true },
     logout: function () {},
     login_confirm_clicked: function () { this.login_form_visible = false },
-    register_confirm_clicked: function () { this.register_form_visible = false }
+    register_confirm_clicked: function (form_name) { this.$refs[form_name].validate((valid) => {
+      if (valid) {
+        this.register_form_visible = false
+      }
+      else {
+        return false
+      }
+    }) }
   }
 }
 </script>
