@@ -37,10 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-<<<<<<< HEAD
-=======
-
->>>>>>> d206135612d46989b9f9666d16690d8f2fe8f4bc
     'backend',
 ]
 
@@ -82,13 +78,16 @@ WSGI_APPLICATION = 'iCourse.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'iCourse',  # MySQL中Schema名字
+        'NAME': 'icourse',  # MySQL中Schema名字
         'USER':'icourse',
-        'PASSWORD':'Hotcode@1506',  # MySQL的密码
+        'PASSWORD':'Hotcode@1506',  
+        'HOST':'10.2.28.124',  
+        'PORT':'3306'
+         
         #'USER':'root',
         #'PASSWORD':'123456',  # MySQL的密码
-        'HOST':'127.0.0.1',  # 默认本地
-        'PORT':'3306'  # 默认3306端口
+        #'HOST':'127.0.0.1',  # 默认本地
+        #'PORT':'3306'  # 默认3306端口
     }
 }
 
