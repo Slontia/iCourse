@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '@/components/Index'
 import Course from '@/components/course/Course'
+import Resource from '@/components/course/resource'
 import Personal from '@/components/Personal'
 import PersonalData from '@/components/PersonalData'
 import ElementUI from 'element-ui'
@@ -26,6 +27,11 @@ export default new Router({
       path: '/course',
       name: 'course',
       component: Course
+    },
+    {
+      path: '/resource',
+      name: 'resource',
+      component: Resource
     },
     {
       path: '/personal',
