@@ -1,7 +1,8 @@
 <template>
   <div id="personal">
     <el-col :span="24" class="header">
-      {{ user_name }}
+      <el-col :span="12" style="text-align:right;font-size:30px;font-weight:bold;">{{ spaceName }}</el-col>
+      <el-col :span="12" style="text-align:left;font-size:20px;font-style:italic;"><p>{{ signature }}</p></el-col>
     </el-col>    
     <el-col :span="2" :offset="1">
       <el-menu>
@@ -21,7 +22,8 @@ export default {
   name: 'personal',
   data () {
     return {
-      user_name: '森高Slontia的花园 一只有情怀的程序猿'
+      spaceName: '森高Slontia的花园',
+      signature: '一只有情怀的程序猿'
     }
   },
   methods: {
@@ -45,7 +47,7 @@ export default {
     font-size: 14px;
   }
   .el-row {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     &:last-child {
       margin-bottom: 0;
     }
