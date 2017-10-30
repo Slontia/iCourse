@@ -24,22 +24,6 @@ const routers = [
 				component: Login
 			}
 		]
-	},
-	{
-	path: '/personal',
-	name: 'personal',
-	component: Personal,
-	children: [
-	    {
-	    	path: '/',
-	    	component: Personal
-	    }
-		{
-			path: 'personalData',
-			name: 'personalData',
-			component: PersonalData
-		}
-	]
 	}
 ]
 export default routers
