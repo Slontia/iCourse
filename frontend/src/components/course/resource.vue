@@ -45,27 +45,135 @@
           <el-button type="button" @click.native="closed">搜索资源</el-button>
         </el-col>       
       </el-row>
+      <el-row>
+        <el-col :span="20" :offset="2">
+          <el-row style="margin:20px 0px 0px 0px;height:1px;background-color:black;">
+          </el-row>
+        </el-col>
+      </el-row>
       <el-row style="margin:20px 0px 0px 0px;">
-        <el-col :span="6" :offset="2">
-          <el-row style="margin:20px 0px 0px 0px;">
+        <el-col :span="6" :offset="2">          
+        <el-row v-for="item in resourcesData" v-if="item.col1" class="hoverChange">
+          <el-row style="margin:20px 0px 0px 0px;" >
             <el-col :span="8" :offset="1">
               <img :src="zipImg" style="height:100px;"></img>
             </el-col>
             <el-col :span="14" :offset="1">
               <el-row class="resourseTitle">
-                全部课件.zip
+                {{ item.name }}
               </el-row>
               <el-row class="resourseIntro">
-                里面整合了1~13章课件，全部是pdf格式
+                {{ item.intro }}
               </el-row>
             </el-col>
           </el-row>
+          <el-row  style="margin:20px 0px 0px 0px;">
+            <el-col :span="4" :offset="1">
+              <i class="el-icon-star-off"></i>&nbsp;{{ item.collections }}
+            </el-col>
+            <el-col :span="4">
+              <i class="el-icon-arrow-down"></i>&nbsp;{{ item.downloads }}
+            </el-col>
+            <el-col :span="4">
+              <i class="el-icon-message"></i>&nbsp;{{ item.messages }}
+            </el-col>
+            <el-col :span="2" :offset="5">
+              <img :src="zipImg" style="height:18px;"></img>
+            </el-col>
+            <el-col :span="4">
+              <a href="">{{ item.author }}</a>
+            </el-col>
+          </el-row>
+          <el-row style="margin:10px 0px 0px 0px;">
+            <el-col :span="11" :offset="13" style="color:#d3d3d3;">
+              上传时间:{{ item.time }}
+            </el-col>
+          </el-row>
+          <el-row style="margin:5px 0px 0px 0px;height:1px;background-color:black;"></el-row>
+        </el-row> 
+        
+        </el-col>
+         
+
+        <el-col :span="6" :offset="1">
+          <el-row v-for="item in resourcesData" v-if="item.col2" class="hoverChange">
+          <el-row style="margin:20px 0px 0px 0px;" >
+            <el-col :span="8" :offset="1">
+              <img :src="zipImg" style="height:100px;"></img>
+            </el-col>
+            <el-col :span="14" :offset="1">
+              <el-row class="resourseTitle">
+                {{ item.name }}
+              </el-row>
+              <el-row class="resourseIntro">
+                {{ item.intro }}
+              </el-row>
+            </el-col>
+          </el-row>
+          <el-row  style="margin:20px 0px 0px 0px;">
+            <el-col :span="4" :offset="1">
+              <i class="el-icon-star-off"></i>&nbsp;{{ item.collections }}
+            </el-col>
+            <el-col :span="4">
+              <i class="el-icon-arrow-down"></i>&nbsp;{{ item.downloads }}
+            </el-col>
+            <el-col :span="4">
+              <i class="el-icon-message"></i>&nbsp;{{ item.messages }}
+            </el-col>
+            <el-col :span="2" :offset="5">
+              <img :src="zipImg" style="height:18px;"></img>
+            </el-col>
+            <el-col :span="4">
+              <a href="">{{ item.author }}</a>
+            </el-col>
+          </el-row>
+          <el-row style="margin:10px 0px 0px 0px;">
+            <el-col :span="11" :offset="13" style="color:#d3d3d3;">
+              上传时间:{{ item.time }}
+            </el-col>
+          </el-row>
+          <el-row style="margin:5px 0px 0px 0px;height:1px;background-color:black;"></el-row>
+        </el-row>
         </el-col>
         <el-col :span="6" :offset="1">
-          <div style="height:200px;background-color:LightSeaGreen;"></div>
-        </el-col>
-        <el-col :span="6" :offset="1">
-          <div style="height:200px;background-color:LightSeaGreen;"></div>
+          <el-row v-for="item in resourcesData" v-if="item.col3" class="hoverChange">
+          <el-row style="margin:20px 0px 0px 0px;" >
+            <el-col :span="8" :offset="1">
+              <img :src="zipImg" style="height:100px;"></img>
+            </el-col>
+            <el-col :span="14" :offset="1">
+              <el-row class="resourseTitle">
+                {{ item.name }}
+              </el-row>
+              <el-row class="resourseIntro">
+                {{ item.intro }}
+              </el-row>
+            </el-col>
+          </el-row>
+          <el-row  style="margin:20px 0px 0px 0px;">
+            <el-col :span="4" :offset="1">
+              <i class="el-icon-star-off"></i>&nbsp;{{ item.collections }}
+            </el-col>
+            <el-col :span="4">
+              <i class="el-icon-arrow-down"></i>&nbsp;{{ item.downloads }}
+            </el-col>
+            <el-col :span="4">
+              <i class="el-icon-message"></i>&nbsp;{{ item.messages }}
+            </el-col>
+            <el-col :span="2" :offset="5">
+              <img :src="zipImg" style="height:18px;"></img>
+            </el-col>
+            <el-col :span="4">
+              <a href="">{{ item.author }}</a>
+            </el-col>
+          </el-row>
+          <el-row style="margin:10px 0px 0px 0px;">
+            <el-col :span="11" :offset="13" style="color:#d3d3d3;">
+              上传时间:{{ item.time }}
+            </el-col>
+          </el-row>
+          <el-row style="margin:5px 0px 0px 0px;height:1px;background-color:black;"></el-row>
+        </el-row>
         </el-col>
       </el-row>
     </el-row>
@@ -95,7 +203,93 @@ export default {
         }
       ],
       sortMode: '按上传时间排序',
-      zipImg: ZipImg
+      zipImg: ZipImg,
+      resourcesData: [
+        {
+          col1: false,
+          col2: true,
+          col3: false,
+          name: '全部课件.zip',
+          intro: '里面整合了1~13章课件，全部是pdf格式',
+          collections: 23,
+          downloads: 56,
+          messages: 2,
+          author: '果冻',
+          time: '2017-3-26'
+        },
+        {
+          col1: false,
+          col2: false,
+          col3: true,
+          name: '全部课件.zip',
+          intro: '里面整合了1~13章课件，全部是pdf格式',
+          collections: 23,
+          downloads: 56,
+          messages: 2,
+          author: '果冻',
+          time: '2017-3-26'
+        },
+        {
+          col1: true,
+          col2: false,
+          col3: false,
+          name: '全部课件.zip',
+          intro: '里面整合了1~13章课件，全部是pdf格式',
+          collections: 23,
+          downloads: 56,
+          messages: 2,
+          author: '果冻',
+          time: '2017-3-26'
+        },
+        {
+          col1: false,
+          col2: true,
+          col3: false,
+          name: '全部课件.zip',
+          intro: '里面整合了1~13章课件，全部是pdf格式',
+          collections: 23,
+          downloads: 56,
+          messages: 2,
+          author: '果冻',
+          time: '2017-3-26'
+        },
+        {
+          col1: false,
+          col2: false,
+          col3: true,
+          name: '全部课件.zip',
+          intro: '里面整合了1~13章课件，全部是pdf格式',
+          collections: 23,
+          downloads: 56,
+          messages: 2,
+          author: '果冻',
+          time: '2017-3-26'
+        },
+        {
+          col1: true,
+          col2: false,
+          col3: false,
+          name: '全部课件.zip',
+          intro: '里面整合了1~13章课件，全部是pdf格式',
+          collections: 23,
+          downloads: 56,
+          messages: 2,
+          author: '果冻',
+          time: '2017-3-26'
+        },
+        {
+          col1: true,
+          col2: false,
+          col3: false,
+          name: '全部课件.zip',
+          intro: '里面整合了1~13章课件，全部是pdf格式',
+          collections: 23,
+          downloads: 56,
+          messages: 2,
+          author: '果冻',
+          time: '2017-3-26'
+        }
+      ]
     }
   },
   methods: {
@@ -117,5 +311,8 @@ export default {
   }
   .resourseIntro {
     margin: 10px 0px 0px 0px;
+  }
+  .hoverChange:hover {
+    background-color:#fff0f5;
   }
 </style>

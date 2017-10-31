@@ -30,8 +30,8 @@
   <!-- 登录界面  -->
   <el-dialog title="登录" :visible="login_form_visible">
     <el-form :model="login_form" label-position="left">
-      <el-form-item type="text" label="用户名" :label-width="form_label_width" id="login_form1">
-        <el-input v-model="login_form.name" auto_complete="off"></el-input>
+      <el-form-item type="text" label="用户名" :label-width="form_label_width">
+        <el-input v-model="login_form.name" auto_complete="off" id="login_form1"></el-input>
       </el-form-item>
       <el-form-item label="密码" :label-width="form_label_width" id="login_form2">
         <el-input type="password" v-model="login_form.password" auto_complete="off"></el-input>
