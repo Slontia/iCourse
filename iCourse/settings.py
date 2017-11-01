@@ -79,10 +79,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'icourse',  # MySQL中Schema名字
-        'USER':'icourse',
+        'USER':'root',
         'PASSWORD':'Hotcode@1506',  
         'HOST':'10.2.28.124',  
-        'PORT':'3306'
+        'PORT':'3306' 
          
         #'USER':'root',
         #'PASSWORD':'123456',  # MySQL的密码
