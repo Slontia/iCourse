@@ -1,7 +1,7 @@
 <template>
     <div id="course">
         <Header></Header>
-            <el-col :span="24" class="navigator">
+            <el-col :span="24" class="navigator" style="margin-top: 20px">
               <el-tree :data="tree_data" :props="defaultProps" accordion @node-click="course_tree_clicked" class="course_tree">
               </el-tree>
             <section class="course_content_container">

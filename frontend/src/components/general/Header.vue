@@ -5,17 +5,18 @@
     <el-col :span="4" class="logo">
       {{ logo_name }}
     </el-col>
-    <el-col :span="16">
-      <el-menu class="el-menu" theme="light" mode="horizontal" @select="handle_select">
-        <el-menu-item index="index" class = "el-menu-item">首页</el-menu-item>
-        <el-menu-item index="course" class = "el-menu-item">课程</el-menu-item>
+    <el-col :span="16" class="menu">
+      <el-menu class="el-menu" theme="light" mode="horizontal" @select="handle_select" style="background-color: white;">
+        <el-menu-item index="index" class = "el-menu-item" style="margin-right: 20px;">首页</el-menu-item>
+        <el-menu-item index="course" class = "el-menu-item"style="margin-right: 20px">课程</el-menu-item>
         <el-menu-item index="about" class = "el-menu-item">联系我们</el-menu-item>
       </el-menu>
     </el-col>
     <el-col :span="4" class="userinfo">
       <el-dropdown trigger="click">
         <span class="el-dropdown-link">
-          <i class="el-icon-setting"></i>
+          <span v-if="!is_login">登陆/注册</span>
+          <span v-else>{{username}}</span>
         </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item @click.native="personal_space" v-if="is_login">个人主页</el-dropdown-item>
@@ -169,6 +170,7 @@ export default {
       login_form_visible: false,
       register_form_visible: false,
       form_label_width: '120px',
+      username: '',
       login_form: {
         name: '',
         password: ''
@@ -243,38 +245,35 @@ export default {
  .header{
     height: 60px;
     line-height: 60px;
-    background: #20a0ff;
-    color:#fff;
-      }
+    }
   .container {
     position: absolute;
     height: 60px;
-    top: 0px;
-    bottom: 0px;
     width: 100%;
-
-   
-   
   }
   .logo{
     height: 60px;
-    font-size: 22px;
-    font-weight: bold;
+    font-size: 24px;
+    font-weight: 500;
+    color: #409EFF;
+    font-family: Microsoft YaHei;
     padding-left:20px;
     padding-right:20px;
-    border-color: rgba(238,241,146,0.3);
     border-right-width: 0px;
     border-right-style: solid;
+  }
   .userinfo {
     text-align: right;
     padding-right: 35px;
     float: right;
   }
   .el-menu-item {
-    color: black;
     font-size: 22px;
-    font-weight: bold;
+    font-family: Microsoft YaHei;
   }
+  .el-dropdown-link{
+    font-family: Microsoft YaHei;
+    color: #409EFF;
   }
  
 </style>
