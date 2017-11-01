@@ -3,11 +3,11 @@
         <Header></Header>
             <el-col :span="24" class="navigator">
               <el-tree :data="tree_data" :props="defaultProps" accordion @node-click="course_tree_clicked" class="course_tree">
-            </el-tree>
+              </el-tree>
             <section class="course_content_container">
                 <div class = "grid-content bg-purple-light">
                     <el-col :span="24" class="breadcrumb-container">
-                        <strong class= "course_table_title">{{ course_bread_message }}</p>
+                        <strong class= "course_table_title">{{ course_bread_message }}
                         </strong>
                         <el-col :span="24" class="course_content_wrapper">
                           <transition name="fade" mode="out-in">
@@ -123,6 +123,7 @@ export default {
     },
     search_course_clicked () {
       // todo: 1.more search selection 2.use api to get the corresponding courses of this.filters.name
+      this.$router.push({ path: '/course_info' })
     },
     add_course_clicked () {
       // todo: add course function
