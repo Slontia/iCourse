@@ -1,15 +1,18 @@
 <template>
   <div id="app">
     <Header></Header>
+    <Carousel></Carousel>
   </div>
 </template>
 
 <script type="text/javascript">
 import Header from './general/Header'
+import Carousel from './general/Carousel'
 export default {
   name: 'Index',
   components: {
-    Header
+    Header,
+    Carousel
   },
   methods: {
     handle_select: function () {},
