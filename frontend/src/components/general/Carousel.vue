@@ -28,13 +28,15 @@ export default {
   .carousel{
     top:60px;
     margin-top: 20px;
-    width: auto;
+    width: 100%;
   }
   .demonstration{
     font-size: 30px;
     font-weight: 100;
     font-family: Microsoft Yahei;
     text-align: center;
+    margin-bottom: 10px;
+    margin: 0px,0px,10px,0px;
     color:#20a0ff;
   }
 </style>

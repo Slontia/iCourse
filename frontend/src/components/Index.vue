@@ -2,17 +2,20 @@
   <div id="app">
     <Header></Header>
     <Carousel></Carousel>
+    <Footer></Footer>
   </div>
 </template>
 
 <script type="text/javascript">
 import Header from './general/Header'
 import Carousel from './general/Carousel'
+import Footer from './general/Footer'
 export default {
   name: 'Index',
   components: {
     Header,
-    Carousel
+    Carousel,
+    Footer
   },
   methods: {
     handle_select: function () {},

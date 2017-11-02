@@ -15,7 +15,7 @@
     <el-col :span="4" class="userinfo">
       <el-dropdown trigger="click">
         <span class="el-dropdown-link">
-          <el-button type="text" v-if="!is_login">登陆/注册</el-button>
+          <el-button type="text" v-if="!is_login">登录/注册</el-button>
           <el-button type="text" v-else>{{username}}</el-button>
         </span>
         <el-dropdown-menu slot="dropdown">
@@ -29,13 +29,13 @@
   </el-col>
 </el-row>
   <!-- 登录界面  -->
-  <el-dialog title="登录" :visible="login_form_visible">
-    <el-form :model="login_form" label-position="left">
+  <el-dialog title="登录" :visible="login_form_visible" size="tiny" :before-close="handle_close_login">
+    <el-form :model="login_form" label-position="left" >
       <el-form-item type="text" label="用户名" :label-width="form_label_width">
         <el-input v-model="login_form.name" auto_complete="off" id="login_form1"></el-input>
       </el-form-item>
       <el-form-item label="密码" :label-width="form_label_width" id="login_form2">
-        <el-input type="password" v-model="login_form.password" auto_complete="off"></el-input>
+        <el-input type="password" v-model="login_form.password" auto_complete="off" size="small"></el-input>
       </el-form-item>
     </el-form>
       <span slot="footer" class="dialog-footer">
@@ -44,8 +44,8 @@
       </span>
   </el-dialog>
   <!-- 注册页面 -->
-  <el-dialog title="注册" :visible="register_form_visible">
-    <el-form :model="register_form" label-position="left" :rules="rules" ref="register_form">
+  <el-dialog title="注册" :visible="register_form_visible" :before-close="handle_close_register">
+    <el-form :model="register_form" label-position="left" :rules="rules" ref="register_form" >
       <el-form-item tyep="text" label="用户名" :label-width="form_label_width" prop="username" id="register_form1">
         <el-input v-model="register_form.username" auto_complete="off" placeholder="唯一的用户名,由字母/数字/下划线组成，大小写不敏感，20字符以内"></el-input>
       </el-form-item>
@@ -169,7 +169,7 @@ export default {
       is_login: false,
       login_form_visible: false,
       register_form_visible: false,
-      form_label_width: '120px',
+      form_label_width: '80px',
       username: '',
       login_form: {
         name: '',
@@ -229,6 +229,12 @@ export default {
     register: function () { this.register_form_visible = true },
     logout: function () {},
     login_confirm_clicked: function () { this.login_form_visible = false },
+    handle_close_login (done) {
+      this.login_form_visible = false
+    },
+    handle_close_register (done) {
+      this.register_form_visible = false
+    },
     register_confirm_clicked: function (form_name) { this.$refs[form_name].validate((valid) => {
       if (valid) {
         this.register_form_visible = false
@@ -266,6 +272,7 @@ export default {
     text-align: right;
     float: right;
     width: auto;
+    padding-right: 10px;
   }
   .el-menu-item {
     font-size: 22px;

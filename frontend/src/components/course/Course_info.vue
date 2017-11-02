@@ -42,7 +42,7 @@
       <!-- contribution rank -->
       <el-col :span="6" class = "contribution_container">
         <div class="history_contribution_table">
-        <p style="text-align: center;"> 历史贡献度排行 </p>
+        <p style="text-align: center; padding-bottom: 10px"> 历史贡献度排行 </p>
         <el-table :data="history_contribution_data" highlight-current-row style="width: auto;" height="300">
           <el-table-column prop="contribution_username" label="用户名"></el-table-column>
           <el-table-column prop="contribution_score" label="贡献度"></el-table-column>
@@ -50,7 +50,7 @@
         </el-table>
         </div>
         <div class="month_contribution_table">
-        <p style="text-align: center;"> 近一个月贡献度排行 </p>
+        <p style="text-align: center; padding-bottom: 10px"> 近一个月贡献度排行 </p>
         <el-table :data="latest_contribution_data" highlight-current-row style="width: auto;" height="300">
           <el-table-column prop="contribution_username" label="用户名"></el-table-column>
           <el-table-column prop="contribution_score" label="贡献度"></el-table-column>
@@ -69,7 +69,7 @@
       </el-row>
         <el-row class = "resource_container">
           <el-col :span="9" class="hot_resource_container">
-              <h3 style="text-align: left"> 热门资源 </h3>
+              <h3 style="text-align: left;padding-bottom: 10px"> 热门资源 </h3>
                 <el-col :span="9" v-for="(o,index) in 2" :key="o" :offset="index > 0 ? 2:0 ">
                   <el-card :body-style="{ padding: '0px'}">
                     <el-row>
@@ -94,7 +94,7 @@
                 </el-col>
           </el-col>
           <el-col :span="9" class= "latest_resource_container">
-              <h3 style="text-align: left">最新资源</h3>
+              <h3 style="text-align: left;padding-bottom: 10px">最新资源</h3>
                 <el-col :span="10" v-for="(o,index) in 2" :key="o" :offset="index > 0 ? 2:0 ">
                   <el-card :body-style="{ padding: '0px'}">
                     <el-row>
@@ -157,8 +157,9 @@ export default {
 <style type="text/css">
   .course_introduction{
     position: absolute;
-    top:60px;
+
     margin-top: 10px;
+    padding-left: 10px;
     height: 70%;
     width: 100%;
   }
@@ -174,6 +175,7 @@ export default {
     position:absolute;
     top:400px;
     margin-top: 20px;
+    padding-left: 10px;
     width: 71%;
   }
   .resource_container{
