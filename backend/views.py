@@ -212,3 +212,26 @@ def userLogin(request):
             error.extend(loginForm.errors.values())
             #print(error)
             return HttpResponse(json.dumps({'error': error}))
+
+# Logout Interface
+# REQUIRES: POST method
+# MODIFIES: request.user.is_authenticated() == False
+# EFFECTS: return json data {'error': error}, if logout success, error=0,
+#          else error is the error list
+# URL: /sign/login/
+@csrf_exempt
+def userLogout(request):
+    if(request.method == "POST"):
+        error = []
+        try:
+            #print(request.user)
+            #print(request.user.is_authenticated())
+            auth.logout(request)
+            #print(request.user)
+            #print(request.user.is_authenticated())
+            return HttpResponse(json.dumps({'error': 0}))
+        except Exception as e:
+            error.append(str(e))
+            #print(error)
+            return HttpResponse(json.dumps({'error': error}))
+
