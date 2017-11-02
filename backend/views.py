@@ -24,6 +24,7 @@ def contact(request):
 # MODIFIES: create a new user in database, update tables(mainly auth_user and backend_userprofile)
 # EFFECTS: if register success, return a json data {'error': 0};
 #          else return a json data {'error': error}, error is a list of error
+# URL: /sign/register/
 @csrf_exempt
 def userRegister(request):
     #print(request.user)
@@ -96,6 +97,7 @@ def userRegister(request):
 # REQUIRES: the ajax data should be json data {'college_id': class_id}
 # MODIFIES: None
 # EFFECTS: return json data {'course_id_list': course_id_list}, course_id_list is a list
+# URL: /course/college_course/
 @csrf_exempt
 def course_by_college(request):
     if(request.method == "POST"):
@@ -108,6 +110,7 @@ def course_by_college(request):
 # REQUIRES: the ajax data should be json data {'class_id': class_id}
 # MODIFIES: None
 # EFFECTS: return json data {'course_id_list': course_id_list}, course_id_list is a list
+# URL: /course/classification_course/
 @csrf_exempt
 def course_by_class(request):
     if(request.method == "POST"):
@@ -120,6 +123,7 @@ def course_by_class(request):
 # REQUIRES: the ajax data should be json data {'course_id': class_id}
 # MODIFIES: None
 # EFFECTS: return json data {'course_info': course_info}, course_info is a dict
+# URL: /course/course_info/
 @csrf_exempt
 def course_information(request):
     if(request.method == "POST"):
@@ -144,6 +148,7 @@ def user_information(request):
 # REQUIRES: the ajax data should be json data {'resource_id': resource_id}
 # MODIFIES: None
 # EFFECTS: return json data {'resource_info': resource_info}, resource_info is a dict
+# URL:
 @csrf_exempt
 def resource_information(request):
     if(request.method == "POST"):

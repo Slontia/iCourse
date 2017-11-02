@@ -22,6 +22,11 @@ from backend import views as backend_views
 
 
 urlpatterns = [
+    url(r'^sign/register/$', backend_views.userRegister, name='userRegister'),    # for user register
+    url(r'course/college_course/$', backend_views.course_by_college, name='course_by_college'),    # for searching course list by college_id
+    url(r'course/classification_course/$', backend_views.course_by_class, name='course_by_class'),    # for searching course list by class_id
+    url(r'course/course_info/$', backend_views.course_information, name='course_information'),    # for course information
+
     url(r'^admin/', admin.site.urls),
     url(r'^$', TemplateView.as_view(template_name='index.html')), # NEW
     # url(r'^course/$', backend_views.course, name='course'),
