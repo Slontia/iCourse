@@ -153,3 +153,15 @@ def course_contrib_list(request):
         course_id = int(data.get('course_id'))
         contrib_list = interface.resource_contribution_list(course_id)
         return HttpResponse(json.dumps({'contrib_list': contrib_list})) 
+
+# Check User Status Interface
+# REQUIRES:
+# MODIFIES: None
+# EFFECTS: return json data {'is_login': is_login}
+#          is_login is True if request.user.is_authenticated(), else False
+# URL: /sign/get_user/
+@csrf_exempt
+def get_user(request):
+    if(request.method == "POST"):
+        is_login = request.user.is_authenticated()
+        return HttpResponse(json.dumps({'is_login': is_login}))
