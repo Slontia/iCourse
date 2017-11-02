@@ -138,4 +138,16 @@ def user_information(request):
         data = json.loads(request.POST)
         username = str(data.get('username'))
         user_info = interface.user_information(username)
-        return HttrResponse(json.dumps({'user_info': user_info}))
+        return HttpResponse(json.dumps({'user_info': user_info}))
+
+# Resource Information Interface
+# REQUIRES: the ajax data should be json data {'resource_id': resource_id}
+# MODIFIES: None
+# EFFECTS: return json data {'resource_info': resource_info}, resource_info is a dict
+@csrf_exempt
+def resource_information(request):
+    if(request.method == "POST"):
+        data = json.loads(request.POST)
+        resource_id = int(data.get('resource_id'))
+        resource_info = interface.resource_information(resource_id)
+        return HttpResponse(json.dumps('resource_info': resource_info))
