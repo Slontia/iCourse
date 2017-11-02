@@ -134,3 +134,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend/dist/static"),
 ]
+
+# Add for UserProfile
+AUTH_PROFILE_MODULE = 'backend.UserProfile'
