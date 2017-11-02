@@ -155,4 +155,19 @@ def resource_information(request):
         data = json.loads(request.POST)
         resource_id = int(data.get('resource_id'))
         resource_info = interface.resource_information(resource_id)
-        return HttpResponse(json.dumps('resource_info': resource_info))
+        return HttpResponse(json.dumps({'resource_info': resource_info}))
+
+# Course Contribution List Interface
+# REQUIRES: the ajax data should be json data {'course_id', course_id}
+# MODIFIES: None
+# EFFECTS: return data {'contrib_list': contrib_list}
+#          contrib_list is a list whose element is tuples like (user_id, total scores),
+#          the list is ordered by total scores
+# URL:
+@csrf_exempt
+def course_contrib_list(request):
+    if(request.method == "POST"):
+        data = json.loads(request.POST)
+        course_id = int(data.get('course_id'))
+        contrib_list = interface.resource_contribution_list(course_id)
+        return HttpResponse(json.dumps({'contrib_list': contrib_list})) 
