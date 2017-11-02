@@ -13,7 +13,7 @@ def college_course_list(col_id):
     return list(result)
 
 # 通过某课程类别获取课程列表
-# REQUIRES: type(cla_id) == <class 'int'> && lower_value <= cla_id <= upper_value
+# REQUIRES: type(cla_id) == <class 'int'>
 # MODIFIES: None
 # EFFECTS: 返回某种课程类别的课程列表,返回类型为list
 
@@ -22,21 +22,27 @@ def classification_course_list(cla_id):
     return list(result)
 
 # 查询课程详细信息
-# REQUIRES: type(cou_id) == <class 'int'> && lower_value <= cou_id <= upper_value
+# REQUIRES: type(cou_id) == <class 'int'>
 # MODIFIES: None
-# EFFECTS: 返回某个课程的所有信息,返回类型为dict
+# EFFECTS: 返回某个课程的所有信息,返回类型为dict,若课程不存在则返回空字典
 
 def course_information(cou_id):
-    result = Course.objects.filter(id=cou_id).values()[0]
+    result = Course.objects.filter(id=cou_id)
+    if(len(result) == 0):
+        return {}
+    result = result.values()[0]
     return result
 
 # 查询课程贡献度列表
-# REQUIRES: type(cou_id) == <class 'int'> && lower_value <= cou_id <= upper_value
+# REQUIRES: type(cou_id) == <class 'int'>
 # MODIFIES: None
 # EFFECTS: 返回某个课程的贡献度列表,表中元素为排好序的(user_id, score)元组,返回类型为list
 
 def course_contribution_list(cou_id):
-    temp = R_Course_User_Contribution.objects.filter(course_id=cou_id).values_list("user_id", "score")
+    temp = R_Course_User_Contribution.objects.filter(course_id=cou_id)
+    if(len(temp) == 0):
+        return []
+    temp = temp.values_list("user_id", "score")
     keys = []
     for item in temp:
         if(item[0] not in keys):
@@ -54,12 +60,15 @@ def course_contribution_list(cou_id):
     return result
 
 # 查询资源信息
-# REQUIRES: type(resource_id) == <class 'int'> && lower_value <= resource_id <= higher_value
+# REQUIRES: type(resource_id) == <class 'int'>
 # MODIFIES: None
-# EFFECTS: 返回某个资源的所有信息,返回类型为dict
+# EFFECTS: 返回某个资源的所有信息,返回类型为dict,若资源不存在则返回空字典
 
 def resource_information(resource_id):
-    result = Resource.objects.filter(id=resource_id).values()[0]
+    result = Resource.objects.filter(id=resource_id)
+    if(len(result) == 0):
+        return {}
+    result = result.values()[0]
     return result
 
 # 查询个人信息
