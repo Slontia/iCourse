@@ -27,8 +27,6 @@ def contact(request):
 # URL: /sign/register/
 @csrf_exempt
 def userRegister(request):
-    #print(request.user)
-    #print(request.user.is_authenticated())
     try:
         if(request.method == 'POST'):
             data = json.loads(request.POST)
@@ -46,20 +44,6 @@ def userRegister(request):
             if(not registerForm.is_valid()):
                 error.extend(registerForm.errors.values())
                 #print(error)
-                #return render(request,"backend/userregister.html",{'username':username,'email':email,'error':error})
-                return HttpResponse(json.dumps({'error': error}))
-
-            if(password1!=password2):
-                error.append("两次输入的密码不一致!")
-                #print(error)
-                #return render(request,"backend/userregister.html",{'username':username,'email':email,'error':error})
-                return HttpResponse(json.dumps({'error': error}))
-
-            filterResult=User.objects.filter(username=username)
-            if(len(filterResult) > 0):
-                error.append("用户名已存在")
-                #print(error)
-                #return render(request,"backend/userregister.html",{'username':username,'email':email,'error':error})
                 return HttpResponse(json.dumps({'error': error}))
 
             user=User()
@@ -87,10 +71,8 @@ def userRegister(request):
     except Exception as e:
         error.append(str(e))
         #print(error)
-        #return render(request,"backend/userregister.html",{'username':username,'email':email,'error':error})
         return HttpResponse(json.dumps({'error': error}))
 
-    #return render(request,"backend/userregister.html",{'username':username,'email':email,'error':error})
     return HttpResponse(json.dumps({'error': 0}))
 
 # the Interface of search course list by college id
