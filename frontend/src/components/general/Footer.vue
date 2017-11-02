@@ -27,7 +27,7 @@
 		width: 100%;
 		height: 100px;
 		text-align: center;
-		margin-top: 20px;
+		margin-top: 50px;
 	}
 	.footer_link_container{
 		margin-top: 10px;
