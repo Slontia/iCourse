@@ -5,7 +5,7 @@
     <!-- course introduction -->
     <el-row :gutter="50" class="course_introduction">
         <el-col :span="18" >
-            <el-button type="primary" icon = "arrow-left" @click="return_course_page_clicked">返回课程页面</el-button>
+            <el-button type="primary" icon = "arrow-left" @click="return_course_page_clicked" style="margin-top: 20px">返回课程页面</el-button>
           <div class="info_card">
             <el-card class="box-card">
             <div slot="header" class = "clearfix">
@@ -43,18 +43,18 @@
       <el-col :span="6" class = "contribution_container">
         <div class="history_contribution_table">
         <p style="text-align: center;"> 历史贡献度排行 </p>
-        <el-table :data="history_contribution_data" highlight-current-row style="width: 100%;" height="300">
-          <el-table-column prop="contribution_username" label="用户名" width="100"></el-table-column>
-          <el-table-column prop="contribution_score" label="贡献度" width="90"></el-table-column>
-          <el-table-column prop="contribution_level" label="等级" width="80"></el-table-column>
+        <el-table :data="history_contribution_data" highlight-current-row style="width: auto;" height="300">
+          <el-table-column prop="contribution_username" label="用户名"></el-table-column>
+          <el-table-column prop="contribution_score" label="贡献度"></el-table-column>
+          <el-table-column prop="contribution_level" label="等级"></el-table-column>
         </el-table>
         </div>
         <div class="month_contribution_table">
         <p style="text-align: center;"> 近一个月贡献度排行 </p>
-        <el-table :data="latest_contribution_data" highlight-current-row style="width: 100%;" height="300">
-          <el-table-column prop="contribution_username" label="用户名" width="100"></el-table-column>
-          <el-table-column prop="contribution_score" label="贡献度" width="90"></el-table-column>
-          <el-table-column prop="contribution_level" label="等级" width="80"></el-table-column>
+        <el-table :data="latest_contribution_data" highlight-current-row style="width: auto;" height="300">
+          <el-table-column prop="contribution_username" label="用户名"></el-table-column>
+          <el-table-column prop="contribution_score" label="贡献度"></el-table-column>
+          <el-table-column prop="contribution_level" label="等级"></el-table-column>
         </el-table>
       </div>
       </el-col>
@@ -63,7 +63,7 @@
      <div class = "course_resource_container">
         <el-row class="course_resource_head">
             <h2 style="float: left">课程资源</h2>
-            <el-button type="primary" @click="check_all_resource_clicked" style="float: right; margin-top: 10px;">
+            <el-button type="primary" @click="check_all_resource_clicked" style="float: right; margin-top: 20px">
               查看全部
             </el-button>
       </el-row>
@@ -72,25 +72,49 @@
               <h3 style="text-align: left"> 热门资源 </h3>
                 <el-col :span="9" v-for="(o,index) in 2" :key="o" :offset="index > 0 ? 2:0 ">
                   <el-card :body-style="{ padding: '0px'}">
-                    <img :src="img" class="image" width="50" height="50">
-                    <div style = "padding-left:10px;">
-                      <h2>CHAPTER{{ o }}</h2>
-                      <p>上传者:果冻</p>
-                      <p>下载次数:59</p>
-                    </div>
+                    <el-row>
+                      <el-col :span="4" style="margin-left: 10px">
+                        <img :src="img" style="width: 50px; height:50px;margin-top: 25px"></img>
+                      </el-col>
+                      <el-col :span="5">
+                        <el-row style="margin:15px 20px;text-align: center">
+                          <h2>CHAPTER{{ o }}</h2>
+                        </el-row>
+                      </el-col>
+                    </el-row>
+                    <el-row style="margin-left: 10px">
+                      <el-col :span="18">
+                        上传者:Aletheia
+                      </el-col>
+                      <el-col :span="18" style="margin-top: 10px">
+                        下载次数:11
+                      </el-col>
+                    </el-row>
                   </el-card>
                 </el-col>
           </el-col>
           <el-col :span="9" class= "latest_resource_container">
               <h3 style="text-align: left">最新资源</h3>
-                <el-col :span="9" v-for="(o,index) in 2" :key="o" :offset="index > 0 ? 2:0 ">
+                <el-col :span="10" v-for="(o,index) in 2" :key="o" :offset="index > 0 ? 2:0 ">
                   <el-card :body-style="{ padding: '0px'}">
-                    <img :src="img" class="image" width="50" height="50">
-                    <div style = "padding-left:10px;">
-                      <h2>PPT{{ o }}</h2>
-                      <p>上传者:果冻</p>
-                      <p>下载次数:90</p>
-                    </div>
+                    <el-row>
+                      <el-col :span="4" style="margin-left: 10px">
+                        <img :src="img" style="width: 50px; height:50px;margin-top: 25px"></img>
+                      </el-col>
+                      <el-col :span="5">
+                        <el-row style="margin:15px 20px;text-align: center">
+                          <h2>PPT{{ o }}</h2>
+                        </el-row>
+                      </el-col>
+                    </el-row>
+                    <el-row style="margin-left: 10px">
+                      <el-col :span="18">
+                        上传者:Aletheia
+                      </el-col>
+                      <el-col :span="18" style="margin-top: 10px">
+                        下载次数:99
+                      </el-col>
+                    </el-row>
                   </el-card>
                 </el-col>
           </el-col>
@@ -149,19 +173,17 @@ export default {
   .course_resource_container{
     position:absolute;
     top:400px;
+    margin-top: 20px;
     width: 71%;
   }
   .resource_container{
-    postion:absolute;
-
+    
   }
   .hot_resource_container{
-    position:absolute;
-    margin-left: 500px;
-    width:500px;
+    width:auto;
   }
   .latest_resource_container{
-    width: 500px;
+    width: auto;
   }
  
 </style>

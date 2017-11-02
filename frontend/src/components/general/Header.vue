@@ -15,8 +15,8 @@
     <el-col :span="4" class="userinfo">
       <el-dropdown trigger="click">
         <span class="el-dropdown-link">
-          <span v-if="!is_login">登陆/注册</span>
-          <span v-else>{{username}}</span>
+          <el-button type="text" v-if="!is_login">登陆/注册</el-button>
+          <el-button type="text" v-else>{{username}}</el-button>
         </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item @click.native="personal_space" v-if="is_login">个人主页</el-dropdown-item>
@@ -247,9 +247,8 @@ export default {
     line-height: 60px;
     }
   .container {
-    position: absolute;
     height: 60px;
-    width: 100%;
+    width: auto;
   }
   .logo{
     height: 60px;
@@ -259,13 +258,14 @@ export default {
     font-family: Microsoft YaHei;
     padding-left:20px;
     padding-right:20px;
+    margin-right: 50px;
     border-right-width: 0px;
-    border-right-style: solid;
+    width:auto;
   }
   .userinfo {
     text-align: right;
-    padding-right: 35px;
     float: right;
+    width: auto;
   }
   .el-menu-item {
     font-size: 22px;
