@@ -9,6 +9,9 @@ from .models import *
 from .forms import *
 from django.contrib.auth.models import User
 from django.contrib import auth
+from django.contrib.auth.backends import ModelBackend
+from django.db.models import Q
+from django.views.generic.base import View
 
 def home(request):
     return render(request, 'index.html')
@@ -155,7 +158,7 @@ def course_contrib_list(request):
         return HttpResponse(json.dumps({'contrib_list': contrib_list})) 
 
 # Check User Status Interface
-# REQUIRES:
+# REQUIRES: POST method
 # MODIFIES: None
 # EFFECTS: return json data {'is_login': is_login}
 #          is_login is True if request.user.is_authenticated(), else False
@@ -165,3 +168,47 @@ def get_user(request):
     if(request.method == "POST"):
         is_login = request.user.is_authenticated()
         return HttpResponse(json.dumps({'is_login': is_login}))
+
+# rewrite the authenticate method
+class CustomBackend(ModelBackend):
+    def authenticate(self, username=None, password=None, **kwargs):
+        try:
+            # try authenticate the username or the emial
+            user = User.objects.get(Q(username=username) | Q(email=username))    # Q offers a '&' operation between two objects
+            if(user.check_password(password)):
+                return user    # if success, return the user object
+        except Exception as e:
+            return None    # return None if failed
+
+# Login Interface
+# REQUIRES: the ajax data should be json data {'username':username, 'passward':passward
+# MODIFIES: request.user.is_authenticated() == True
+# EFFECTS: return json data {'error': error}, if login success, error=0,
+#          else error is the error list
+# URL: /sign/login/
+@csrf_exempt
+def userLogin(request):
+    if(request.method == "POST"):
+        error = []
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        username = str(data.get('username'))
+        password = str(data.get('password'))
+
+        loginForm = LoginForm({'username': username, 'password': password})
+
+        if(loginForm.is_valid()):
+            cb = CustomBackend()
+            user = cb.authenticate(username=username, password=password)
+            if(user is not None and user.is_active):
+                auth.login(request, user)
+                #print("login success")
+                #print(request.user)
+                return HttpResponse(json.dumps({'error': 0}))
+            else:
+                errror.append('该帐号不存在或为激活')
+                return HttpResponse(json.dumps({'error': error}))
+        else:
+            error.extend(loginForm.errors.values())
+            #print(error)
+            return HttpResponse(json.dumps({'error': error}))

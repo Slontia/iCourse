@@ -26,7 +26,8 @@ urlpatterns = [
     url(r'course/college_course/$', backend_views.course_by_college, name='course_by_college'),    # for searching course list by college_id
     url(r'course/classification_course/$', backend_views.course_by_class, name='course_by_class'),    # for searching course list by class_id
     url(r'course/course_info/$', backend_views.course_information, name='course_information'),    # for course information
-    url(r'sign/get_user/$', backend_views.get_user, name='get_user'),    # for Check User Status
+    url(r'sign/get_user/$', backend_views.get_user, name='get_user'),    # for check user status
+    url(r'sign/login/$', backend_views.userLogin, name='userLogin'),    # for user login
 
     url(r'^admin/', admin.site.urls),
     url(r'^$', TemplateView.as_view(template_name='index.html')), # NEW

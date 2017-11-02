@@ -137,3 +137,6 @@ STATICFILES_DIRS = [
 
 # Add for UserProfile
 AUTH_PROFILE_MODULE = 'backend.UserProfile'
+
+# Reload for login
+AUTHENTICATE_BACKENDS = {'backend.views.CustomBackend', }
