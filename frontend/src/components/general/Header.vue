@@ -8,7 +8,8 @@
     <el-col :span="16" class="menu">
       <el-menu class="el-menu" theme="light" mode="horizontal" @select="handle_select" style="background-color: white;">
         <el-menu-item index="index" class = "el-menu-item" style="margin-right: 20px;">首页</el-menu-item>
-        <el-menu-item index="course" class = "el-menu-item">课程</el-menu-item>
+        <el-menu-item index="course" class = "el-menu-item"style="margin-right: 20px">课程</el-menu-item>
+        <el-menu-item index="about" class = "el-menu-item">联系我们</el-menu-item>
       </el-menu>
     </el-col>
     <el-col :span="4" class="userinfo">
@@ -38,7 +39,7 @@
       </el-form-item>
     </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click.native="login_confirm_clicked">确 定</el-button>
+        <el-button type="primary" @click.native="login_confirm_clicked('login_form')">确 定</el-button>
         <el-button @click.native="login_form_visible=false">取 消</el-button>
       </span>
   </el-dialog>
@@ -75,6 +76,8 @@
 </template>
 
 <script>
+import $ from 'jquery'
+// import json from 'json5'
 /* eslint-disable brace-style */
 /* eslint-disable camelcase */
 export default {
@@ -227,7 +230,31 @@ export default {
     personal_space: function () {},
     register: function () { this.register_form_visible = true },
     logout: function () {},
-    login_confirm_clicked: function () { this.login_form_visible = false },
+    login_confirm_clicked: function (form_name) {
+      var post_data = {
+        'username': this.login_form['name'],
+        'password': this.login_form['password']
+      }
+      $.ajax({
+        ContentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: 'sign/login/',
+        type: 'POST',
+        data: post_data,
+        success: function (data) {
+          // data = JSON.parse(data)
+          if (data['error'] === 0) {
+            this.login_form_visible = false
+            alert('success')
+          } else {
+            alert('failed')
+          }
+        },
+        error: function () {
+          alert('lost connection')
+        }
+      })
+    },
     handle_close_login (done) {
       this.login_form_visible = false
     },
@@ -236,7 +263,33 @@ export default {
     },
     register_confirm_clicked: function (form_name) { this.$refs[form_name].validate((valid) => {
       if (valid) {
-        this.register_form_visible = false
+        var post_data = {
+          'username': this.register_form['username'],
+          'password1': this.register_form['password'],
+          'password2': this.register_form['confirmed_password'],
+          'email': this.register_form['email'],
+          'gender': this.register_form['gender'],
+          'nickname': this.register_form['nickname'],
+          'intro': null
+        }
+        $.ajax({
+          ContentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          url: 'sign/register/',
+          type: 'POST',
+          data: post_data,
+          success: function (data) {
+            if (data['error'].length === 0) {
+              this.register_form_visible = false
+              alert('success')
+            } else {
+              alert('failed')
+            }
+          },
+          error: function () {
+            alert('lost connection')
+          }
+        })
       }
       else {
         return false
