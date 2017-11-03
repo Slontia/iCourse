@@ -8,8 +8,7 @@
     <el-col :span="16" class="menu">
       <el-menu class="el-menu" theme="light" mode="horizontal" @select="handle_select" style="background-color: white;">
         <el-menu-item index="index" class = "el-menu-item" style="margin-right: 20px;">首页</el-menu-item>
-        <el-menu-item index="course" class = "el-menu-item"style="margin-right: 20px">课程</el-menu-item>
-        <el-menu-item index="about" class = "el-menu-item">联系我们</el-menu-item>
+        <el-menu-item index="course" class = "el-menu-item">课程</el-menu-item>
       </el-menu>
     </el-col>
     <el-col :span="4" class="userinfo">
