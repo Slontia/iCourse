@@ -144,6 +144,7 @@ def resource_information(request):
         resource_info = interface.resource_information(resource_id)
         return HttpResponse(json.dumps({'resource_info': resource_info}))
 
+
 # Course Contribution List Interface
 # REQUIRES: the ajax data should be json data {'course_id', course_id}
 # MODIFIES: None

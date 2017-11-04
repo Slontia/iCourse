@@ -22,6 +22,10 @@ from backend import views as backend_views
 
 
 urlpatterns = [
+    url(r'^index/$', backend_views.home, name='index'),
+    url(r'^course/$', backend_views.course, name='course'),
+    url(r'^contact/$', backend_views.contact, name='contact'), 
+
     url(r'^sign/register/$', backend_views.userRegister, name='userRegister'),    # for user register
     url(r'^course/college_course/$', backend_views.course_by_college, name='course_by_college'),    # for searching course list by college_id
     url(r'^course/classification_course/$', backend_views.course_by_class, name='course_by_class'),    # for searching course list by class_id
