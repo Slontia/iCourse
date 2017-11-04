@@ -29,7 +29,7 @@
   </el-col>
 </el-row>
   <!-- 登录界面  -->
-  <el-dialog title="登录" :visible="login_form_visible" size="tiny" :before-close="handle_close_login">
+  <el-dialog title="登录" :visible="login_form_visible" size="tiny" :before-close="handle_close_login" id="login_dialog">
     <el-form :model="login_form" label-position="left" :rules="login_rules" ref="login_form">
       <el-form-item type="text" label="用户名" :label-width="form_label_width" prop="username" id="login_form1">
         <el-input v-model="login_form.username" auto_complete="off"></el-input>
@@ -87,11 +87,15 @@ export default {
       if (!value) {
         callback(new Error('用户名不能为空'))
       }
+      callback()
+      // setTimeout(() => {  }, 500)
     }
     var password_check_empty = (rule, value, callback) => {
       if (!value) {
         callback(new Error('密码不能为空'))
       }
+      callback()
+      // setTimeout(() => { callback() }, 500)
     }
     var check_username = (rule, value, callback) => {
       if (!value) {
@@ -245,15 +249,18 @@ export default {
       }
     },
     login: function () { this.login_form_visible = true },
-    personal_space: function () {},
+    personal_space: function () {
+      this.$router.push({ path: '/index' + username + '/home' })
+    },
     register: function () { this.register_form_visible = true },
     logout: function () {},
     login_confirm_clicked: function (form_name) { this.$refs[form_name].validate((valid) => {
       if (valid) {
         var post_data = {
-          'username': this.login_form['name'],
+          'username': this.login_form['username'],
           'password': this.login_form['password']
         }
+        var self = this
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
@@ -262,11 +269,13 @@ export default {
           data: post_data,
           success: function (data) {
             // data = JSON.parse(data)
+            // login_form_visible = false
             switch (data['error']) {
               case 0:
-                this.login_form_visible = false
-                this.username = post_data['username']
-                this.is_login = true
+                self.login_form_visible = false
+                self.username = post_data['username']
+                self.is_login = true
+                alert('登录成功')
                 break
               case 101:
                 alert('用户名不存在或账号未被激活')
@@ -304,6 +313,7 @@ export default {
           'nickname': this.register_form['nickname'],
           'intro': null
         }
+        var self = this
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
@@ -313,7 +323,7 @@ export default {
           success: function (data) {
             switch (data['error']) {
               case 0:
-                this.register_form_visible = false
+                self.register_form_visible = false
                 alert('注册成功')
                 break
               case 201:

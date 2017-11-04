@@ -195,7 +195,9 @@ def userLogin(request):
         data = json.loads(data)
         #data = json.loads(requset.body.decode())
         username = str(data.get('username'))
+        print (username)
         password = str(data.get('password'))
+        print (password)
 
         loginForm = LoginForm({'username': username, 'password': password})
 
