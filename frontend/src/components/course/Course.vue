@@ -62,7 +62,7 @@
 /* eslint-disable camelcase */
 import Header from '../general/Header'
 import get_url from '../general/getUrl'
-// import $ from 'jquery'
+import $ from 'jquery'
 export default {
   name: 'Course',
   components: { Header },
@@ -108,16 +108,17 @@ export default {
         this.course_bread_message = node.parent.label + '->' + node.label
         this.load_courses = true
         if (node.parent.label === '开设院系') {
-          var temp1 = { college_id: node.label[0] }
-          this.$ajax({
+          var temp1 = { 'college_id': node.label[0] }
+          $.ajax({
             ContentType: 'application/json; charset=utf-8',
             dataType: 'json',
-            method: 'POST',
+            type: 'POST',
             url: get_url('/course/college_course/'),
-            data: JSON.stringify(temp1),
+            data: temp1,
             success: function (data) {
               this.courses = []
-              alert(this.parseJSON(data))
+              console.log('ok')
+              alert('success')
             },
             error: function () {
               alert('错误')
@@ -125,7 +126,7 @@ export default {
           })
         }
         else if (node.parent.label === '课程类别') {
-          var temp2 = { class_id: '' }
+          var temp2 = { 'class_id': '' }
           switch (node.label) {
             case ('一般通识课'):
               temp2.class_id = '0'
@@ -148,14 +149,16 @@ export default {
             default:
               temp2.class_id = '-1'
           }
-          this.$ajax({
+
+          $.ajax({
             ContentType: 'application/json; charset=utf-8',
             dataType: 'json',
-            method: 'POST',
+            type: 'POST',
             url: get_url('/course/classification_course/'),
-            data: JSON.stringify(temp2),
+            data: temp2,
             success: function (data) {
-              alert(this.parseJSON(data))
+              console.log('ok')
+              alert('success')
             },
             error: function () {
               alert('错误')
