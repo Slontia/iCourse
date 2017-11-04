@@ -124,10 +124,16 @@ def course_information(request):
 @csrf_exempt
 def user_information(request):
     if(request.method == "POST"):
-        data = json.loads(request.POST)
+        #data = json.dumps(request.POST)
+        #data = json.loads(request.POST)
         #data = json.loads(request.body.decode())
-        username = str(data.get('username'))
+        #data = request.POST
+        username = str(request.POST.get('username'))
+
         user_info = interface.user_information(username)
+        print("******************")
+        print(user_info)
+        print("******************")
         return HttpResponse(json.dumps({'user_info': user_info}))
 
 # Resource Information Interface
@@ -196,7 +202,9 @@ def userLogin(request):
         data = json.loads(data)
         #data = json.loads(requset.body.decode())
         username = str(data.get('username'))
+        print ('username: ' + username)
         password = str(data.get('password'))
+        print ('password:' + password)
 
         loginForm = LoginForm({'username': username, 'password': password})
 
@@ -205,6 +213,7 @@ def userLogin(request):
             user = cb.authenticate(username=username, password=password)
             if(user is not None and user.is_active):
                 auth.login(request, user)
+                request.session['username'] = username # store in session
                 return HttpResponse(json.dumps({'error': 0}))
             else:
                 return HttpResponse(json.dumps({'error': 101})) # username not exists
@@ -220,16 +229,25 @@ def userLogin(request):
 @csrf_exempt
 def userLogout(request):
     if(request.method == "POST"):
-        error = []
+        #error = []
         try:
             #print(request.user)
             #print(request.user.is_authenticated())
             auth.logout(request)
+            #del request.session['username']
             #print(request.user)
             #print(request.user.is_authenticated())
             return HttpResponse(json.dumps({'error': 0}))
         except Exception as e:
-            error.append(str(e))
+            #error.append(str(e))
             #print(error)
-            return HttpResponse(json.dumps({'error': error}))
+            return HttpResponse(json.dumps({'error': 301}))
 
+
+# use session
+@csrf_exempt
+def isLoggedIn(request):
+    if(request.method == "POST"):
+        return HttpResponse(json.dumps({
+            'username': request.session.get('username',default=None),
+        }))

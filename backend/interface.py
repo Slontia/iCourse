@@ -82,7 +82,7 @@ def resource_information(resource_id):
 # EFFECTS: 返回某个用户的一些信息,返回类型为dict,若用户不存在则返回空字典
 
 def user_information(username):
-    result = User.object.filter(username=usernaem)
+    result = User.objects.filter(username=username)
     if(len(result) == 0):
         return {}
     profile = User.objects.get(username=username).userprofile
