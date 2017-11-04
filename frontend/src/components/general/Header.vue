@@ -98,7 +98,7 @@ export default {
         }
       },
       error: function () {
-        alert('加载导航栏连接服务器失败')
+        // alert('加载导航栏连接服务器失败')
       }
     })
   },
@@ -269,7 +269,7 @@ export default {
       }
     },
     login: function () { this.login_form_visible = true },
-    personal_space: function () {},
+    personal_space: function () { this.$router.push({ path: '/personal' }) },
     register: function () { this.register_form_visible = true },
     logout: function () {
       var self = this

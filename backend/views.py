@@ -124,10 +124,16 @@ def course_information(request):
 @csrf_exempt
 def user_information(request):
     if(request.method == "POST"):
-        data = json.loads(request.POST)
+        #data = json.dumps(request.POST)
+        #data = json.loads(request.POST)
         #data = json.loads(request.body.decode())
-        username = str(data.get('username'))
+        #data = request.POST
+        username = str(request.POST.get('username'))
+
         user_info = interface.user_information(username)
+        print("******************")
+        print(user_info)
+        print("******************")
         return HttpResponse(json.dumps({'user_info': user_info}))
 
 # Resource Information Interface
