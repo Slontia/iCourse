@@ -32,8 +32,8 @@ def contact(request):
 def userRegister(request):
     try:
         if(request.method == 'POST'):
-            #data = json.loads(request.POST)
-            data = json.loads(request.body)
+            data = json.loads(request.POST)
+            #data = json.loads(request.body.decode())
             username = str(data.get('username'))
             password1 = str(data.get('password1'))
             password2 = str(data.get('password2'))
@@ -87,8 +87,8 @@ def userRegister(request):
 @csrf_exempt
 def course_by_college(request):
     if(request.method == "POST"):
-        #data = json.loads(request.POST)
-        data = json.loads(request.body)
+        data = json.loads(request.POST)
+        #data = json.loads(request.body.decode())
         college_id = int(data.get('college_id'))
         course_id_list = interface.college_course_list(college_id)
         return HttpResponse(json.dumps({'course_id_list': course_id_list}))
@@ -101,8 +101,8 @@ def course_by_college(request):
 @csrf_exempt
 def course_by_class(request):
     if(request.method == "POST"):
-        #data = json.loads(request.POST)
-        data = json.loads(request.body)
+        data = json.loads(request.POST)
+        #data = json.loads(request.body.decode())
         class_id = int(data.get('class_id'))
         course_id_list = interface.classification_course_list(class_id)
         return HttpResponse(json.dumps({'course_id_list': course_id_list}))
@@ -115,8 +115,8 @@ def course_by_class(request):
 @csrf_exempt
 def course_information(request):
     if(request.method == "POST"):
-        #data = json.loads(request.POST)
-        data = json.loads(request.body)
+        data = json.loads(request.POST)
+        #data = json.loads(request.body.decode())
         course_id = int(data.get('course_id','0'))
         course_info = interface.course_information(course_id)
         return HttpResponse(json.dumps({'course_info': course_info}))
@@ -128,8 +128,8 @@ def course_information(request):
 @csrf_exempt
 def user_information(request):
     if(request.method == "POST"):
-        #data = json.loads(request.POST)
-        data = json.loads(request.body)
+        data = json.loads(request.POST)
+        #data = json.loads(request.body.decode())
         username = str(data.get('username'))
         user_info = interface.user_information(username)
         return HttpResponse(json.dumps({'user_info': user_info}))
@@ -142,8 +142,8 @@ def user_information(request):
 @csrf_exempt
 def resource_information(request):
     if(request.method == "POST"):
-        #data = json.loads(request.POST)
-        data = json.loads(request.body)
+        data = json.loads(request.POST)
+        #data = json.loads(request.body.decode())
         resource_id = int(data.get('resource_id'))
         resource_info = interface.resource_information(resource_id)
         return HttpResponse(json.dumps({'resource_info': resource_info}))
@@ -158,8 +158,8 @@ def resource_information(request):
 @csrf_exempt
 def course_contrib_list(request):
     if(request.method == "POST"):
-        #data = json.loads(request.POST)
-        data = json.loads(request.body)
+        data = json.loads(request.POST)
+        #data = json.loads(request.body.decode())
         course_id = int(data.get('course_id'))
         contrib_list = interface.resource_contribution_list(course_id)
         return HttpResponse(json.dumps({'contrib_list': contrib_list})) 
@@ -197,8 +197,8 @@ class CustomBackend(ModelBackend):
 def userLogin(request):
     if(request.method == "POST"):
         error = []
-        #data = json.loads(request.POST)
-        data = json.loads(requset.body)
+        data = json.loads(request.POST)
+        #data = json.loads(requset.body.decode())
         username = str(data.get('username'))
         password = str(data.get('password'))
 
