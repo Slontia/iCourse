@@ -32,14 +32,28 @@ def contact(request):
 def userRegister(request):
     try:
         if(request.method == 'POST'):
-            data = json.loads(request.POST)
+            data = json.dumps(request.POST)
+            data = json.loads(data)
+            
             username = str(data.get('username'))
             password1 = str(data.get('password1'))
             password2 = str(data.get('password2'))
             email = str(data.get('email'))
             gender = str(data.get('gender'))
             nickname = str(data.get('nickname'))
-            intro = str(data.get('intro'))
+            intro = 'Za Warudo!' #str(data.get('intro'))
+
+
+            '''#username = 'Za Warudo!'
+            password1 = 'Za Warudo!'
+            password2 = 'Za Warudo!'
+            email = 'Za Warudo!'
+            gender = 'Za Warudo!'
+            nickname = 'Za Warudo!'
+            intro = 'Za Warudo!'
+
+'''
+
             error=[]
 
             registerForm = RegisterForm({'username':username,'password1':password1,'password2':password2,'email':email,'gender':gender,'nickname':nickname,'intro':intro})
@@ -76,7 +90,7 @@ def userRegister(request):
         #print(error)
         return HttpResponse(json.dumps({'error': error}))
 
-    return HttpResponse(json.dumps({'error': 0}))
+    return HttpResponse(json.dumps({'error': []}))
 
 # the Interface of search course list by college id
 # REQUIRES: the ajax data should be json data {'college_id': class_id}
@@ -206,7 +220,7 @@ def userLogin(request):
                 #print(request.user)
                 return HttpResponse(json.dumps({'error': 0}))
             else:
-                errror.append('该帐号不存在或为激活')
+                error.append('该帐号不存在或为激活')
                 return HttpResponse(json.dumps({'error': error}))
         else:
             error.extend(loginForm.errors.values())
