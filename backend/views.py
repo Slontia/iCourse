@@ -34,34 +34,18 @@ def userRegister(request):
         if(request.method == 'POST'):
             data = json.dumps(request.POST)
             data = json.loads(data)
-            
             username = str(data.get('username'))
             password1 = str(data.get('password1'))
             password2 = str(data.get('password2'))
             email = str(data.get('email'))
             gender = str(data.get('gender'))
             nickname = str(data.get('nickname'))
-            intro = 'Za Warudo!' #str(data.get('intro'))
-
-
-            '''#username = 'Za Warudo!'
-            password1 = 'Za Warudo!'
-            password2 = 'Za Warudo!'
-            email = 'Za Warudo!'
-            gender = 'Za Warudo!'
-            nickname = 'Za Warudo!'
-            intro = 'Za Warudo!'
-
-'''
-
-            error=[]
+            intro = str(data.get('intro'))
 
             registerForm = RegisterForm({'username':username,'password1':password1,'password2':password2,'email':email,'gender':gender,'nickname':nickname,'intro':intro})
 
             if(not registerForm.is_valid()):
-                error.extend(registerForm.errors.values())
-                #print(error)
-                return HttpResponse(json.dumps({'error': error}))
+                return HttpResponse(json.dumps({'error': 201}))
 
             user=User()
             user.username = username
@@ -86,11 +70,9 @@ def userRegister(request):
             '''
 
     except Exception as e:
-        error.append(str(e))
-        #print(error)
-        return HttpResponse(json.dumps({'error': error}))
+        return HttpResponse(json.dumps({'error': 202}))
 
-    return HttpResponse(json.dumps({'error': []}))
+    return HttpResponse(json.dumps({'error': 0}))
 
 # the Interface of search course list by college id
 # REQUIRES: the ajax data should be json data {'college_id': class_id}
@@ -101,6 +83,7 @@ def userRegister(request):
 def course_by_college(request):
     if(request.method == "POST"):
         data = json.loads(request.POST)
+        #data = json.loads(request.body.decode())
         college_id = int(data.get('college_id'))
         course_id_list = interface.college_course_list(college_id)
         return HttpResponse(json.dumps({'course_id_list': course_id_list}))
@@ -114,6 +97,7 @@ def course_by_college(request):
 def course_by_class(request):
     if(request.method == "POST"):
         data = json.loads(request.POST)
+        #data = json.loads(request.body.decode())
         class_id = int(data.get('class_id'))
         course_id_list = interface.classification_course_list(class_id)
         return HttpResponse(json.dumps({'course_id_list': course_id_list}))
@@ -127,6 +111,7 @@ def course_by_class(request):
 def course_information(request):
     if(request.method == "POST"):
         data = json.loads(request.POST)
+        #data = json.loads(request.body.decode())
         course_id = int(data.get('course_id','0'))
         course_info = interface.course_information(course_id)
         return HttpResponse(json.dumps({'course_info': course_info}))
@@ -139,6 +124,7 @@ def course_information(request):
 def user_information(request):
     if(request.method == "POST"):
         data = json.loads(request.POST)
+        #data = json.loads(request.body.decode())
         username = str(data.get('username'))
         user_info = interface.user_information(username)
         return HttpResponse(json.dumps({'user_info': user_info}))
@@ -152,6 +138,7 @@ def user_information(request):
 def resource_information(request):
     if(request.method == "POST"):
         data = json.loads(request.POST)
+        #data = json.loads(request.body.decode())
         resource_id = int(data.get('resource_id'))
         resource_info = interface.resource_information(resource_id)
         return HttpResponse(json.dumps({'resource_info': resource_info}))
@@ -167,6 +154,7 @@ def resource_information(request):
 def course_contrib_list(request):
     if(request.method == "POST"):
         data = json.loads(request.POST)
+        #data = json.loads(request.body.decode())
         course_id = int(data.get('course_id'))
         contrib_list = interface.resource_contribution_list(course_id)
         return HttpResponse(json.dumps({'contrib_list': contrib_list})) 
@@ -203,9 +191,9 @@ class CustomBackend(ModelBackend):
 @csrf_exempt
 def userLogin(request):
     if(request.method == "POST"):
-        error = []
         data = json.dumps(request.POST)
         data = json.loads(data)
+        #data = json.loads(requset.body.decode())
         username = str(data.get('username'))
         password = str(data.get('password'))
 
@@ -216,16 +204,11 @@ def userLogin(request):
             user = cb.authenticate(username=username, password=password)
             if(user is not None and user.is_active):
                 auth.login(request, user)
-                #print("login success")
-                #print(request.user)
                 return HttpResponse(json.dumps({'error': 0}))
             else:
-                error.append('该帐号不存在或为激活')
-                return HttpResponse(json.dumps({'error': error}))
+                return HttpResponse(json.dumps({'error': 101})) # username not exists
         else:
-            error.extend(loginForm.errors.values())
-            #print(error)
-            return HttpResponse(json.dumps({'error': error}))
+            return HttpResponse(json.dumps({'error': 102})) # password error
 
 # Logout Interface
 # REQUIRES: POST method
