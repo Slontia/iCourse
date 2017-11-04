@@ -27,8 +27,6 @@
 		//background-color: #58B7FF;
 		width: 100%;
 		height: 100px;
-		margin-top: -100px;
-		bottom: 0px;
 		text-align: center;
 		margin-top: 50px;
 	}
