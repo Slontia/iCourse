@@ -87,7 +87,7 @@ export default {
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: 'sign/logged_in/',
+      url: '/sign/logged_in/',
       type: 'POST',
       success: function (data) {
         self.username = data['username']
@@ -98,7 +98,7 @@ export default {
         }
       },
       error: function () {
-        alert('加载导航栏连接服务器失败')
+        // alert('加载导航栏连接服务器失败')
       }
     })
   },
@@ -269,14 +269,14 @@ export default {
       }
     },
     login: function () { this.login_form_visible = true },
-    personal_space: function () {},
+    personal_space: function () { this.$router.push({ path: '/personal' }) },
     register: function () { this.register_form_visible = true },
     logout: function () {
       var self = this
       $.ajax({
         ContentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        url: 'sign/logout/',
+        url: '/sign/logout/',
         type: 'POST',
         success: function (data) {
           switch (data['error']) {
@@ -307,7 +307,7 @@ export default {
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
-          url: 'sign/login/',
+          url: '/sign/login/',
           type: 'POST',
           data: post_data,
           success: function (data) {
@@ -360,7 +360,7 @@ export default {
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
-          url: 'sign/register/',
+          url: '/sign/register/',
           type: 'POST',
           data: post_data,
           success: function (data) {
