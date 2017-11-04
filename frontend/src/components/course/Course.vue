@@ -107,19 +107,17 @@ export default {
       else {
         this.course_bread_message = node.label
       }
+      // var temp = { 'college_id': 6 }
       this.$ajax({
-        type: 'POST',
+        method: 'post',
         url: '/course/college_course/',
-        data: {
-          college_id: '6'
-        },
+        data: { college_id: '6' },
         success: function (data) {
           console.log(this.parseJSON(data))
         },
         error: function () {
           alert('错误')
         }
-
       })
     },
     search_course_clicked () {

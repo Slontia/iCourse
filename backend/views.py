@@ -86,9 +86,15 @@ def userRegister(request):
 @csrf_exempt
 def course_by_college(request):
     if(request.method == "POST"):
-        data = json.loads(request.POST)
+        data = json.loads(request.body.decode())
+        print(data)
+        #print(request.POST.get('college_id'))
+        #data = json.loads(request.POST)
+        #print(data)
+        #data = request.POST
         college_id = int(data.get('college_id'))
-        course_id_list = interface.college_course_list(college_id)
+        course_id_list = interface.college_course_list(6)
+        print(course_id_list)
         return HttpResponse(json.dumps({'course_id_list': course_id_list}))
 
 # the Interface of search course list by class id
