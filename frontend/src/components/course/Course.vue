@@ -16,7 +16,7 @@
                               <el-col :span="24" class="tools_bar_top" style="padding-bottom: 0px;">
                                 <el-form :inline="true" :model="filters">
                                   <el-form-item>
-                                    <el-input v-model = "filters.name" placeholder="输入课程名搜索"></el-input>
+                                    <el-input v-model = "filters.name" placeholder="支持课程名、课程号"></el-input>
                                   </el-form-item>
                                   <el-form-item>
                                     <el-button type="primary" v-on:click="search_course_clicked" icon="search">搜索</el-button>
@@ -59,7 +59,10 @@
 
 <script type="text/javascript">
 /* eslint-disable brace-style */
+/* eslint-disable camelcase */
 import Header from '../general/Header'
+import get_url from '../general/getUrl'
+// import $ from 'jquery'
 export default {
   name: 'Course',
   components: { Header },
@@ -103,29 +106,82 @@ export default {
       // todo: use api to get the corresponding courses
       if (typeof (node.parent.label) !== 'undefined') {
         this.course_bread_message = node.parent.label + '->' + node.label
+        this.load_courses = true
+        if (node.parent.label === '开设院系') {
+          var temp1 = { college_id: node.label[0] }
+          this.$ajax({
+            ContentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            method: 'POST',
+            url: get_url('/course/college_course/'),
+            data: JSON.stringify(temp1),
+            success: function (data) {
+              this.courses = []
+              alert(this.parseJSON(data))
+            },
+            error: function () {
+              alert('错误')
+            }
+          })
+        }
+        else if (node.parent.label === '课程类别') {
+          var temp2 = { class_id: '' }
+          switch (node.label) {
+            case ('一般通识课'):
+              temp2.class_id = '0'
+              break
+            case ('核心通识课'):
+              temp2.class_id = '1'
+              break
+            case ('核心专业课'):
+              temp2.class_id = '2'
+              break
+            case ('一般专业课'):
+              temp2.class_id = '3'
+              break
+            case ('公共必修课'):
+              temp2.class_id = '4'
+              break
+            case ('公共选修课'):
+              temp2.class_id = '5'
+              break
+            default:
+              temp2.class_id = '-1'
+          }
+          this.$ajax({
+            ContentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            method: 'POST',
+            url: get_url('/course/classification_course/'),
+            data: JSON.stringify(temp2),
+            success: function (data) {
+              alert(this.parseJSON(data))
+            },
+            error: function () {
+              alert('错误')
+            }
+          })
+        }
+        else {
+          alert('结点不存在')
+        }
+        this.load_courses = false
       }
       else {
         this.course_bread_message = node.label
       }
-      // var temp = { 'college_id': 6 }
-      this.$ajax({
-        method: 'post',
-        url: '/course/college_course/',
-        data: { college_id: '6' },
-        success: function (data) {
-          console.log(this.parseJSON(data))
-        },
-        error: function () {
-          alert('错误')
-        }
-      })
     },
     search_course_clicked () {
-      // todo: 1.more search selection 2.use api to get the corresponding courses of this.filters.name
-      this.$router.push({ path: '/course_info' })
+      if (!this.filters.name) {
+        alert('搜索内容不能为空！')
+      }
+      else {
+        // todo: use the url to get courses which are searched
+      }
     },
     add_course_clicked () {
       // todo: add course function
+      alert('功能暂未开放,敬请期待')
     }
   },
   mounted () {

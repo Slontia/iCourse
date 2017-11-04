@@ -82,10 +82,10 @@ def userRegister(request):
 @csrf_exempt
 def course_by_college(request):
     if(request.method == "POST"):
-        data = json.loads(request.POST)
-        #data = json.loads(request.body.decode())
+        #data = json.loads(request.POST)
+        data = json.loads(request.body.decode())
         college_id = int(data.get('college_id'))
-        course_id_list = interface.college_course_list(6)
+        course_id_list = interface.college_course_list(college_id)
         print(course_id_list)
         return HttpResponse(json.dumps({'course_id_list': course_id_list}))
 
@@ -97,8 +97,8 @@ def course_by_college(request):
 @csrf_exempt
 def course_by_class(request):
     if(request.method == "POST"):
-        data = json.loads(request.POST)
-        #data = json.loads(request.body.decode())
+        #data = json.loads(request.POST)
+        data = json.loads(request.body.decode())
         class_id = int(data.get('class_id'))
         course_id_list = interface.classification_course_list(class_id)
         return HttpResponse(json.dumps({'course_id_list': course_id_list}))

@@ -24,6 +24,11 @@ SECRET_KEY = 'tsuw%ib$4i+6(=i3q#67g32nozrp)#1)h53c!$@+ra&pio42ez'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:8080'
+)
+
 
 ALLOWED_HOSTS = ['*']
 
@@ -38,9 +43,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'backend',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -140,3 +147,5 @@ AUTH_PROFILE_MODULE = 'backend.UserProfile'
 
 # Reload for login
 AUTHENTICATE_BACKENDS = {'backend.views.CustomBackend', }
+
+
