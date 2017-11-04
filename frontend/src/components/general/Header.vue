@@ -30,22 +30,22 @@
 </el-row>
   <!-- 登录界面  -->
   <el-dialog title="登录" :visible="login_form_visible" size="tiny" :before-close="handle_close_login">
-    <el-form :model="login_form" label-position="left" >
-      <el-form-item type="text" label="用户名" :label-width="form_label_width">
-        <el-input v-model="login_form.name" auto_complete="off" id="login_form1"></el-input>
+    <el-form :model="login_form" label-position="left" :rules="login_rules" ref="login_form">
+      <el-form-item type="text" label="用户名" :label-width="form_label_width" prop="username" id="login_form1">
+        <el-input v-model="login_form.username" auto_complete="off"></el-input>
       </el-form-item>
-      <el-form-item label="密码" :label-width="form_label_width" id="login_form2">
+      <el-form-item label="密码" :label-width="form_label_width" prop="password" id="login_form2">
         <el-input type="password" v-model="login_form.password" auto_complete="off" size="small"></el-input>
       </el-form-item>
     </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click.native="login_confirm_clicked">确 定</el-button>
+        <el-button type="primary" @click.native="login_confirm_clicked('login_form')">确 定</el-button>
         <el-button @click.native="login_form_visible=false">取 消</el-button>
       </span>
   </el-dialog>
   <!-- 注册页面 -->
   <el-dialog title="注册" :visible="register_form_visible" :before-close="handle_close_register">
-    <el-form :model="register_form" label-position="left" :rules="rules" ref="register_form" >
+    <el-form :model="register_form" label-position="left" :rules="register_rules" ref="register_form" >
       <el-form-item tyep="text" label="用户名" :label-width="form_label_width" prop="username" id="register_form1">
         <el-input v-model="register_form.username" auto_complete="off" placeholder="唯一的用户名,由字母/数字/下划线组成，大小写不敏感，20字符以内"></el-input>
       </el-form-item>
@@ -76,11 +76,23 @@
 </template>
 
 <script>
+import $ from 'jquery'
+// import json from 'json5'
 /* eslint-disable brace-style */
 /* eslint-disable camelcase */
 export default {
   name: 'Header',
   data () {
+    var username_check_empty = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('用户名不能为空'))
+      }
+    }
+    var password_check_empty = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('密码不能为空'))
+      }
+    }
     var check_username = (rule, value, callback) => {
       if (!value) {
         callback(new Error('用户名不能为空'))
@@ -172,7 +184,7 @@ export default {
       form_label_width: '80px',
       username: '',
       login_form: {
-        name: '',
+        username: '',
         password: ''
       },
       register_form: {
@@ -193,7 +205,15 @@ export default {
         value: '0',
         label: '保密'
       }],
-      rules: {
+      login_rules: {
+        username: [
+          { validator: username_check_empty, trigger: 'blur' }
+        ],
+        password: [
+          { validator: password_check_empty, trigger: 'blur' }
+        ]
+      },
+      register_rules: {
         username: [
           { validator: check_username, trigger: 'blur' }
         ],
@@ -228,7 +248,45 @@ export default {
     personal_space: function () {},
     register: function () { this.register_form_visible = true },
     logout: function () {},
-    login_confirm_clicked: function () { this.login_form_visible = false },
+    login_confirm_clicked: function (form_name) { this.$refs[form_name].validate((valid) => {
+      if (valid) {
+        var post_data = {
+          'username': this.login_form['name'],
+          'password': this.login_form['password']
+        }
+        $.ajax({
+          ContentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          url: 'sign/login/',
+          type: 'POST',
+          data: post_data,
+          success: function (data) {
+            // data = JSON.parse(data)
+            switch (data['error']) {
+              case 0:
+                this.login_form_visible = false
+                this.username = post_data['username']
+                this.is_login = true
+                break
+              case 101:
+                alert('用户名不存在或账号未被激活')
+                break
+              case 102:
+                alert('密码错误')
+                break
+              default:
+                alert('未知错误')
+            }
+          },
+          error: function () {
+            alert('服务器连接异常')
+          }
+        })
+      } else {
+        return false
+      }
+    })
+    },
     handle_close_login (done) {
       this.login_form_visible = false
     },
@@ -237,7 +295,41 @@ export default {
     },
     register_confirm_clicked: function (form_name) { this.$refs[form_name].validate((valid) => {
       if (valid) {
-        this.register_form_visible = false
+        var post_data = {
+          'username': this.register_form['username'],
+          'password1': this.register_form['password'],
+          'password2': this.register_form['confirmed_password'],
+          'email': this.register_form['email'],
+          'gender': this.register_form['gender'],
+          'nickname': this.register_form['nickname'],
+          'intro': null
+        }
+        $.ajax({
+          ContentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          url: 'sign/register/',
+          type: 'POST',
+          data: post_data,
+          success: function (data) {
+            switch (data['error']) {
+              case 0:
+                this.register_form_visible = false
+                alert('注册成功')
+                break
+              case 201:
+                alert('用户名或邮箱已被注册')
+                break
+              case 202:
+                alert('注册异常')
+                break
+              default:
+                alert('未知错误')
+            }
+          },
+          error: function () {
+            alert('服务器连接异常')
+          }
+        })
       }
       else {
         return false

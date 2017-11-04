@@ -12,7 +12,7 @@
               <span style="line-height:36px;text-align: left;">
                 <el-row>
                   <el-col :span="8">
-                    <h1>{{ course_name }}</h1>
+                    <p style="padding-top:30px;font-size: xx-large">{{ course_name }}</p>
                   </el-col>
                   <el-col :span="10">
                     <img :src="img" width="100px" height="100px" style="float:right">
@@ -60,64 +60,71 @@
       </el-col>
     </el-row>
      <!-- course resource -->
+
      <div class = "course_resource_container">
-        <el-row class="course_resource_head">
-            <h2 style="float: left">课程资源</h2>
-            <el-button type="primary" @click="check_all_resource_clicked" style="float: right; margin-top: 20px">
+      <hr style="margin-top: 20px;width:100%" />
+        <el-row class="course_resource_head" style="margin-bottom: 20px">
+          <el-col :span="24" style="margin-top: 20px">
+            <p style="float: left;font-size: x-large">课程资源</p>
+            <el-button type="primary" @click="check_all_resource_clicked" style="float: right;">
               查看全部
             </el-button>
+          </el-col>
       </el-row>
-        <el-row class = "resource_container">
-          <el-col :span="9" class="hot_resource_container">
-              <h3 style="text-align: left;padding-bottom: 10px"> 热门资源 </h3>
-                <el-col :span="9" v-for="(o,index) in 2" :key="o" :offset="index > 0 ? 2:0 ">
-                  <el-card :body-style="{ padding: '0px'}">
+        <el-row class = "resource_container" >
+          <el-col :span="16" class="hot_resource_container">
+              <p style="text-align: left;padding-bottom: 20px;font-size: large"> 热门资源 </p>
+          </el-col>
+            <el-col :span="8" class= "latest_resource_container" :offset="14">
+              <p style="padding-bottom: 10px; font-size: large">最新资源</p>
+          </el-col>
+        </el-row>
+              <el-row>
+                <el-col :span="7" v-for="(o,index) in 2" :key="o" :offset="index>0?1:0">
+                  <el-button type="text" class="card_button">
+                  <el-card :body-style="{ padding: '10px'} " class="card">
                     <el-row>
-                      <el-col :span="4" style="margin-left: 10px">
-                        <img :src="img" style="width: 50px; height:50px;margin-top: 25px"></img>
+                      <el-col :span="4" style="">
+                        <img :src="img" style="width: 50px; height:50px;"></img>
                       </el-col>
-                      <el-col :span="5">
-                        <el-row style="margin:15px 20px;text-align: center">
-                          <h2>CHAPTER{{ o }}</h2>
+                      <el-col :span="16" :offset="2">
+                        <el-row>
+                          CHAPTER{{ o }}
+                        </el-row>
+                        <el-row>
+                          上传者:Aletheia
+                        </el-row>
+                        <el-row>
+                          下载次数:11
                         </el-row>
                       </el-col>
                     </el-row>
-                    <el-row style="margin-left: 10px">
-                      <el-col :span="18">
-                        上传者:Aletheia
-                      </el-col>
-                      <el-col :span="18" style="margin-top: 10px">
-                        下载次数:11
-                      </el-col>
-                    </el-row>
                   </el-card>
+                </el-button>
                 </el-col>
-          </el-col>
-          <el-col :span="9" class= "latest_resource_container">
-              <h3 style="text-align: left;padding-bottom: 10px">最新资源</h3>
-                <el-col :span="10" v-for="(o,index) in 2" :key="o" :offset="index > 0 ? 2:0 ">
-                  <el-card :body-style="{ padding: '0px'}">
+
+                <el-col :span="7" v-for="(o,index) in 1" :key="o" :offset="1">
+                  <el-button type="text" class="card_button">
+                  <el-card :body-style="{ padding: '10px'}" class="card">
                     <el-row>
-                      <el-col :span="4" style="margin-left: 10px">
-                        <img :src="img" style="width: 50px; height:50px;margin-top: 25px"></img>
+                      <el-col :span="4" style="">
+                        <img :src="img" style="width: 50px; height:50px;"></img>
                       </el-col>
-                      <el-col :span="5">
-                        <el-row style="margin:15px 20px;text-align: center">
-                          <h2>PPT{{ o }}</h2>
+                      <el-col :span="16" :offset="2">
+                        <el-row>
+                          CHAPTER{{ o }}
+                        </el-row>
+                        <el-row>
+                          上传者:Aletheia
+                        </el-row>
+                        <el-row>
+                          下载次数:11
                         </el-row>
                       </el-col>
                     </el-row>
-                    <el-row style="margin-left: 10px">
-                      <el-col :span="18">
-                        上传者:Aletheia
-                      </el-col>
-                      <el-col :span="18" style="margin-top: 10px">
-                        下载次数:99
-                      </el-col>
-                    </el-row>
                   </el-card>
+                </el-button>
                 </el-col>
-          </el-col>
       </el-row>
     </div>
   </div>
@@ -156,10 +163,8 @@ export default {
 
 <style type="text/css">
   .course_introduction{
-    position: absolute;
-
     margin-top: 10px;
-    padding-left: 10px;
+    padding-left: 20px;
     height: 70%;
     width: 100%;
   }
@@ -175,11 +180,11 @@ export default {
     position:absolute;
     top:400px;
     margin-top: 20px;
-    padding-left: 10px;
+    padding-left: 20px;
     width: 71%;
   }
   .resource_container{
-    
+    widht:auto;
   }
   .hot_resource_container{
     width:auto;
@@ -187,5 +192,16 @@ export default {
   .latest_resource_container{
     width: auto;
   }
- 
+  .card:hover{
+    background-color: #409EFF;
+  }
+  .card_button{
+    padding-top:0px;
+    margin-top:0px;
+    border:0px;
+    width:100%;
+    height:100%;
+    text-align:left;
+    color: black;
+  }
 </style>

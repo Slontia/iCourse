@@ -21,6 +21,7 @@
 		height: 0px;
 	}
 	.footer{
+		position: absolute;
 		font-family: Microsoft Yahei;
 		background-size: 100%;
 		//background-color: #58B7FF;

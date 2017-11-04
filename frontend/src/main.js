@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import axios from 'axios'
 import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
@@ -6,6 +7,7 @@ import App from './App'
 
 Vue.use(ElementUI)
 // to index
+Vue.prototype.$ajax = axios
 Vue.prototype.$goRoute = function (index) {
   this.$router.push(index)
 }

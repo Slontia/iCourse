@@ -16,10 +16,10 @@
                               <el-col :span="24" class="tools_bar_top" style="padding-bottom: 0px;">
                                 <el-form :inline="true" :model="filters">
                                   <el-form-item>
-                                    <el-input v-model = "filters.name"></el-input>
+                                    <el-input v-model = "filters.name" placeholder="输入课程名搜索"></el-input>
                                   </el-form-item>
                                   <el-form-item>
-                                    <el-button type="primary" v-on:click="search_course_clicked" icon="search" >搜索</el-button>
+                                    <el-button type="primary" v-on:click="search_course_clicked" icon="search">搜索</el-button>
                                   </el-form-item>
                                   <el-form-item>
                                     <el-button type="primary" @click="add_course_clicked" icon="plus" style="float:left;">新增课程
@@ -99,29 +99,26 @@ export default {
       this.page = value
       // todo:get_courses
     },
-
-    get_courses () {
-      this.total = 2
-      var a = {
-        course_name: '软件工程基础',
-        course_id: '2333333',
-        course_academy: '计算机学院',
-        course_teacher: '罗杰',
-        course_class: '专业选修课'
-      }
-      var b = {
-        course_name: '编译技术',
-        course_id: '1234567',
-        course_academy: '计算机学院',
-        course_teacher: '史晓华',
-        course_class: '核心专业课'
-      }
-      this.courses.push(a)
-      this.courses.push(b)
-    },
     course_tree_clicked (data, node) {
       // todo: use api to get the corresponding courses
-      this.course_bread_message = node.label
+      if (typeof (node.parent.label) !== 'undefined') {
+        this.course_bread_message = node.parent.label + '->' + node.label
+      }
+      else {
+        this.course_bread_message = node.label
+      }
+      // var temp = { 'college_id': 6 }
+      this.$ajax({
+        method: 'post',
+        url: '/course/college_course/',
+        data: { college_id: '6' },
+        success: function (data) {
+          console.log(this.parseJSON(data))
+        },
+        error: function () {
+          alert('错误')
+        }
+      })
     },
     search_course_clicked () {
       // todo: 1.more search selection 2.use api to get the corresponding courses of this.filters.name
@@ -132,7 +129,6 @@ export default {
     }
   },
   mounted () {
-    this.get_courses()
   }
 }
 </script>
@@ -155,12 +151,13 @@ export default {
       }
       .course_tree {
         height: 600px;
-        width: 30%;
+        width: auto;
+        min-width: 20%;
         margin-right: 10px;
         font-family: Microsoft Yahei;
       }
       .course_table_title {
-            width: 200px;
+            width: 50%;
             float: left;
             color: #475669;
             margin-top: 10px;
