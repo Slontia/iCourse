@@ -271,7 +271,32 @@ export default {
     login: function () { this.login_form_visible = true },
     personal_space: function () {},
     register: function () { this.register_form_visible = true },
-    logout: function () {},
+    logout: function () {
+      var self = this
+      $.ajax({
+        ContentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: 'sign/logout/',
+        type: 'POST',
+        success: function (data) {
+          switch (data['error']) {
+            case 0:
+              self.is_login = false
+              self.username = null
+              alert('登出成功')
+              break
+            case 301:
+              alert('登出失败')
+              break
+            default:
+              alert('未知错误')
+          }
+        },
+        error: function () {
+          alert('登出连接服务器失败')
+        }
+      })
+    },
     login_confirm_clicked: function (form_name) { this.$refs[form_name].validate((valid) => {
       if (valid) {
         var post_data = {

@@ -223,25 +223,25 @@ def userLogin(request):
 @csrf_exempt
 def userLogout(request):
     if(request.method == "POST"):
-        error = []
+        #error = []
         try:
             #print(request.user)
             #print(request.user.is_authenticated())
             auth.logout(request)
+            #del request.session['username']
             #print(request.user)
             #print(request.user.is_authenticated())
             return HttpResponse(json.dumps({'error': 0}))
         except Exception as e:
-            error.append(str(e))
+            #error.append(str(e))
             #print(error)
-            return HttpResponse(json.dumps({'error': error}))
+            return HttpResponse(json.dumps({'error': 301}))
 
 
 # use session
 @csrf_exempt
-def loggedIn(request):
+def isLoggedIn(request):
     if(request.method == "POST"):
         return HttpResponse(json.dumps({
             'username': request.session.get('username',default=None),
         }))
-        
