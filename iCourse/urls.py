@@ -37,5 +37,6 @@ urlpatterns = [
     #url(r'^api/', include('backend.urls', namespace='api')) # NEW
     #url( r'^testdb$', testdb.test ),
 
-    url(r'^/user/[username]/home/$')
+    url(r'^sign/logged_in/$', backend_views.loggedIn, name='loggedIn')
+    #url(r'^/user/[username]/home/$')
 ]

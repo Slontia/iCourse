@@ -82,6 +82,26 @@ import $ from 'jquery'
 /* eslint-disable camelcase */
 export default {
   name: 'Header',
+  beforeCreate: function () {
+    var self = this
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: 'sign/logged_in/',
+      type: 'POST',
+      success: function (data) {
+        self.username = data['username']
+        if (self.username == null) {
+          self.is_login = false
+        } else {
+          self.is_login = true
+        }
+      },
+      error: function () {
+        alert('加载导航栏连接服务器失败')
+      }
+    })
+  },
   data () {
     var username_check_empty = (rule, value, callback) => {
       if (!value) {
@@ -249,9 +269,7 @@ export default {
       }
     },
     login: function () { this.login_form_visible = true },
-    personal_space: function () {
-      this.$router.push({ path: '/index' + username + '/home' })
-    },
+    personal_space: function () {},
     register: function () { this.register_form_visible = true },
     logout: function () {},
     login_confirm_clicked: function (form_name) { this.$refs[form_name].validate((valid) => {

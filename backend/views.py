@@ -195,9 +195,9 @@ def userLogin(request):
         data = json.loads(data)
         #data = json.loads(requset.body.decode())
         username = str(data.get('username'))
-        print (username)
+        print ('username: ' + username)
         password = str(data.get('password'))
-        print (password)
+        print ('password:' + password)
 
         loginForm = LoginForm({'username': username, 'password': password})
 
@@ -206,6 +206,7 @@ def userLogin(request):
             user = cb.authenticate(username=username, password=password)
             if(user is not None and user.is_active):
                 auth.login(request, user)
+                request.session['username'] = username # store in session
                 return HttpResponse(json.dumps({'error': 0}))
             else:
                 return HttpResponse(json.dumps({'error': 101})) # username not exists
@@ -234,3 +235,12 @@ def userLogout(request):
             #print(error)
             return HttpResponse(json.dumps({'error': error}))
 
+
+# use session
+@csrf_exempt
+def loggedIn(request):
+    if(request.method == "POST"):
+        return HttpResponse(json.dumps({
+            'username': request.session.get('username',default=None),
+        }))
+        
