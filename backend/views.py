@@ -271,16 +271,20 @@ def http_get(url):
 @csrf_exempt
 def course_query(request):
     if(request.method == "POST"):
-        data = json.loads(request.POST)
+        data = json.dumps(request.POST) # new
+        data = json.loads(data)
         #data = json.loads(request.body.decode())
-        query = str(data.get('query'))
-        cs_url = 'http://10.2.28.124:8080/solr/mynode/select?'#q=Bill&wt=json&indent=true'
+        query = str(data.get('keyword'))
+        print ('query ' + query)
+        cs_url = 'http://10.2.28.124:8080/solr/mynode/select?'#q=Bill&wt=json&indent=true' 
         param  = {'q':query, 'fl':'id,name,college_id,class_id,credit,hours', 'wt':'json', 'indent':'true'}
-        
+
         r = requests.get(cs_url, params = param)
         
         query_res = http_get(r.url)
+        #json_r = bytes.decode(query_res)
         json_r = json.loads(bytes.decode(query_res))
         query_list = json_r['response']['docs']
+        print (query_list)
         return HttpResponse(json.dumps({'query_list': query_list}))
->>>>>>> 7a7d0b6e763b6534a9486d10eafe7603e84407e7
+

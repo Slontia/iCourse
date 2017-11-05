@@ -22,7 +22,7 @@
                                     <el-button type="primary" v-on:click="search_course_clicked" icon="search">搜索</el-button>
                                   </el-form-item>
                                   <el-form-item>
-                                    <el-button type="primary" @click="add_course_clicked" icon="plus" style="float:left;">新增课程
+                                    <el-button type="primary" @click="add_course_clicked" icon="plus" style="float:left;">添加课程
                                     </el-button>
                                   </el-form-item>
                                 </el-form>
@@ -36,7 +36,8 @@
                               <el-table-column prop="course_id" label="课程名"  sortable></el-table-column>
                               <el-table-column prop="course_academy" label="开设学院"  sortable></el-table-column>
                               <el-table-column prop="course_class" label="课程分类"  sortable></el-table-column>
-                              <el-table-column prop="course_teacher" label="任课教师"  sortable></el-table-column>
+                              <el-table-column prop="course_hours" label="学时"  sortable></el-table-column>
+                              <el-table-column prop="course_credit" label="学分"  sortable></el-table-column>
                             </el-table>
                           </el-col>
 
@@ -179,7 +180,35 @@ export default {
         alert('搜索内容不能为空！')
       }
       else {
-        // todo: use the url to get courses which are searched
+        var post_data = {
+          'keyword': this.filters.name
+        }
+        var self = this
+        $.ajax({
+          ContentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          url: '/course/searching/',
+          type: 'POST',
+          data: post_data,
+          success: function (data) {
+            alert('成功！开始搜索')
+            self.courses = []
+            for (var i = 0; i < data['query_list'].length; i++) {
+              var course = data['query_list'][i]
+              self.courses.push({
+                'course_name': course['name'],
+                'course_id': course['id'],
+                'course_academy': course['college_id'],
+                'course_hours': course['hours'],
+                'course_credit': course['credit'],
+                'course_class': course['class_id']
+              })
+            }
+          },
+          error: function () {
+            alert('连接服务器异常')
+          }
+        })
       }
     },
     add_course_clicked () {
