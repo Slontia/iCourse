@@ -30,7 +30,7 @@
 
                             <!-- course table -->
                             <el-col :span="24">
-                            <el-table :data="courses" highlight-current-row v-loading="load_courses" style="width: auto;" height="auto" stripe>
+                            <el-table :data="courses" highlight-current-row v-loading="load_courses" style="width: auto;" height="500" stripe>
                               <el-table-column type="index" label="序号"width=""></el-table-column>
                               <el-table-column prop="course_name" label="课程编号"  sortable></el-table-column>
                               <el-table-column prop="course_id" label="课程名"  sortable></el-table-column>
@@ -62,7 +62,7 @@
 /* eslint-disable brace-style */
 /* eslint-disable camelcase */
 import Header from '../general/Header'
-// import get_url from '../general/getUrl'
+import get_url from '../general/getUrl'
 import $ from 'jquery'
 export default {
   name: 'Course',
@@ -114,7 +114,7 @@ export default {
             ContentType: 'application/json; charset=utf-8',
             dataType: 'json',
             type: 'POST',
-            url: '/course/college_course/',
+            url: get_url('/course/college_course/'),
             data: temp1,
             success: function (data) {
               this.courses = []
@@ -155,7 +155,7 @@ export default {
             ContentType: 'application/json; charset=utf-8',
             dataType: 'json',
             type: 'POST',
-            url: '/course/classification_course/',
+            url: get_url('/course/classification_course/'),
             data: temp2,
             success: function (data) {
               console.log('ok')
@@ -187,11 +187,12 @@ export default {
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
-          url: '/course/searching/',
+          url: get_url('/course/searching/'),
           type: 'POST',
           data: post_data,
           success: function (data) {
             alert('成功！开始搜索')
+            self.total = data['query_list'].length
             self.courses = []
             for (var i = 0; i < data['query_list'].length; i++) {
               var course = data['query_list'][i]
