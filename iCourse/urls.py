@@ -47,3 +47,4 @@ urlpatterns = [
     url(r'^course/searching/$', backend_views.course_query, name='course_searching'),
     url(r'^resource/information/$', backend_views.resource_information, name='resource_information')
 ]
+
