@@ -92,7 +92,7 @@ export default {
       username: '',
       nickname: '',
       gender: '',
-      college: '计算机学院',
+      college: '暂无',
       follows: 0,
       fans: 0,
       personalIntro: '这个人比较懒，还没有个人介绍哦~',
@@ -135,13 +135,12 @@ export default {
         alert('加载导航栏连接服务器失败')
       }
     })
-    var postData = {'username': personalSelf.username}
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
       url: '/user/information/',
       type: 'POST',
-      data: postData,
+      data: {'username': personalSelf.username},
       success: function (data) {
         personalSelf.nickname = data['user_info']['nickname']
         if (data['user_info']['gender'] === '1') {

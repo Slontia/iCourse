@@ -24,6 +24,7 @@ from backend import views as backend_views
 urlpatterns = [
     url(r'^index/$', backend_views.home, name='index'),
     url(r'^course/$', backend_views.course, name='course'),
+    url(r'^resource/$', backend_views.course, name='course'),
     url(r'^contact/$', backend_views.contact, name='contact'), 
     url(r'^sign/register/$', backend_views.userRegister, name='userRegister'),    # for user register
     url(r'^course/college_course/$', backend_views.course_by_college, name='course_by_college'),    # for searching course list by college_id
@@ -43,5 +44,6 @@ urlpatterns = [
     url(r'^sign/logged_in/$', backend_views.isLoggedIn, name='isLoggedIn'),
     #url(r'^/user/[username]/home/$')
     url(r'^user/information/$', backend_views.user_information, name='user_information'),
-    url(r'^course/searching/$', backend_views.course_query, name='course_searching')
+    url(r'^course/searching/$', backend_views.course_query, name='course_searching'),
+    url(r'^resource/information/$', backend_views.resource_information, name='resource_information')
 ]

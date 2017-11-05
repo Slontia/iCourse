@@ -135,9 +135,6 @@ def user_information(request):
         username = str(request.POST.get('username'))
 
         user_info = interface.user_information(username)
-        print("******************")
-        print(user_info)
-        print("******************")
         return HttpResponse(json.dumps({'user_info': user_info}))
 
 # Resource Information Interface
@@ -148,10 +145,13 @@ def user_information(request):
 @csrf_exempt
 def resource_information(request):
     if(request.method == "POST"):
-        data = json.loads(request.POST)
+        #data = json.loads(request.POST)
         #data = json.loads(request.body.decode())
-        resource_id = int(data.get('resource_id'))
+        resource_id = int(request.POST.get('resource_id'))
         resource_info = interface.resource_information(resource_id)
+        print("******************")
+        print(resource_info)
+        print("******************")
         return HttpResponse(json.dumps({'resource_info': resource_info}))
 
 

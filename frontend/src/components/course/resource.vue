@@ -271,6 +271,7 @@
 <script>
 import Header from '../general/Header'
 import ZipImg from './../../assets/headportrait.jpg'
+import $ from 'jquery'
 export default {
   name: 'resource',
   components: { Header },
@@ -346,6 +347,22 @@ export default {
   },
   methods: {
     closed: function () { alert('还未开放') }
+  },
+  created: function () {
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: '/resource/information/',
+      type: 'POST',
+      data: {'resource_id': 1},
+      success: function (data) {
+        alert('***')
+        alert(data['resource_info'])
+      },
+      error: function () {
+        alert('fail')
+      }
+    })
   }
 }
 </script>
