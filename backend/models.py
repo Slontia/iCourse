@@ -46,6 +46,7 @@ class Course(models.Model):
     class_id = models.PositiveSmallIntegerField()
     hours = models.SmallIntegerField()
     credit = models.SmallIntegerField()
+    course_code = models.CharField(max_length=10)
 
     def __str__(self):
         return str(self.id)
@@ -57,7 +58,7 @@ class Resource(models.Model):
     name = models.CharField(max_length=30)
     intro = models.TextField()
     upload_user_id = models.PositiveIntegerField()
-    course_id = models.PositiveIntegerField()
+    course_code = models.CharField(max_length=10)
     upload_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

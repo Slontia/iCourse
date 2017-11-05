@@ -270,7 +270,7 @@ export default {
       }
     },
     login: function () { this.login_form_visible = true },
-    personal_space: function () { this.$router.push({ path: '/personal' }) },
+    personal_space: function () { this.$router.push({ path: ('/user/home/' + this.username) }) },
     register: function () { this.register_form_visible = true },
     logout: function () {
       var self = this

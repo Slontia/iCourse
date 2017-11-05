@@ -89,13 +89,13 @@ export default {
     return {
       spaceName: this.username + '的花园',
       signature: '一只有情怀的程序猿',
-      username: '',
-      nickname: '',
-      gender: '',
-      college: '计算机学院',
+      username: 'NULL',
+      nickname: 'NULL',
+      gender: 'NULL',
+      college: 'NULL',
       follows: 0,
       fans: 0,
-      personalIntro: '这个人比较懒，还没有个人介绍哦~',
+      personalIntro: 'NULL',
       tableData: [
         {
           course: '工科数学分析',
@@ -122,6 +122,7 @@ export default {
   },
   created: function () {
     var personalSelf = this
+    /*
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
@@ -135,7 +136,9 @@ export default {
         alert('加载导航栏连接服务器失败')
       }
     })
-    var postData = {'username': personalSelf.username}
+    */
+    var postData = { 'username': this.$route.params.username }
+    this.username = this.$route.params.username
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',

@@ -32,12 +32,19 @@
                             <el-col :span="24">
                             <el-table :data="courses" highlight-current-row v-loading="load_courses" style="width: auto;" height="500" stripe>
                               <el-table-column type="index" label="序号"width=""></el-table-column>
-                              <el-table-column prop="course_name" label="课程编号"  sortable></el-table-column>
-                              <el-table-column prop="course_id" label="课程名"  sortable></el-table-column>
+                              <el-table-column prop="course_id" label="课程编号"  sortable></el-table-column>
+                              <el-table-column prop="course_name" label="课程名"  sortable></el-table-column>
                               <el-table-column prop="course_academy" label="开设学院"  sortable></el-table-column>
                               <el-table-column prop="course_class" label="课程分类"  sortable></el-table-column>
                               <el-table-column prop="course_hours" label="学时"  sortable></el-table-column>
                               <el-table-column prop="course_credit" label="学分"  sortable></el-table-column>
+                              <el-table-column label="操作">
+                              <template slot-scope="scope">
+                                <el-button
+                                  size="mini"
+                                  @click="to_course_page(scope.$index)">进入课程</el-button>
+                              </template>
+                            </el-table-column>
                             </el-table>
                           </el-col>
 
@@ -99,6 +106,11 @@ export default {
     }
   },
   methods: {
+    to_course_page (index) {
+      alert(index)
+      alert(this.courses[index]['college_id'])
+      this.$router.push({ path: ('/course/page/' + this.courses[index]['course_id']) })
+    },
     handle_current_change (value) {
       this.page = value
       // todo:get_courses
@@ -187,7 +199,7 @@ export default {
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
-          url: get_url('/course/searching/'),
+          url: '/course/searching/',
           type: 'POST',
           data: post_data,
           success: function (data) {

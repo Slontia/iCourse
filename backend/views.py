@@ -17,6 +17,10 @@ import requests
 import urllib.request
 import json
 
+def page404(request):
+    return
+    # return HttpResponse(u"page not found: 404")
+
 def home(request):
     return render(request, 'index.html')
 

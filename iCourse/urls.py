@@ -43,5 +43,7 @@ urlpatterns = [
     url(r'^sign/logged_in/$', backend_views.isLoggedIn, name='isLoggedIn'),
     #url(r'^/user/[username]/home/$')
     url(r'^user/information/$', backend_views.user_information, name='user_information'),
-    url(r'^course/searching/$', backend_views.course_query, name='course_searching')
+    url(r'^course/searching/$', backend_views.course_query, name='course_searching'),
+    url(r'^user/home/.*/$', backend_views.home),
+    url(r'^course/page/.*/$', backend_views.home)
 ]

@@ -30,7 +30,7 @@ export default new Router({
       component: Course
     },
     {
-      path: '/courseinfo',
+      path: '/course/page/:course_id',
       name: 'course_info',
       component: Courseinfo
     },
@@ -40,7 +40,7 @@ export default new Router({
       component: Resource
     },
     {
-      path: '/personal',
+      path: '/user/home/:username',
       name: 'personal',
       component: Personal,
       children: [
