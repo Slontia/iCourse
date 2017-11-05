@@ -350,7 +350,7 @@ export default {
 }
 </script>
 
-<style>
+<style scpoed>
   #resourceTitle {
     font-size: 25px;
     font-weight: bold;

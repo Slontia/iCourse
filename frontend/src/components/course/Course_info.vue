@@ -161,7 +161,7 @@ export default {
 </script>
 
 
-<style type="text/css">
+<style type="text/css" scoped>
   .course_introduction{
     margin-top: 10px;
     padding-left: 20px;

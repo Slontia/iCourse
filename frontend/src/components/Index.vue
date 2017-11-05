@@ -29,7 +29,7 @@ export default {
 }
 </script>
 
-<style>
+<style scpoed>
   .container {
     position: absolute;
     top: 0px;

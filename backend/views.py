@@ -283,4 +283,3 @@ def course_query(request):
         json_r = json.loads(bytes.decode(query_res))
         query_list = json_r['response']['docs']
         return HttpResponse(json.dumps({'query_list': query_list}))
->>>>>>> 7a7d0b6e763b6534a9486d10eafe7603e84407e7

@@ -100,7 +100,7 @@ export default {
 }
 </script>
 
-<style>
+<style scpoed>
   #headPortrait {
     height: 200px;
     font-size: 20px;

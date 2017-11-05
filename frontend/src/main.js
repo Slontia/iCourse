@@ -4,8 +4,11 @@ import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import App from './App'
+import Vue from 'vuex'
+import store from './vuex/store'
 
 Vue.use(ElementUI)
+Vue.use(Vuex)
 // to index
 // Vue.prototype.$ajax = axios
 Vue.prototype.$goRoute = function (index) {
@@ -20,6 +23,7 @@ Vue.prototype.$goRoute = function (personalData) {
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  store,
   router,
   render: h => h(App)
 })

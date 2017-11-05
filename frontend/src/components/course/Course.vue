@@ -192,7 +192,7 @@ export default {
 }
 </script>
 
-<style type="text/css">
+<style type="text/css" scpoed>
 
     .tools_bar_above {
       width: auto;
