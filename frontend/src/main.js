@@ -1,11 +1,11 @@
 import Vue from 'vue'
 // import axios from 'axios'
-import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import App from './App'
-import Vue from 'vuex'
+import Vuex from 'vuex'
 import store from './vuex/store'
+import router from './router'
 
 Vue.use(ElementUI)
 Vue.use(Vuex)

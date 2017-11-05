@@ -397,6 +397,7 @@ export default {
  .header{
     height: 60px;
     line-height: 60px;
+    background-color: white;
     }
   .container {
     height: 60px;
@@ -413,12 +414,14 @@ export default {
     margin-right: 50px;
     border-right-width: 0px;
     width:auto;
+    background-color: white;
   }
   .userinfo {
     text-align: right;
     float: right;
     width: auto;
     padding-right: 10px;
+    background-color: white;
   }
   .el-menu-item {
     font-size: 22px;
