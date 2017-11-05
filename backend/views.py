@@ -16,6 +16,7 @@ from django.views.generic.base import View
 import requests
 import urllib.request
 import json
+import datetime
 
 def page404(request):
     return
@@ -53,7 +54,7 @@ def userRegister(request):
             registerForm = RegisterForm({'username':username,'password1':password1,'password2':password2,'email':email,'gender':gender,'nickname':nickname,'intro':intro})
 
             if(not registerForm.is_valid()):
-                return HttpResponse(json.dumps({'error': 201}))
+                return HttpResponse(json.dumps({'error': 201}, cls=ComplexEncoder))
 
             user=User()
             user.username = username
@@ -95,7 +96,7 @@ def course_by_college(request):
         college_id = int(data.get('college_id'))
         course_id_list = interface.college_course_list(6)
         print(course_id_list)
-        return HttpResponse(json.dumps({'course_id_list': course_id_list}))
+        return HttpResponse(json.dumps({'course_id_list': course_id_list}, cls=ComplexEncoder))
 
 # the Interface of search course list by class id
 # REQUIRES: the ajax data should be json data {'class_id': class_id}
@@ -109,7 +110,7 @@ def course_by_class(request):
         data = json.loads(data)
         class_id = int(data.get('class_id'))
         course_id_list = interface.classification_course_list(class_id)
-        return HttpResponse(json.dumps({'course_id_list': course_id_list}))
+        return HttpResponse(json.dumps({'course_id_list': course_id_list}, cls=ComplexEncoder))
 
 # Course Information Interface
 # REQUIRES: the ajax data should be json data {'course_id': class_id}
@@ -123,7 +124,7 @@ def course_information(request):
         data = json.loads(data)
         course_id = int(data.get('course_id','0'))
         course_info = interface.course_information(course_id)
-        return HttpResponse(json.dumps({'course_info': course_info}))
+        return HttpResponse(json.dumps({'course_info': course_info}, cls=ComplexEncoder))
 
 # User Information Interface
 # REQUIRES: the ajax data should be json data {'username': username}
@@ -139,10 +140,17 @@ def user_information(request):
         username = str(request.POST.get('username'))
 
         user_info = interface.user_information(username)
-        print("******************")
-        print(user_info)
-        print("******************")
-        return HttpResponse(json.dumps({'user_info': user_info}))
+        return HttpResponse(json.dumps({'user_info': user_info}, cls=ComplexEncoder))
+
+class ComplexEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.strftime('%Y-%m-%d %H:%M:%S')
+        elif isinstance(obj, date):
+            return obj.strftime('%Y-%m-%d')
+        else:
+            return json.JSONEncoder.default(self, obj)
+
 
 # Resource Information Interface
 # REQUIRES: the ajax data should be json data {'resource_id': resource_id}
@@ -152,11 +160,14 @@ def user_information(request):
 @csrf_exempt
 def resource_information(request):
     if(request.method == "POST"):
-        data = json.loads(request.POST)
+        # data = json.loads(request.POST)
         #data = json.loads(request.body.decode())
-        resource_id = int(data.get('resource_id'))
+        resource_id = int(request.POST.get('resource_id'))
         resource_info = interface.resource_information(resource_id)
-        return HttpResponse(json.dumps({'resource_info': resource_info}))
+        print("******************")
+        print(resource_info)
+        print("******************")
+        return HttpResponse(json.dumps({'resource_info': resource_info}, cls=ComplexEncoder))
 
 
 # Course Contribution List Interface
@@ -173,7 +184,7 @@ def course_contrib_list(request):
         #data = json.loads(request.body.decode())
         course_id = int(data.get('course_id'))
         contrib_list = interface.resource_contribution_list(course_id)
-        return HttpResponse(json.dumps({'contrib_list': contrib_list})) 
+        return HttpResponse(json.dumps({'contrib_list': contrib_list}, cls=ComplexEncoder))
 
 # Check User Status Interface
 # REQUIRES: POST method
@@ -185,7 +196,7 @@ def course_contrib_list(request):
 def get_user(request):
     if(request.method == "POST"):
         is_login = request.user.is_authenticated()
-        return HttpResponse(json.dumps({'is_login': is_login}))
+        return HttpResponse(json.dumps({'is_login': is_login}, cls=ComplexEncoder))
 
 # rewrite the authenticate method
 class CustomBackend(ModelBackend):
@@ -228,7 +239,7 @@ def userLogin(request):
             else:
                 return HttpResponse(json.dumps({'error': 101})) # username not exists
         else:
-            return HttpResponse(json.dumps({'error': 102})) # password error
+            return HttpResponse(json.dumps({'error': 102}, cls=ComplexEncoder)) # password error
 
 # Logout Interface
 # REQUIRES: POST method
@@ -291,4 +302,5 @@ def course_query(request):
         json_r = json.loads(bytes.decode(query_res))
         query_list = json_r['response']['docs']
         print (query_list)
-        return HttpResponse(json.dumps({'query_list': query_list}))
+        return HttpResponse(json.dumps({'query_list': query_list}, cls=ComplexEncoderdumps))
+

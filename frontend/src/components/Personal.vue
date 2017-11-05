@@ -89,10 +89,10 @@ export default {
     return {
       spaceName: this.username + '的花园',
       signature: '一只有情怀的程序猿',
-      username: 'NULL',
-      nickname: 'NULL',
-      gender: 'NULL',
-      college: 'NULL',
+      username: '',
+      nickname: '',
+      gender: '',
+      college: '暂无',
       follows: 0,
       fans: 0,
       personalIntro: 'NULL',
@@ -137,14 +137,13 @@ export default {
       }
     })
     */
-    var postData = { 'username': this.$route.params.username }
     this.username = this.$route.params.username
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
       url: '/user/information/',
       type: 'POST',
-      data: postData,
+      data: {'username': personalSelf.username},
       success: function (data) {
         personalSelf.nickname = data['user_info']['nickname']
         if (data['user_info']['gender'] === '1') {
