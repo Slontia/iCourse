@@ -24,7 +24,7 @@ export default {
 }
 </script>
 
-<style type="text/css">
+<style type="text/css" scoped>
   .carousel{
     top:60px;
     margin-top: 20px;

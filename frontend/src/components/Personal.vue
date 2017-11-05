@@ -158,7 +158,7 @@ export default {
 }
 </script>
 
-<style>
+<style scpoed>
   .header{
     height: 60px;
     line-height: 60px;

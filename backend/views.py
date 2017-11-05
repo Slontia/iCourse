@@ -219,6 +219,7 @@ def userLogin(request):
             if(user is not None and user.is_active):
                 auth.login(request, user)
                 request.session['username'] = username # store in session
+                print ('success')
                 return HttpResponse(json.dumps({'error': 0}))
             else:
                 return HttpResponse(json.dumps({'error': 101})) # username not exists
@@ -287,4 +288,3 @@ def course_query(request):
         query_list = json_r['response']['docs']
         print (query_list)
         return HttpResponse(json.dumps({'query_list': query_list}))
-

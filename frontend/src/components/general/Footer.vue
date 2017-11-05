@@ -15,7 +15,7 @@
 	
 </script>
 
-<style type="text/css">
+<style type="text/css" scpoed>
 	.line{
 		width: 90%;
 		height: 0px;

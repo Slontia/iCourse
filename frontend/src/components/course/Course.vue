@@ -62,7 +62,7 @@
 /* eslint-disable brace-style */
 /* eslint-disable camelcase */
 import Header from '../general/Header'
-import get_url from '../general/getUrl'
+// import get_url from '../general/getUrl'
 import $ from 'jquery'
 export default {
   name: 'Course',
@@ -114,7 +114,7 @@ export default {
             ContentType: 'application/json; charset=utf-8',
             dataType: 'json',
             type: 'POST',
-            url: get_url('/course/college_course/'),
+            url: '/course/college_course/',
             data: temp1,
             success: function (data) {
               this.courses = []
@@ -155,7 +155,7 @@ export default {
             ContentType: 'application/json; charset=utf-8',
             dataType: 'json',
             type: 'POST',
-            url: get_url('/course/classification_course/'),
+            url: '/course/classification_course/',
             data: temp2,
             success: function (data) {
               console.log('ok')
@@ -221,7 +221,7 @@ export default {
 }
 </script>
 
-<style type="text/css">
+<style type="text/css" scpoed>
 
     .tools_bar_above {
       width: auto;
