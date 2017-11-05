@@ -141,7 +141,7 @@ export default {
   components: { Header },
   beforeCreate () {
     var self = this
-    var postData = { 'username': this.$route.params.course_id }
+    var postData = { 'course_id': this.$route.params.course_id }
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
