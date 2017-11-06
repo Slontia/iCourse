@@ -20,7 +20,7 @@ import datetime
 
 def page404(request):
     return
-    # return HttpResponse(u"page not found: 404")
+# return HttpResponse(u"page not found: 404")
 
 def home(request):
     return render(request, 'index.html')
@@ -59,37 +59,37 @@ def userRegister(request):
             gender = str(data.get('gender'))
             nickname = str(data.get('nickname'))
             intro = str(data.get('intro'))
-
+            
             registerForm = RegisterForm({'username':username,'password1':password1,'password2':password2,'email':email,'gender':gender,'nickname':nickname,'intro':intro})
-
+            
             if(not registerForm.is_valid()):
                 return HttpResponse(json.dumps({'error': 201}, cls=ComplexEncoder))
-
+        
             user=User()
             user.username = username
             user.set_password(password1)
             user.email = email
             user.save()
-
-            #用户扩展信息 profile  
+            
+            #用户扩展信息 profile
             profile=UserProfile()
             profile.user_id = user.id # user_id
             profile.gender = gender
             profile.nickname = nickname
             profile.intro = intro
             profile.save()
-
+            
             '''
-            #注册成功以后自动进行登录，登录前需要先验证，去掉注释后需要修改your url，HttpResponseRedirect进行页面重定向
-            newUser=auth.authenticate(username=username,password=password1)
-            if(newUser is not None):
+                #注册成功以后自动进行登录，登录前需要先验证，去掉注释后需要修改your url，HttpResponseRedirect进行页面重定向
+                newUser=auth.authenticate(username=username,password=password1)
+                if(newUser is not None):
                 auth.login(request, newUser)
                 return HttpResponseRedirect("/your url/")
-            '''
+                '''
 
-    except Exception as e:
-        return HttpResponse(json.dumps({'error': 202}))
-
+except Exception as e:
+    return HttpResponse(json.dumps({'error': 202}))
+    
     return HttpResponse(json.dumps({'error': 0}))
 
 # the Interface of search course list by college id
@@ -147,7 +147,7 @@ def user_information(request):
         #data = json.loads(request.body.decode())
         #data = request.POST
         username = str(request.POST.get('username'))
-
+        
         user_info = interface.user_information(username)
         return HttpResponse(json.dumps({'user_info': user_info}, cls=ComplexEncoder))
 
@@ -224,9 +224,9 @@ def userLogin(request):
         print ('username: ' + username)
         password = str(data.get('password'))
         print ('password:' + password)
-
+        
         loginForm = LoginForm({'username': username, 'password': password})
-
+        
         if(loginForm.is_valid()):
             cb = CustomBackend()
             user = cb.authenticate(username=username, password=password)
@@ -269,8 +269,8 @@ def userLogout(request):
 def isLoggedIn(request):
     if(request.method == "POST"):
         return HttpResponse(json.dumps({
-            'username': request.session.get('username',default=None),
-        }))
+                                       'username': request.session.get('username',default=None),
+                                       }))
 
 def http_get(url):
     response = urllib.request.urlopen(url)
@@ -291,9 +291,9 @@ def course_query(request):
         #data = json.loads(request.body.decode())
         query = str(data.get('keyword'))
         print ('query ' + query)
-        cs_url = 'http://10.2.28.124:8080/solr/mynode/select?'#q=Bill&wt=json&indent=true' 
+        cs_url = 'http://10.2.28.124:8080/solr/mynode/select?'#q=Bill&wt=json&indent=true'
         param  = {'q':query, 'fl':'id,name,college_id,class_id,credit,hours', 'wt':'json', 'indent':'true'}
-
+        
         r = requests.get(cs_url, params = param)
         
         query_res = http_get(r.url)
@@ -302,4 +302,3 @@ def course_query(request):
         query_list = json_r['response']['docs']
         print (query_list)
         return HttpResponse(json.dumps({'query_list': query_list}, cls=ComplexEncoder))
-
