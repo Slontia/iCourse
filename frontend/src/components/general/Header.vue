@@ -426,6 +426,7 @@ export default {
   .el-menu-item {
     font-size: 22px;
     font-family: Microsoft YaHei;
+    color:#5A5E66;
   }
   .el-dropdown-link{
     font-family: Microsoft YaHei;
