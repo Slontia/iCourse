@@ -31,6 +31,15 @@ def course(request):
 def contact(request):
     return render(request, 'contact.html')
 
+class ComplexEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.strftime('%Y-%m-%d %H:%M:%S')
+        elif isinstance(obj, date):
+            return obj.strftime('%Y-%m-%d')
+        else:
+            return json.JSONEncoder.default(self, obj)
+
 # Register Interface
 # REQUIRES: the ajax datatype must be json and the data should be like {'name': value,...}
 # MODIFIES: create a new user in database, update tables(mainly auth_user and backend_userprofile)
@@ -141,16 +150,6 @@ def user_information(request):
 
         user_info = interface.user_information(username)
         return HttpResponse(json.dumps({'user_info': user_info}, cls=ComplexEncoder))
-
-class ComplexEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, datetime.datetime):
-            return obj.strftime('%Y-%m-%d %H:%M:%S')
-        elif isinstance(obj, date):
-            return obj.strftime('%Y-%m-%d')
-        else:
-            return json.JSONEncoder.default(self, obj)
-
 
 # Resource Information Interface
 # REQUIRES: the ajax data should be json data {'resource_id': resource_id}
