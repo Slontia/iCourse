@@ -46,6 +46,7 @@ class Course(models.Model):
     class_id = models.PositiveSmallIntegerField()
     hours = models.SmallIntegerField()
     credit = models.SmallIntegerField()
+    course_code = models.CharField(max_length=10)
 
     def __str__(self):
         return str(self.id)

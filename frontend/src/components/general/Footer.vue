@@ -4,7 +4,7 @@
 		<div class="footer-main">
 			<p class="footer_copyright"> © 2017 hotcode5</p>
 			<p class="footer_link_container">
-				<a href="http://baidu.com" target="_blank" class="footer_link">Github</a>
+				<a href="https://github.com/Slontia/iCourse/" target="_blank" class="footer_link">Github</a>
 				<a href="http://www.cnblogs.com/hotcode5/" target="_blank" class="footer_link">blog</a>
 			</p>
 		</div>
@@ -15,7 +15,7 @@
 	
 </script>
 
-<style type="text/css">
+<style type="text/css" scpoed>
 	.line{
 		width: 90%;
 		height: 0px;

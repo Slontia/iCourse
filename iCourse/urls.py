@@ -22,6 +22,10 @@ from backend import views as backend_views
 
 
 urlpatterns = [
+    url(r'^index/$', backend_views.home, name='index'),
+    url(r'^course/$', backend_views.course, name='course'),
+    url(r'^resource/$', backend_views.course, name='course'),
+    url(r'^contact/$', backend_views.contact, name='contact'), 
     url(r'^sign/register/$', backend_views.userRegister, name='userRegister'),    # for user register
     url(r'^course/college_course/$', backend_views.course_by_college, name='course_by_college'),    # for searching course list by college_id
     url(r'^course/classification_course/$', backend_views.course_by_class, name='course_by_class'),    # for searching course list by class_id
@@ -37,6 +41,13 @@ urlpatterns = [
     #url(r'^api/', include('backend.urls', namespace='api')) # NEW
     #url( r'^testdb$', testdb.test ),
 
-    url(r'^sign/logged_in/$', backend_views.loggedIn, name='loggedIn')
+    url(r'^sign/logged_in/$', backend_views.isLoggedIn, name='isLoggedIn'),
     #url(r'^/user/[username]/home/$')
+    url(r'^user/information/$', backend_views.user_information, name='user_information'),
+    url(r'^course/searching/$', backend_views.course_query, name='course_searching'),
+    url(r'^user/home/.*/$', backend_views.home),
+    url(r'^course/page/.*/$', backend_views.home),
+    url(r'^resource/information/$', backend_views.resource_information, name='resource_information'),
+    url(r'^resource/id/list/$', backend_views.resource_id_list, name='resource_id_list'),
 ]
+

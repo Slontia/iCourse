@@ -16,13 +16,13 @@
                               <el-col :span="24" class="tools_bar_top" style="padding-bottom: 0px;">
                                 <el-form :inline="true" :model="filters">
                                   <el-form-item>
-                                    <el-input v-model = "filters.name" placeholder="输入课程名搜索"></el-input>
+                                    <el-input v-model = "filters.name" placeholder="支持课程名、课程号"></el-input>
                                   </el-form-item>
                                   <el-form-item>
                                     <el-button type="primary" v-on:click="search_course_clicked" icon="search">搜索</el-button>
                                   </el-form-item>
                                   <el-form-item>
-                                    <el-button type="primary" @click="add_course_clicked" icon="plus" style="float:left;">新增课程
+                                    <el-button type="primary" @click="add_course_clicked" icon="plus" style="float:left;">添加课程
                                     </el-button>
                                   </el-form-item>
                                 </el-form>
@@ -30,13 +30,21 @@
 
                             <!-- course table -->
                             <el-col :span="24">
-                            <el-table :data="courses" highlight-current-row v-loading="load_courses" style="width: auto;" height="auto" stripe>
+                            <el-table :data="courses" highlight-current-row v-loading="load_courses" style="width: auto;" height="500" stripe>
                               <el-table-column type="index" label="序号"width=""></el-table-column>
-                              <el-table-column prop="course_name" label="课程编号"  sortable></el-table-column>
-                              <el-table-column prop="course_id" label="课程名"  sortable></el-table-column>
+                              <el-table-column prop="course_id" label="课程编号"  sortable></el-table-column>
+                              <el-table-column prop="course_name" label="课程名"  sortable></el-table-column>
                               <el-table-column prop="course_academy" label="开设学院"  sortable></el-table-column>
                               <el-table-column prop="course_class" label="课程分类"  sortable></el-table-column>
-                              <el-table-column prop="course_teacher" label="任课教师"  sortable></el-table-column>
+                              <el-table-column prop="course_hours" label="学时"  sortable></el-table-column>
+                              <el-table-column prop="course_credit" label="学分"  sortable></el-table-column>
+                              <el-table-column label="操作">
+                              <template slot-scope="scope">
+                                <el-button
+                                  size="mini"
+                                  @click="to_course_page(scope.$index)">进入课程</el-button>
+                              </template>
+                            </el-table-column>
                             </el-table>
                           </el-col>
 
@@ -59,7 +67,10 @@
 
 <script type="text/javascript">
 /* eslint-disable brace-style */
+/* eslint-disable camelcase */
 import Header from '../general/Header'
+import get_url from '../general/getUrl'
+import $ from 'jquery'
 export default {
   name: 'Course',
   components: { Header },
@@ -95,6 +106,11 @@ export default {
     }
   },
   methods: {
+    to_course_page (index) {
+      alert(index)
+      alert(this.courses[index]['college_id'])
+      this.$router.push({ path: ('/course/page/' + this.courses[index]['course_id']) })
+    },
     handle_current_change (value) {
       this.page = value
       // todo:get_courses
@@ -103,29 +119,115 @@ export default {
       // todo: use api to get the corresponding courses
       if (typeof (node.parent.label) !== 'undefined') {
         this.course_bread_message = node.parent.label + '->' + node.label
+        this.load_courses = true
+        if (node.parent.label === '开设院系') {
+          var temp1 = { 'college_id': node.label[0] }
+          $.ajax({
+            ContentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            type: 'POST',
+            url: get_url('/course/college_course/'),
+            data: temp1,
+            success: function (data) {
+              this.courses = []
+              console.log('ok')
+              alert('success')
+            },
+            error: function () {
+              alert('错误')
+            }
+          })
+        }
+        else if (node.parent.label === '课程类别') {
+          var temp2 = { 'class_id': '' }
+          switch (node.label) {
+            case ('一般通识课'):
+              temp2.class_id = '0'
+              break
+            case ('核心通识课'):
+              temp2.class_id = '1'
+              break
+            case ('核心专业课'):
+              temp2.class_id = '2'
+              break
+            case ('一般专业课'):
+              temp2.class_id = '3'
+              break
+            case ('公共必修课'):
+              temp2.class_id = '4'
+              break
+            case ('公共选修课'):
+              temp2.class_id = '5'
+              break
+            default:
+              temp2.class_id = '-1'
+          }
+
+          $.ajax({
+            ContentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            type: 'POST',
+            url: get_url('/course/classification_course/'),
+            data: temp2,
+            success: function (data) {
+              console.log('ok')
+              alert('success')
+            },
+            error: function () {
+              alert('错误')
+            }
+          })
+        }
+        else {
+          alert('结点不存在')
+        }
+        this.load_courses = false
       }
       else {
         this.course_bread_message = node.label
       }
-      // var temp = { 'college_id': 6 }
-      this.$ajax({
-        method: 'post',
-        url: '/course/college_course/',
-        data: { college_id: '6' },
-        success: function (data) {
-          console.log(this.parseJSON(data))
-        },
-        error: function () {
-          alert('错误')
-        }
-      })
     },
     search_course_clicked () {
-      // todo: 1.more search selection 2.use api to get the corresponding courses of this.filters.name
-      this.$router.push({ path: '/course_info' })
+      if (!this.filters.name) {
+        alert('搜索内容不能为空！')
+      }
+      else {
+        this.course_bread_message = this.filters.name
+        var post_data = {
+          'keyword': this.filters.name
+        }
+        var self = this
+        $.ajax({
+          ContentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          url: '/course/searching/',
+          type: 'POST',
+          data: post_data,
+          success: function (data) {
+            alert('成功！开始搜索')
+            self.total = data['query_list'].length
+            self.courses = []
+            for (var i = 0; i < data['query_list'].length; i++) {
+              var course = data['query_list'][i]
+              self.courses.push({
+                'course_name': course['name'],
+                'course_id': course['id'],
+                'course_academy': course['college_id'],
+                'course_hours': course['hours'],
+                'course_credit': course['credit'],
+                'course_class': course['class_id']
+              })
+            }
+          },
+          error: function () {
+            alert('连接服务器异常')
+          }
+        })
+      }
     },
     add_course_clicked () {
       // todo: add course function
+      alert('功能暂未开放,敬请期待')
     }
   },
   mounted () {
@@ -133,7 +235,7 @@ export default {
 }
 </script>
 
-<style type="text/css">
+<style type="text/css" scpoed>
 
     .tools_bar_above {
       width: auto;

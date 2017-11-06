@@ -246,10 +246,10 @@
         <el-col :span="1">656</el-col>
       </el-row>
       <el-row style="margin:20px 0px 0px 0px;">
-        <el-col :span="4" :offset="1" style="height:20px;font-weight:bold;font-size:20px;">全部评论</el-col>
+        <el-col :span="6" :offset="1" style="height:20px;font-weight:bold;font-size:20px;">全部评论</el-col>
         <el-col :span="1" :offset="1" style="height:20px;line-height:20px;"><i class="el-icon-message"></i></el-col>
         <el-col :span="1" style="height:20px;line-height:20px;">0</el-col>
-        <el-col :span="4" :offset="12" style="height:20px;line-height:20px;"><a href="">我要评论</a></el-col>        
+        <el-col :span="4" :offset="10" style="height:20px;line-height:20px;"><a href="">我要评论</a></el-col>        
       </el-row>
       <el-row style="margin:5px 0px 0px 0px;">
         <el-col :span="22" :offset="1">
@@ -271,6 +271,7 @@
 <script>
 import Header from '../general/Header'
 import ZipImg from './../../assets/headportrait.jpg'
+import $ from 'jquery'
 export default {
   name: 'resource',
   components: { Header },
@@ -346,11 +347,26 @@ export default {
   },
   methods: {
     closed: function () { alert('还未开放') }
+  },
+  created: function () {
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: '/resource/information/',
+      type: 'POST',
+      data: {'resource_id': 1},
+      success: function (data) {
+        alert(data['resource_info']['id'])
+      },
+      error: function () {
+        alert('fail')
+      }
+    })
   }
 }
 </script>
 
-<style>
+<style scpoed>
   #resourceTitle {
     font-size: 25px;
     font-weight: bold;

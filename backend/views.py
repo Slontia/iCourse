@@ -1,7 +1,5 @@
-from django.shortcuts import render
-
 # Create your views here.
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, StreamingHttpResponse
 from backend import interface
 import json
 from django.views.decorators.csrf import csrf_exempt
@@ -13,6 +11,17 @@ from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 from django.views.generic.base import View
 
+import requests
+import urllib.request
+import json
+import datetime
+
+import os
+
+def page404(request):
+    return
+# return HttpResponse(u"page not found: 404")
+
 def home(request):
     return render(request, 'index.html')
 
@@ -21,6 +30,15 @@ def course(request):
 
 def contact(request):
     return render(request, 'contact.html')
+
+class ComplexEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.strftime('%Y-%m-%d %H:%M:%S')
+        elif isinstance(obj, date):
+            return obj.strftime('%Y-%m-%d')
+        else:
+            return json.JSONEncoder.default(self, obj)
 
 # Register Interface
 # REQUIRES: the ajax datatype must be json and the data should be like {'name': value,...}
@@ -41,37 +59,37 @@ def userRegister(request):
             gender = str(data.get('gender'))
             nickname = str(data.get('nickname'))
             intro = str(data.get('intro'))
-
+            
             registerForm = RegisterForm({'username':username,'password1':password1,'password2':password2,'email':email,'gender':gender,'nickname':nickname,'intro':intro})
-
+            
             if(not registerForm.is_valid()):
-                return HttpResponse(json.dumps({'error': 201}))
-
+                return HttpResponse(json.dumps({'error': 201}, cls=ComplexEncoder))
+        
             user=User()
             user.username = username
             user.set_password(password1)
             user.email = email
             user.save()
-
-            #用户扩展信息 profile  
+            
+            #用户扩展信息 profile
             profile=UserProfile()
             profile.user_id = user.id # user_id
             profile.gender = gender
             profile.nickname = nickname
             profile.intro = intro
             profile.save()
-
+            
             '''
-            #注册成功以后自动进行登录，登录前需要先验证，去掉注释后需要修改your url，HttpResponseRedirect进行页面重定向
-            newUser=auth.authenticate(username=username,password=password1)
-            if(newUser is not None):
+                #注册成功以后自动进行登录，登录前需要先验证，去掉注释后需要修改your url，HttpResponseRedirect进行页面重定向
+                newUser=auth.authenticate(username=username,password=password1)
+                if(newUser is not None):
                 auth.login(request, newUser)
                 return HttpResponseRedirect("/your url/")
-            '''
+                '''
 
     except Exception as e:
         return HttpResponse(json.dumps({'error': 202}))
-
+    
     return HttpResponse(json.dumps({'error': 0}))
 
 # the Interface of search course list by college id
@@ -82,12 +100,12 @@ def userRegister(request):
 @csrf_exempt
 def course_by_college(request):
     if(request.method == "POST"):
-        data = json.loads(request.POST)
-        #data = json.loads(request.body.decode())
+        data = json.dumps(request.POST)
+        data = json.loads(data)
         college_id = int(data.get('college_id'))
         course_id_list = interface.college_course_list(6)
         print(course_id_list)
-        return HttpResponse(json.dumps({'course_id_list': course_id_list}))
+        return HttpResponse(json.dumps({'course_id_list': course_id_list}, cls=ComplexEncoder))
 
 # the Interface of search course list by class id
 # REQUIRES: the ajax data should be json data {'class_id': class_id}
@@ -97,11 +115,11 @@ def course_by_college(request):
 @csrf_exempt
 def course_by_class(request):
     if(request.method == "POST"):
-        data = json.loads(request.POST)
-        #data = json.loads(request.body.decode())
+        data = json.dumps(request.POST)
+        data = json.loads(data)
         class_id = int(data.get('class_id'))
         course_id_list = interface.classification_course_list(class_id)
-        return HttpResponse(json.dumps({'course_id_list': course_id_list}))
+        return HttpResponse(json.dumps({'course_id_list': course_id_list}, cls=ComplexEncoder))
 
 # Course Information Interface
 # REQUIRES: the ajax data should be json data {'course_id': class_id}
@@ -111,11 +129,11 @@ def course_by_class(request):
 @csrf_exempt
 def course_information(request):
     if(request.method == "POST"):
-        data = json.loads(request.POST)
-        #data = json.loads(request.body.decode())
+        data = json.dumps(request.POST)
+        data = json.loads(data)
         course_id = int(data.get('course_id','0'))
         course_info = interface.course_information(course_id)
-        return HttpResponse(json.dumps({'course_info': course_info}))
+        return HttpResponse(json.dumps({'course_info': course_info}, cls=ComplexEncoder))
 
 # User Information Interface
 # REQUIRES: the ajax data should be json data {'username': username}
@@ -124,11 +142,14 @@ def course_information(request):
 @csrf_exempt
 def user_information(request):
     if(request.method == "POST"):
-        data = json.loads(request.POST)
+        #data = json.dumps(request.POST)
+        #data = json.loads(request.POST)
         #data = json.loads(request.body.decode())
-        username = str(data.get('username'))
+        #data = request.POST
+        username = str(request.POST.get('username'))
+        
         user_info = interface.user_information(username)
-        return HttpResponse(json.dumps({'user_info': user_info}))
+        return HttpResponse(json.dumps({'user_info': user_info}, cls=ComplexEncoder))
 
 # Resource Information Interface
 # REQUIRES: the ajax data should be json data {'resource_id': resource_id}
@@ -138,11 +159,15 @@ def user_information(request):
 @csrf_exempt
 def resource_information(request):
     if(request.method == "POST"):
-        data = json.loads(request.POST)
+        # data = json.loads(request.POST)
         #data = json.loads(request.body.decode())
-        resource_id = int(data.get('resource_id'))
+        resource_id = int(request.POST.get('resource_id'))
         resource_info = interface.resource_information(resource_id)
-        return HttpResponse(json.dumps({'resource_info': resource_info}))
+        print("******************")
+        print(resource_info)
+        print("******************")
+        return HttpResponse(json.dumps({'resource_info': resource_info}, cls=ComplexEncoder))
+
 
 # Course Contribution List Interface
 # REQUIRES: the ajax data should be json data {'course_id', course_id}
@@ -158,7 +183,7 @@ def course_contrib_list(request):
         #data = json.loads(request.body.decode())
         course_id = int(data.get('course_id'))
         contrib_list = interface.resource_contribution_list(course_id)
-        return HttpResponse(json.dumps({'contrib_list': contrib_list})) 
+        return HttpResponse(json.dumps({'contrib_list': contrib_list}, cls=ComplexEncoder))
 
 # Check User Status Interface
 # REQUIRES: POST method
@@ -170,7 +195,7 @@ def course_contrib_list(request):
 def get_user(request):
     if(request.method == "POST"):
         is_login = request.user.is_authenticated()
-        return HttpResponse(json.dumps({'is_login': is_login}))
+        return HttpResponse(json.dumps({'is_login': is_login}, cls=ComplexEncoder))
 
 # rewrite the authenticate method
 class CustomBackend(ModelBackend):
@@ -199,20 +224,21 @@ def userLogin(request):
         print ('username: ' + username)
         password = str(data.get('password'))
         print ('password:' + password)
-
+        
         loginForm = LoginForm({'username': username, 'password': password})
-
+        
         if(loginForm.is_valid()):
             cb = CustomBackend()
             user = cb.authenticate(username=username, password=password)
             if(user is not None and user.is_active):
                 auth.login(request, user)
                 request.session['username'] = username # store in session
+                print ('success')
                 return HttpResponse(json.dumps({'error': 0}))
             else:
                 return HttpResponse(json.dumps({'error': 101})) # username not exists
         else:
-            return HttpResponse(json.dumps({'error': 102})) # password error
+            return HttpResponse(json.dumps({'error': 102}, cls=ComplexEncoder)) # password error
 
 # Logout Interface
 # REQUIRES: POST method
@@ -223,34 +249,83 @@ def userLogin(request):
 @csrf_exempt
 def userLogout(request):
     if(request.method == "POST"):
-        error = []
+        #error = []
         try:
             #print(request.user)
             #print(request.user.is_authenticated())
             auth.logout(request)
+            #del request.session['username']
             #print(request.user)
             #print(request.user.is_authenticated())
             return HttpResponse(json.dumps({'error': 0}))
         except Exception as e:
-            error.append(str(e))
+            #error.append(str(e))
             #print(error)
-            return HttpResponse(json.dumps({'error': error}))
+            return HttpResponse(json.dumps({'error': 301}))
 
 
 # use session
 @csrf_exempt
-def loggedIn(request):
+def isLoggedIn(request):
     if(request.method == "POST"):
         return HttpResponse(json.dumps({
-            'username': request.session.get('username',default=None),
-        }))
+                                       'username': request.session.get('username',default=None),
+                                       }))
+
+def http_get(url):
+    response = urllib.request.urlopen(url)
+    return response.read()
+
+# Course Search Interface(by ohazyi)
+# REQUIRES: the ajax data should be json data {'query': query}
+# MODIFIES: NONE
+# EFFECTS: return data {'query_list': query_list}
+#          query_list is a list whose element is dicts like (user_id, total scores),
+#          such as {'college_id': 10, 'class_id': 55, 'name': '安卓', 'credit': 5, 'id': 9, 'hours': 10}
+#          the list is ordered by id temporaily (can be modified to revelance)
+@csrf_exempt
+def course_query(request):
+    if(request.method == "POST"):
+        data = json.dumps(request.POST) # new
+        data = json.loads(data)
+        #data = json.loads(request.body.decode())
+        query = str(data.get('keyword'))
+        print ('query: ' + query)
+        cs_url = 'http://10.2.28.124:8080/solr/mynode/select?'#q=Bill&wt=json&indent=true'
+        param  = {'q':query, 'fl':'id,name,college_id,class_id,credit,hours', 'wt':'json', 'indent':'true'}
+        
+        r = requests.get(cs_url, params = param)
+        
+        query_res = http_get(r.url)
+        #json_r = bytes.decode(query_res)
+        json_r = json.loads(bytes.decode(query_res))
+        query_list = json_r['response']['docs']
+        print (query_list)
+        return HttpResponse(json.dumps({'query_list': query_list}, cls=ComplexEncoder))
+
+# Course id list(by ohazyi)
+# REQUIRES: the ajax data should be json data {'query': query}
+# MODIFIES: NONE
+# EFFECTS: return data {'resource_id_list': query_list}
+#          query_list is a list whose course_id = request.get('id') is dicts like (1, 2, 3, 4, 6)...
+# retrun like: {"resource_id_list": [1, 2, 3, 4, 6]}
+@csrf_exempt
+def resource_id_list(request):
+    if(request.method == "POST"):
+        data = json.dumps(request.POST) # new
+        data = json.loads(data)
+        #data = json.loads(request.body.decode())
+        course_id = str(data.get('course_id'))
+        print ('course_id: ' + course_id)
+        res = interface.resource_courseid_list(course_id)
+        return HttpResponse(json.dumps({'resource_id_list': res}, cls=ComplexEncoder))
 
 
-# Handle the uploaded resource, only use in resourceUpload
+# Handle the uploaded resource
 def handle_upload_resource(f, path):
     t = path.split("/")
     file_name = t[-1]
-    t.remove(t[-1])
+    t.remove(t[-1]) 
     t.remove(t[0])
     path = "/".join(t)
     try:
@@ -262,8 +337,104 @@ def handle_upload_resource(f, path):
         for chunk in f.chunks():
             destination.write(chunk)
             destination.close()
-    except Exception as e:
+    except Exception as e: 
         print(e)
     return file_name
 
-        
+# Resource Upload Interface
+# REQUIRES: request.POST['course_id'] != None && request.POST['only_url'] == True/False && request.FILES['file'] != None ,the uploaded should less than 10MB
+# MODIFIES: store the uploaded file to iCourse/media/uploads/%Y/%m && insert a record to backend_resource table in database
+# EFFECTS: return json data {'error':error}, if upload success, error = 0, else error = 1
+@csrf_exempt
+def resourceUpload(request):
+    if(request.method == 'POST'):
+        errors = []
+        if(not request.user.is_authenticated()):    # if the user is not authenticated
+            return HttpResponse(json.dumps({'error':1}))
+        upload_user_id = request.user.id
+        data = json.loads(request.POST)
+        intro = int(data.get('intro'))
+        course_id = int(data.get('course_id'))
+        only_url = bool(data.get('only_url'))     # only_url = True 表示只上传了一个链接,该链接应当保存在resource的url字段,link字段应该为None
+        if(only_url):
+            url = str(data.get('url'))
+            name = str(data.get('name'))
+            size = 0
+            RUForm = ResourceUploadForm({'name':name, 'size':size, 'upload_user_id':upload_user_id, 'course_id':course_id})
+            if(RUForm.is_valid()):
+                resource_up = Resource()
+                resource_ip.only_url = True
+                resource_up.name = name
+                resource_up.size = size     # bytes
+                resource_up.intro = intro
+                resource_up.url = url
+                resource_up.course_id = course_id
+                resource_up.upload_user_id = upload_user_id
+                resource_up.save()
+                return HttpResponse(json.dumps({'error':0}))
+            else:
+                errors.extend(RUForm.errors.values())
+                return HttpResponse(json.dumps({'error':1}))
+        else:
+            name = str(request.FILES['file'].name)
+            size = int(request.FILES['file'].size)
+            RUForm = ResourceUploadForm({'name':name, 'size':size, 'upload_user_id':upload_user_id, 'course_id':course_id})
+            if(RUForm.is_valid()):
+                resource_up = Resource()
+                resource_up.only_url = False
+                resource_up.name = name
+                resource_up.link = request.FILES['file']
+                resource_up.size = size
+                resource_up.intro = intro
+                resource_up.course_id = course_id
+                resource_up.upload_user_id = upload_user_id
+                resource_up.save()
+                handle_upload_resource(request.FILES['file'], resource_up.link.url)
+                return HttpResponse(json.dumps({'error':0}))
+            else:
+                errors.extend(RUForm.errors.values())
+                return HttpResponse(json.dumps({'error':1}))
+
+# Download Interface
+# REQUIRES: GET method
+# MODIFIES: None
+# EFFECTS: return a StreamingHttpResponse if success
+# URL: /download/(\d+)/, (\d+) is resource_id
+def download(request, resource_id): # 2 parameters
+    if(request.method == "GET"):
+        # alpha阶段暂时不实现下载表的写入
+        '''
+        user_id = request.user.id
+        resource_id = int(data.get('resource_id'))
+        download_record = R_Resource_User_Download.objects.create(user_id=user_id, resource_id=resource_id)
+        download_record.save()
+        '''
+        resource = Resource.objects.get(id=resource_id)
+        if(resource.only_url):    # 若仅保存了一个链接
+            return HttpResponse(resource.url)
+        link = resource.link.url
+        real_name = resource.name
+        t = link.split("/")
+        file_name = t[-1]
+        t.remove(t[-1])
+        t.remove(t[0])
+        file_path = "/".join(t)
+        def file_iterator(file_name, file_path, chunk_size=512):
+            path = file_path + "/" + file_name
+            with open(path, 'rb') as f:       # must use 'rb'
+                while True:
+                    c = f.read(chunk_size)
+                    if c:
+                        yield c
+                    else:
+                        break
+        try:
+            response = StreamingHttpResponse(file_iterator(file_name, file_path))
+            response['Content-Type'] = 'application/octet-stream'
+            response['Content-Disposition'] = 'attachment;filename="{0}"'.format(real_name) # display the real_name of the file when user download it
+            #print(response)
+        except Exception as e:
+            #print(e)
+            return HttpResponse("未找到该文件")
+        return response
+

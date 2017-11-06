@@ -76,10 +76,11 @@
 </template>
 
 <script>
-import $ from 'jquery'
-// import json from 'json5'
 /* eslint-disable brace-style */
 /* eslint-disable camelcase */
+import $ from 'jquery'
+// import get_url from './getUrl.js'
+// import json from 'json5'
 export default {
   name: 'Header',
   beforeCreate: function () {
@@ -87,7 +88,7 @@ export default {
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: 'sign/logged_in/',
+      url: '/sign/logged_in/',
       type: 'POST',
       success: function (data) {
         self.username = data['username']
@@ -98,7 +99,7 @@ export default {
         }
       },
       error: function () {
-        alert('加载导航栏连接服务器失败')
+        // alert('加载导航栏连接服务器失败')
       }
     })
   },
@@ -269,9 +270,34 @@ export default {
       }
     },
     login: function () { this.login_form_visible = true },
-    personal_space: function () {},
+    personal_space: function () { this.$router.push({ path: ('/user/home/' + this.username) }) },
     register: function () { this.register_form_visible = true },
-    logout: function () {},
+    logout: function () {
+      var self = this
+      $.ajax({
+        ContentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: '/sign/logout/',
+        type: 'POST',
+        success: function (data) {
+          switch (data['error']) {
+            case 0:
+              self.is_login = false
+              self.username = null
+              alert('登出成功')
+              break
+            case 301:
+              alert('登出失败')
+              break
+            default:
+              alert('未知错误')
+          }
+        },
+        error: function () {
+          alert('登出连接服务器失败')
+        }
+      })
+    },
     login_confirm_clicked: function (form_name) { this.$refs[form_name].validate((valid) => {
       if (valid) {
         var post_data = {
@@ -282,7 +308,7 @@ export default {
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
-          url: 'sign/login/',
+          url: '/sign/login/',
           type: 'POST',
           data: post_data,
           success: function (data) {
@@ -335,7 +361,7 @@ export default {
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
-          url: 'sign/register/',
+          url: '/sign/register/',
           type: 'POST',
           data: post_data,
           success: function (data) {
@@ -367,10 +393,11 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
  .header{
     height: 60px;
     line-height: 60px;
+    background-color: white;
     }
   .container {
     height: 60px;
@@ -387,16 +414,19 @@ export default {
     margin-right: 50px;
     border-right-width: 0px;
     width:auto;
+    background-color: white;
   }
   .userinfo {
     text-align: right;
     float: right;
     width: auto;
     padding-right: 10px;
+    background-color: white;
   }
   .el-menu-item {
     font-size: 22px;
     font-family: Microsoft YaHei;
+    color:#5A5E66;
   }
   .el-dropdown-link{
     font-family: Microsoft YaHei;

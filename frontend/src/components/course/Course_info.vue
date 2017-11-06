@@ -134,10 +134,34 @@
 /* eslint-disable camelcase */
 import Header from '../general/Header.vue'
 import Img from '../../assets/pdf.png'
+import $ from 'jquery'
 
 export default {
   name: 'course_info',
   components: { Header },
+  beforeCreate () {
+    var self = this
+    var postData = { 'course_id': this.$route.params.course_id }
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: '/course/course_info/',
+      type: 'POST',
+      data: postData,
+      success: function (data) {
+        var info = data['course_info']
+        self.course_name = info['name']
+        self.teacher = undefined
+        self.academy = info['college_id']
+        self.hours = info['hours']
+        self.intro_info = undefined
+        self.img = undefined
+      },
+      error: function () {
+        alert('fail')
+      }
+    })
+  },
   data () {
     return {
       course_name: '软件工程基础',
@@ -161,7 +185,7 @@ export default {
 </script>
 
 
-<style type="text/css">
+<style type="text/css" scoped>
   .course_introduction{
     margin-top: 10px;
     padding-left: 20px;

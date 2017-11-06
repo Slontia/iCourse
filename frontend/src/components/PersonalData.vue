@@ -50,7 +50,7 @@
   
   <el-col :span="6" style="margin:30px 0px 0px 0px;">
     <el-col id="tableTitle">
-      森高的主要贡献
+      {{ name }}的主要贡献
     </el-col>  
     <el-table :data="tableData" stripe border style="width:100%">
     <el-table-column prop="course" label="课程" :span="12" >
@@ -100,7 +100,7 @@ export default {
 }
 </script>
 
-<style>
+<style scpoed>
   #headPortrait {
     height: 200px;
     font-size: 20px;
