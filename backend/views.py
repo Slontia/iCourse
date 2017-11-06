@@ -353,7 +353,7 @@ def resourceUpload(request):
             return HttpResponse(json.dumps({'error':1}))
         upload_user_id = request.user.id
         data = json.loads(request.POST)
-        intro = int(data.get('intro'))
+        intro = str(data.get('intro'))
         course_id = int(data.get('course_id'))
         only_url = bool(data.get('only_url'))     # only_url = True 表示只上传了一个链接,该链接应当保存在resource的url字段,link字段应该为None
         if(only_url):
