@@ -301,5 +301,5 @@ def course_query(request):
         json_r = json.loads(bytes.decode(query_res))
         query_list = json_r['response']['docs']
         print (query_list)
-        return HttpResponse(json.dumps({'query_list': query_list}, cls=ComplexEncoderdumps))
+        return HttpResponse(json.dumps({'query_list': query_list}, cls=ComplexEncoder))
 
