@@ -60,6 +60,7 @@ class Resource(models.Model):
     upload_user_id = models.PositiveIntegerField()
     course_code = models.CharField(max_length=10)
     upload_time = models.DateTimeField(auto_now_add=True)
+    download_count = models.IntegerField()
 
     def __str__(self):
         return str(self.id)
