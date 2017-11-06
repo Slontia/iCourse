@@ -192,6 +192,7 @@ export default {
         alert('搜索内容不能为空！')
       }
       else {
+        this.course_bread_message = this.filters.name
         var post_data = {
           'keyword': this.filters.name
         }
