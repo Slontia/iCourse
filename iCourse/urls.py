@@ -47,6 +47,8 @@ urlpatterns = [
     url(r'^course/searching/$', backend_views.course_query, name='course_searching'),
     url(r'^user/home/.*/$', backend_views.home),
     url(r'^course/page/.*/$', backend_views.home),
+    url(r'^course/visit_count/$', backend_views.refresh_visit_course_time),
     url(r'^resource/information/$', backend_views.resource_information, name='resource_information')
+
 ]
 

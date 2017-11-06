@@ -37,6 +37,12 @@ def course_information(cou_id):
     result = result.values()[0] 
     return result
 
+def course_visit_count(cou_id):
+    result = Course.objects.filter(id=cou_id)
+    if(len(result) == 0):
+        return -1
+    result = result.values()[0].visit_count
+    return result
 
 # 查询课程贡献度列表
 # REQUIRES: type(cou_id) == <class 'int'>
