@@ -87,8 +87,8 @@ def userRegister(request):
                 return HttpResponseRedirect("/your url/")
                 '''
 
-except Exception as e:
-    return HttpResponse(json.dumps({'error': 202}))
+    except Exception as e:
+        return HttpResponse(json.dumps({'error': 202}))
     
     return HttpResponse(json.dumps({'error': 0}))
 
@@ -285,6 +285,33 @@ def http_get(url):
 #          the list is ordered by id temporaily (can be modified to revelance)
 @csrf_exempt
 def course_query(request):
+    if(request.method == "POST"):
+        data = json.dumps(request.POST) # new
+        data = json.loads(data)
+        #data = json.loads(request.body.decode())
+        query = str(data.get('keyword'))
+        print ('query ' + query)
+        cs_url = 'http://10.2.28.124:8080/solr/mynode/select?'#q=Bill&wt=json&indent=true'
+        param  = {'q':query, 'fl':'id,name,college_id,class_id,credit,hours', 'wt':'json', 'indent':'true'}
+        
+        r = requests.get(cs_url, params = param)
+        
+        query_res = http_get(r.url)
+        #json_r = bytes.decode(query_res)
+        json_r = json.loads(bytes.decode(query_res))
+        query_list = json_r['response']['docs']
+        print (query_list)
+        return HttpResponse(json.dumps({'query_list': query_list}, cls=ComplexEncoder))
+
+# Course Search Interface(by ohazyi)
+# REQUIRES: the ajax data should be json data {'query': query}
+# MODIFIES: NONE
+# EFFECTS: return data {'query_list': query_list}
+#          query_list is a list whose element is dicts like (user_id, total scores),
+#          such as {'college_id': 10, 'class_id': 55, 'name': '安卓', 'credit': 5, 'id': 9, 'hours': 10}
+#          the list is ordered by id temporaily (can be modified to revelance)
+@csrf_exempt
+def resource_id_list(request):
     if(request.method == "POST"):
         data = json.dumps(request.POST) # new
         data = json.loads(data)
