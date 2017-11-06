@@ -244,4 +244,26 @@ def loggedIn(request):
         return HttpResponse(json.dumps({
             'username': request.session.get('username',default=None),
         }))
+
+
+# Handle the uploaded resource, only use in resourceUpload
+def handle_upload_resource(f, path):
+    t = path.split("/")
+    file_name = t[-1]
+    t.remove(t[-1])
+    t.remove(t[0])
+    path = "/".join(t)
+    try:
+        if(not os.path.exists(path)):
+            os.makedirs(path)
+        file_name = path + "/" + file_name
+        print(file_name)
+        destination = open(file_name, 'wb+')
+        for chunk in f.chunks():
+            destination.write(chunk)
+            destination.close()
+    except Exception as e:
+        print(e)
+    return file_name
+
         
