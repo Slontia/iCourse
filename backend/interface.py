@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 该文件为一系列和数据库的接口
 
 from backend.models import *
@@ -97,3 +98,25 @@ def user_information(username):
     result['gender'] = profile.gender
     result['intro'] = profile.intro
     return result
+
+# 根据课程id查询相应的资源信息
+# REQUIRES: type(course_id) == <class 'int'>
+# MODIFIES: None
+# EFFECTS: 返回资源是属于course_id的所有资源的id,以list形式返回
+
+def resource_courseid_list(course_id):
+    c_c = Course.objects.filter(id=course_id)
+    c_c = c_c.values()[0]
+#    print(c_c)
+#    print(c_c['course_code'])
+    c_c=c_c['course_code']
+    result = Resource.objects.filter(course_code=c_c)
+#    print(result)
+    ans = []
+    for i in result:
+#        print(i)
+#        print(str(i))
+        ans_id_i = str(i)
+#        print(int(ans_id_i),'!!!',int(ans_id_i)+1)
+        ans.append(int(ans_id_i))
+    return ans

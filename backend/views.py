@@ -1,7 +1,5 @@
-from django.shortcuts import render
-
 # Create your views here.
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, StreamingHttpResponse
 from backend import interface
 import json
 from django.views.decorators.csrf import csrf_exempt
@@ -17,6 +15,8 @@ import requests
 import urllib.request
 import json
 import datetime
+
+import os
 
 def page404(request):
     return
@@ -325,7 +325,7 @@ def course_query(request):
         data = json.loads(data)
         #data = json.loads(request.body.decode())
         query = str(data.get('keyword'))
-        print ('query ' + query)
+        print ('query: ' + query)
         cs_url = 'http://10.2.28.124:8080/solr/mynode/select?'#q=Bill&wt=json&indent=true'
         param  = {'q':query, 'fl':'id,name,college_id,class_id,credit,hours', 'wt':'json', 'indent':'true'}
         
@@ -338,29 +338,138 @@ def course_query(request):
         print (query_list)
         return HttpResponse(json.dumps({'query_list': query_list}, cls=ComplexEncoder))
 
-# Course Search Interface(by ohazyi)
+# Course id list(by ohazyi)
 # REQUIRES: the ajax data should be json data {'query': query}
 # MODIFIES: NONE
-# EFFECTS: return data {'query_list': query_list}
-#          query_list is a list whose element is dicts like (user_id, total scores),
-#          such as {'college_id': 10, 'class_id': 55, 'name': '安卓', 'credit': 5, 'id': 9, 'hours': 10}
-#          the list is ordered by id temporaily (can be modified to revelance)
+# EFFECTS: return data {'resource_id_list': query_list}
+#          query_list is a list whose course_id = request.get('id') is dicts like (1, 2, 3, 4, 6)...
+# retrun like: {"resource_id_list": [1, 2, 3, 4, 6]}
 @csrf_exempt
 def resource_id_list(request):
     if(request.method == "POST"):
         data = json.dumps(request.POST) # new
         data = json.loads(data)
         #data = json.loads(request.body.decode())
-        query = str(data.get('keyword'))
-        print ('query ' + query)
-        cs_url = 'http://10.2.28.124:8080/solr/mynode/select?'#q=Bill&wt=json&indent=true'
-        param  = {'q':query, 'fl':'id,name,college_id,class_id,credit,hours', 'wt':'json', 'indent':'true'}
-        
-        r = requests.get(cs_url, params = param)
-        
-        query_res = http_get(r.url)
-        #json_r = bytes.decode(query_res)
-        json_r = json.loads(bytes.decode(query_res))
-        query_list = json_r['response']['docs']
-        print (query_list)
-        return HttpResponse(json.dumps({'query_list': query_list}, cls=ComplexEncoder))
+        course_id = str(data.get('course_id'))
+        print ('course_id: ' + course_id)
+        res = interface.resource_courseid_list(course_id)
+        return HttpResponse(json.dumps({'resource_id_list': res}, cls=ComplexEncoder))
+
+
+# Handle the uploaded resource
+def handle_upload_resource(f, path):
+    t = path.split("/")
+    file_name = t[-1]
+    t.remove(t[-1]) 
+    t.remove(t[0])
+    path = "/".join(t)
+    try:
+        if(not os.path.exists(path)):
+            os.makedirs(path)
+        file_name = path + "/" + file_name
+        print(file_name)
+        destination = open(file_name, 'wb+')
+        for chunk in f.chunks():
+            destination.write(chunk)
+            destination.close()
+    except Exception as e: 
+        print(e)
+    return file_name
+
+# Resource Upload Interface
+# REQUIRES: request.POST['course_id'] != None && request.POST['only_url'] == True/False && request.FILES['file'] != None ,the uploaded should less than 10MB
+# MODIFIES: store the uploaded file to iCourse/media/uploads/%Y/%m && insert a record to backend_resource table in database
+# EFFECTS: return json data {'error':error}, if upload success, error = 0, else error = 1
+@csrf_exempt
+def resourceUpload(request):
+    if(request.method == 'POST'):
+        errors = []
+        if(not request.user.is_authenticated()):    # if the user is not authenticated
+            return HttpResponse(json.dumps({'error':1}))
+        upload_user_id = request.user.id
+        data = json.loads(request.POST)
+        intro = str(data.get('intro'))
+        course_id = int(data.get('course_id'))
+        only_url = bool(data.get('only_url'))     # only_url = True 表示只上传了一个链接,该链接应当保存在resource的url字段,link字段应该为None
+        if(only_url):
+            url = str(data.get('url'))
+            name = str(data.get('name'))
+            size = 0
+            RUForm = ResourceUploadForm({'name':name, 'size':size, 'upload_user_id':upload_user_id, 'course_id':course_id})
+            if(RUForm.is_valid()):
+                resource_up = Resource()
+                resource_ip.only_url = True
+                resource_up.name = name
+                resource_up.size = size     # bytes
+                resource_up.intro = intro
+                resource_up.url = url
+                resource_up.course_id = course_id
+                resource_up.upload_user_id = upload_user_id
+                resource_up.save()
+                return HttpResponse(json.dumps({'error':0}))
+            else:
+                errors.extend(RUForm.errors.values())
+                return HttpResponse(json.dumps({'error':1}))
+        else:
+            name = str(request.FILES['file'].name)
+            size = int(request.FILES['file'].size)
+            RUForm = ResourceUploadForm({'name':name, 'size':size, 'upload_user_id':upload_user_id, 'course_id':course_id})
+            if(RUForm.is_valid()):
+                resource_up = Resource()
+                resource_up.only_url = False
+                resource_up.name = name
+                resource_up.link = request.FILES['file']
+                resource_up.size = size
+                resource_up.intro = intro
+                resource_up.course_id = course_id
+                resource_up.upload_user_id = upload_user_id
+                resource_up.save()
+                handle_upload_resource(request.FILES['file'], resource_up.link.url)
+                return HttpResponse(json.dumps({'error':0}))
+            else:
+                errors.extend(RUForm.errors.values())
+                return HttpResponse(json.dumps({'error':1}))
+
+# Download Interface
+# REQUIRES: GET method
+# MODIFIES: None
+# EFFECTS: return a StreamingHttpResponse if success
+# URL: /download/(\d+)/, (\d+) is resource_id
+def download(request, resource_id): # 2 parameters
+    if(request.method == "GET"):
+        # alpha阶段暂时不实现下载表的写入
+        '''
+        user_id = request.user.id
+        resource_id = int(data.get('resource_id'))
+        download_record = R_Resource_User_Download.objects.create(user_id=user_id, resource_id=resource_id)
+        download_record.save()
+        '''
+        resource = Resource.objects.get(id=resource_id)
+        if(resource.only_url):    # 若仅保存了一个链接
+            return HttpResponse(resource.url)
+        link = resource.link.url
+        real_name = resource.name
+        t = link.split("/")
+        file_name = t[-1]
+        t.remove(t[-1])
+        t.remove(t[0])
+        file_path = "/".join(t)
+        def file_iterator(file_name, file_path, chunk_size=512):
+            path = file_path + "/" + file_name
+            with open(path, 'rb') as f:       # must use 'rb'
+                while True:
+                    c = f.read(chunk_size)
+                    if c:
+                        yield c
+                    else:
+                        break
+        try:
+            response = StreamingHttpResponse(file_iterator(file_name, file_path))
+            response['Content-Type'] = 'application/octet-stream'
+            response['Content-Disposition'] = 'attachment;filename="{0}"'.format(real_name) # display the real_name of the file when user download it
+            #print(response)
+        except Exception as e:
+            #print(e)
+            return HttpResponse("未找到该文件")
+        return response
+

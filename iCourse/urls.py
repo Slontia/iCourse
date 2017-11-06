@@ -48,7 +48,7 @@ urlpatterns = [
     url(r'^user/home/.*/$', backend_views.home),
     url(r'^course/page/.*/$', backend_views.home),
     url(r'^course/visit_count/$', backend_views.refresh_visit_course_time),
-    url(r'^resource/information/$', backend_views.resource_information, name='resource_information')
-
+    url(r'^resource/information/$', backend_views.resource_information, name='resource_information'),
+    url(r'^resource/information/$', backend_views.resource_information, name='resource_information'),
+    url(r'^resource/id/list/$', backend_views.resource_id_list, name='resource_id_list')
 ]
-
