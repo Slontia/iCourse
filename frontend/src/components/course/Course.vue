@@ -227,6 +227,7 @@ export default {
     },
     add_course_clicked () {
       // todo: add course function
+      this.$router.push({ path: '/course/page/1' })
       alert('功能暂未开放,敬请期待')
     }
   },

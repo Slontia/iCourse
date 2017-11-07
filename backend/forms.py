@@ -1,6 +1,7 @@
 from django import forms
 import re
 from django.contrib.auth.models import User
+from .models import Resource
 
 class RegisterForm(forms.Form):
     username = forms.CharField(required=True, max_length=20)
@@ -40,3 +41,23 @@ class LoginForm(forms.Form):
     username = forms.CharField(required=True, max_length=20)
     password = forms.CharField(required=True, max_length=20)
 
+
+class ResourceUploadForm(forms.ModelForm):
+    class Meta:
+        model =  Resource
+        fields =  ['name', 'size', 'upload_user_id','course_id']
+    
+    def clean_size(self):
+        # 2.5MB - 2621440
+        # 5MB - 5242880
+        # 10MB - 10485760
+        # 20MB - 20971520
+        # 50MB - 52428800
+        # 100MB - 104857600
+        # 250MB - 214958080
+        # 500MB - 429916160
+        MAX_UPLOAD_SIZE = "10485760"
+        size = int(self.cleaned_data['size'])
+        if(size > MAX_UPLOAD_SIZE):
+            raise forms.ValidationError("文件不能超过10MB")
+        return size

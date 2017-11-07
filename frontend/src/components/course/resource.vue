@@ -352,11 +352,11 @@ export default {
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: '/resource/id/list',
+      url: '/resource/id/list/',
       type: 'POST',
-      data: {'keyword': 1},
+      data: {'course_id': 1},
       success: function (data) {
-        alert(data['query_list'].length)
+        alert(data['resource_id_list'].length)
       },
       error: function () {
         alert('fail')

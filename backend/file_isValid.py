@@ -22,7 +22,7 @@ def file_valid(filepath):
     suffix_allowed = ['.pdf','.doc','.docx','.ppt','.pptx','.txt']
     if (file_size > 10):
         return "Please upload files smaller than 10MB"
-    if (not(file_suffix_name in suffix_allowed)):
+    if (not(file_suffix_name.lower() in suffix_allowed)):
         return "Don't allow file with " + file_suffix_name
     return "Success"
 

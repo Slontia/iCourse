@@ -47,19 +47,24 @@ class Course(models.Model):
     hours = models.SmallIntegerField()
     credit = models.SmallIntegerField()
     course_code = models.CharField(max_length=10)
+    visit_count = models.IntegerField()
 
     def __str__(self):
         return str(self.id)
 
 # Resource Model
 class Resource(models.Model):
-    size = models.IntegerField()
-    link = models.CharField(max_length=100) # 考虑能否用FileField
-    name = models.CharField(max_length=30)
+    size = models.IntegerField(blank=False)
+    link = models.FileField(blank=True, upload_to='uploads/%Y/%m')
+    name = models.CharField(blank=False,max_length=30)
     intro = models.TextField()
-    upload_user_id = models.PositiveIntegerField()
-    course_code = models.CharField(max_length=10)
+    upload_user_id = models.PositiveIntegerField(blank=False)
+    course_id = models.PositiveIntegerField(blank=False)
     upload_time = models.DateTimeField(auto_now_add=True)
+    only_url = models.BooleanField(blank=False)           # if only_url is True, link = None && url = uploaded url; else url = None && link = uploaded file.url
+    url = models.CharField(blank=True, max_length=100)
+    course_code = models.CharField(blank=True, max_length=10)
+    download_count = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.id)

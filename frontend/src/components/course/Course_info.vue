@@ -13,6 +13,7 @@
                 <el-row>
                   <el-col :span="8">
                     <p style="padding-top:30px;font-size: xx-large">{{ course_name }}</p>
+                    <p>点击: {{ visit_count }}</p>
                   </el-col>
                   <el-col :span="10">
                     <img :src="img" width="100px" height="100px" style="float:right">
@@ -176,10 +177,23 @@ export default {
         self.academy = info['college_id']
         self.hours = info['hours']
         self.intro_info = undefined
-        self.img = undefined
+        self.img = Img
       },
       error: function () {
         alert('fail')
+      }
+    })
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: '/course/visit_count/',
+      type: 'POST',
+      data: postData,
+      success: function (data) {
+        self.visit_count = data['visit_count']
+      },
+      error: function () {
+        alert('点击次数链接异常')
       }
     })
   },
@@ -190,6 +204,7 @@ export default {
       academy: '计算机学院',
       hours: '32',
       intro_info: '计算机学院开设的软件工程课',
+      visit_count: -1,
       img: Img,
       history_contribution_data: [],
       latest_contribution_data: [],

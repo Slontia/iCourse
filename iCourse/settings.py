@@ -146,4 +146,8 @@ AUTH_PROFILE_MODULE = 'backend.UserProfile'
 # Reload for login
 AUTHENTICATE_BACKENDS = {'backend.views.CustomBackend', }
 
+# Add for uploaded resources
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+DEFAULT_FILE_STORAGE = "iCourse.CustomFileField.storage.FileStorage" # to solve the filename problem
