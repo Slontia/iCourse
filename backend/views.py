@@ -489,9 +489,8 @@ def latest_resource_info(request):
     if(request.method == 'POST'):
         data = json.dumps(request.POST)
         data = json.loads(data)
-        #print(type(data))
-        #print(request.POST['course_id'])
         course_id = int(data.get('course_id'))
         number = int(data.get('number'))
         result = interface.resource_information_list(course_id, number)
-        return json.dumps({'result': result})
+        #print(result)
+        return HttpResponse(json.dumps({'result': result}))
