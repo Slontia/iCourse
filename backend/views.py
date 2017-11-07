@@ -480,7 +480,7 @@ def download(request, resource_id): # 2 parameters
 
 
 # Latest Resource Information list
-@crsf_exempt
+@csrf_exempt
 def latest_resource_info(request):
     if(request.method == 'POST'):
         data = json.loads(request.POST)

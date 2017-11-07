@@ -122,21 +122,21 @@ def resource_courseid_list(course_id):
         ans.append(int(ans_id_i))
     return ans
 
-def resource_information_list(course_id, number):^M
-    course_id = list(Course.objects.filter(id=course_id).values_list('course_code', flat=True))[0]^M
-    count = 0^M
-    result = []^M
-    temp = list(Resource.objects.filter(course_code=course_id).values_list('id', 'upload_user_id','download_count','name', 'upload_time'))^M
-    temp = sorted(temp, key=lambda x:x[4], reverse=True)^M
+def resource_information_list(course_id, number):
+    course_id = list(Course.objects.filter(id=course_id).values_list('course_code', flat=True))[0]
+    count = 0
+    result = []
+    temp = list(Resource.objects.filter(course_code=course_id).values_list('id', 'upload_user_id','download_count','name', 'upload_time'))
+    temp = sorted(temp, key=lambda x:x[4], reverse=True)
     #print(temp)^M
-    for item in temp:^M
-        if(item[1] == None):^M
-            resource = (item[0], '匿名用户', item[2], item[3])^M
-        else:^M
-            resource = (item[0], User.objects.get(id=int(item[1])), item[2], item[3])^M
-        result.append(resource)^M
-        count += 1^M
-        if(count == number):^M
-            break^M
-    return result^M
+    for item in temp:
+        if(item[1] == None):
+            resource = (item[0], '匿名用户', item[2], item[3])
+        else:
+            resource = (item[0], User.objects.get(id=int(item[1])), item[2], item[3])
+        result.append(resource)
+        count += 1
+        if(count == number):
+            break
+    return result
 
