@@ -157,17 +157,19 @@
 import Header from '../general/Header.vue'
 import Img from '../../assets/pdf.png'
 import $ from 'jquery'
+import get_url from '../general/getUrl.js'
 
 export default {
   name: 'course_info',
   components: { Header },
   beforeCreate () {
     var self = this
-    var postData = { 'course_id': this.$route.params.course_id }
+    var course_id = this.$route.params.course_id
+    var postData = { 'course_id': course_id}
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: '/course/course_info/',
+      url: get_url('/course/course_info/'),
       type: 'POST',
       data: postData,
       success: function (data) {
@@ -186,7 +188,7 @@ export default {
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: '/course/visit_count/',
+      url: get_url('/course/visit_count/'),
       type: 'POST',
       data: postData,
       success: function (data) {
@@ -195,6 +197,18 @@ export default {
       error: function () {
         alert('点击次数链接异常')
       }
+    })
+    // loading the contribution_list
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: get_url('')
+    })
+    // loading the resource
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: ''
     })
   },
   data () {
