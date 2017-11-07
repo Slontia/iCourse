@@ -358,7 +358,6 @@ def resource_id_list(request):
         res = interface.resource_courseid_list(course_id)
         return HttpResponse(json.dumps({'resource_id_list': res}, cls=ComplexEncoder))
 
-
 # Handle the uploaded resource
 def handle_upload_resource(f, path):
     t = path.split("/")
@@ -380,7 +379,7 @@ def handle_upload_resource(f, path):
     return file_name
 
 # Resource Upload Interface
-# REQUIRES: request.POST['course_id'] != None && request.POST['only_url'] == True/False && request.FILES['file'] != None ,the uploaded should less than 10MB
+# REQUIRES: request.POST['course_code'] != None && request.POST['only_url'] == True/False && request.FILES['file'] != None ,the uploaded should less than 10MB
 # MODIFIES: store the uploaded file to iCourse/media/uploads/%Y/%m && insert a record to backend_resource table in database
 # EFFECTS: return json data {'error':error}, if upload success, error = 0, else error = 1
 @csrf_exempt
@@ -392,13 +391,14 @@ def resourceUpload(request):
         upload_user_id = request.user.id
         data = json.loads(request.POST)
         intro = str(data.get('intro'))
-        course_id = int(data.get('course_id'))
+        #course_id = int(data.get('course_id'))
+        course_code = str(data.get('course_code'))
         only_url = bool(data.get('only_url'))     # only_url = True 表示只上传了一个链接,该链接应当保存在resource的url字段,link字段应该为None
         if(only_url):
             url = str(data.get('url'))
             name = str(data.get('name'))
             size = 0
-            RUForm = ResourceUploadForm({'name':name, 'size':size, 'upload_user_id':upload_user_id, 'course_id':course_id})
+            RUForm = ResourceUploadForm({'name':name, 'size':size, 'upload_user_id':upload_user_id, 'course_code':course_code})
             if(RUForm.is_valid()):
                 resource_up = Resource()
                 resource_ip.only_url = True
@@ -406,7 +406,7 @@ def resourceUpload(request):
                 resource_up.size = size     # bytes
                 resource_up.intro = intro
                 resource_up.url = url
-                resource_up.course_id = course_id
+                resource_up.course_code = course_code
                 resource_up.upload_user_id = upload_user_id
                 resource_up.save()
                 return HttpResponse(json.dumps({'error':0}))
@@ -416,7 +416,7 @@ def resourceUpload(request):
         else:
             name = str(request.FILES['file'].name)
             size = int(request.FILES['file'].size)
-            RUForm = ResourceUploadForm({'name':name, 'size':size, 'upload_user_id':upload_user_id, 'course_id':course_id})
+            RUForm = ResourceUploadForm({'name':name, 'size':size, 'upload_user_id':upload_user_id, 'course_id':course_code})
             if(RUForm.is_valid()):
                 resource_up = Resource()
                 resource_up.only_url = False
@@ -424,7 +424,7 @@ def resourceUpload(request):
                 resource_up.link = request.FILES['file']
                 resource_up.size = size
                 resource_up.intro = intro
-                resource_up.course_id = course_id
+                resource_up.course_code = course_code
                 resource_up.upload_user_id = upload_user_id
                 resource_up.save()
                 handle_upload_resource(request.FILES['file'], resource_up.link.url)
@@ -448,6 +448,8 @@ def download(request, resource_id): # 2 parameters
         download_record.save()
         '''
         resource = Resource.objects.get(id=resource_id)
+        resource.download_count +=1 # 下载量+1
+        resource.save()
         if(resource.only_url):    # 若仅保存了一个链接
             return HttpResponse(resource.url)
         link = resource.link.url
@@ -476,3 +478,13 @@ def download(request, resource_id): # 2 parameters
             return HttpResponse("未找到该文件")
         return response
 
+
+# Latest Resource Information list
+@csrf_exempt
+def latest_resource_info(request):
+    if(request.method == 'POST'):
+        data = json.loads(request.POST)
+        course_id = int(data.get('course_id'))
+        number = int(data.get('number'))
+        result = interface.resource_information_list(course_id, number)
+        return json.dumps({'result': result})
