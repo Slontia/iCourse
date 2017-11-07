@@ -9,11 +9,19 @@
         <el-col :span="16" :offset="1">
           <el-row>
             <el-col :span="8">
+              资源名称:
+            </el-col>
+            <el-col :span="16">
+              {{ this.$store.state.name }}
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">
               上传者:
             </el-col>
             <el-col :span="16">
               <img :src="zipImg" style="height:18px;"></img>
-              <a href="">果冻</a>
+              <a href="">{{ this.$store.state.author }}</a>
             </el-col>
           </el-row>
           <el-row style="margin:10px 0px 0px 0px;">
@@ -21,7 +29,7 @@
               上传时间:
             </el-col>
             <el-col :span="16">
-              2017-3-26
+              {{ this.$store.state.time }}
             </el-col>
           </el-row>
           <el-row style="margin:10px 0px 0px 0px;">
@@ -29,7 +37,7 @@
               资源大小:
             </el-col>
             <el-col :span="16">
-              98.6MB
+              {{ this.$store.state.size }}
             </el-col>
           </el-row>
           <el-row style="margin:10px 0px 0px 0px;">
@@ -39,7 +47,7 @@
           </el-row>
           <el-row style="margin:10px 0px 0px 0px;">
             <el-col :span="24">
-              里面整合了1~13章课件，全部是pdf格式
+              {{ this.$store.state.intro }}
             </el-col>
           </el-row>
         </el-col>

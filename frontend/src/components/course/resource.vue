@@ -53,7 +53,7 @@
       </el-row>
       <el-row style="margin:20px 0px 0px 0px;">
         <el-col :span="6" :offset="2">          
-        <el-row v-for="item in resourcesData" v-if="item.col1" class="hoverChange"  @click.native="dialogVisible=true" style="height:300px;">
+        <el-row v-for="item in resourcesData" v-if="item.col1" class="hoverChange"  @click.native="openDialog(item.id)">
           <el-row style="margin:20px 0px 0px 0px;" >
             <el-col :span="8" :offset="1">
               <img :src="zipImg" style="height:100px;"></img>
@@ -94,7 +94,7 @@
         </el-col>         
 
         <el-col :span="6" :offset="1">
-          <el-row v-for="item in resourcesData" v-if="item.col2" class="hoverChange"  @click.native="dialogVisible=true" style="height:300px;">
+          <el-row v-for="item in resourcesData" v-if="item.col2" class="hoverChange"  @click.native="openDialog(item.id)">
           <el-row style="margin:20px 0px 0px 0px;" >
             <el-col :span="8" :offset="1">
               <img :src="zipImg" style="height:100px;"></img>
@@ -134,7 +134,7 @@
         </el-row>
         </el-col>
         <el-col :span="6" :offset="1">
-          <el-row v-for="item in resourcesData" v-if="item.col3" class="hoverChange" @click.native="dialogVisible=true" style="height:300px;">
+          <el-row v-for="item in resourcesData" v-if="item.col3" class="hoverChange" @click.native="openDialog(item.id)">
           <el-row style="margin:20px 0px 0px 0px;" >
             <el-col :span="8" :offset="1">
               <img :src="zipImg" style="height:100px;"></img>
@@ -177,7 +177,7 @@
     </el-row>
 
     <!-- 资源详细信息窗口 -->
-    <el-dialog title="资源信息" :visible.sync="dialogVisible" size="tiny">
+    <el-dialog title="资源信息" :visible.sync="dialogVisible" v-if="dialogVisible" size="tiny">
       <ResourceDialog></ResourceDialog>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible=false">取 消</el-button>
@@ -221,6 +221,29 @@ export default {
     closed: function () { alert('还未开放') },
     return_course_info_page_clicked () {
       this.$router.push({ path: ('/course/page/' + this.$route.params.course_id + '/') })
+    },
+    openDialog: function (id) {
+      this.$store.state.id = id
+      var resourceDialogSelf = this
+      $.ajax({
+        ContentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: '/resource/information/',
+        type: 'POST',
+        async: false,
+        data: {'resource_id': id},
+        success: function (rdata) {
+          resourceDialogSelf.$store.state.name = rdata['resource_info']['name']
+          resourceDialogSelf.$store.state.author = rdata['resource_info']['upload_user_id']
+          resourceDialogSelf.$store.state.size = rdata['resource_info']['size']
+          resourceDialogSelf.$store.state.time = rdata['resource_info']['upload_time']
+          resourceDialogSelf.$store.state.intro = rdata['resource_info']['intro']
+          resourceDialogSelf.dialogVisible = true
+        },
+        error: function () {
+          alert('fail')
+        }
+      })
     }
   },
   created: function () {
@@ -252,7 +275,8 @@ export default {
                 downloads: 56,
                 messages: 0,
                 author: '果冻',
-                time: '2017-3-26'
+                time: '2017-3-26',
+                id: 0
               }
               if (i % 3 === 0) {
                 tt.col1 = true
@@ -268,6 +292,7 @@ export default {
               tt.downloads = rdata['resource_info']['download_count']
               tt.author = rdata['resource_info']['upload_user_id']
               tt.time = rdata['resource_info']['upload_time']
+              tt.id = rdata['resource_info']['id']
               resourceSelf.push(tt)
             },
             error: function () {
