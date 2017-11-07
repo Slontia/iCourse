@@ -356,6 +356,9 @@ def resource_id_list(request):
         course_id = str(data.get('course_id'))
         print ('course_id: ' + course_id)
         res = interface.resource_courseid_list(course_id)
+        print("**********")
+        print(res)
+        print("**********")
         return HttpResponse(json.dumps({'resource_id_list': res}, cls=ComplexEncoder))
 
 # Handle the uploaded resource
