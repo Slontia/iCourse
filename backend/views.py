@@ -360,6 +360,9 @@ def resource_id_list(request):
         course_id = str(data.get('course_id'))
         print ('course_id: ' + course_id)
         res = interface.resource_courseid_list(course_id)
+        print("**********")
+        print(res)
+        print("**********")
         return HttpResponse(json.dumps({'resource_id_list': res}, cls=ComplexEncoder))
 
 # Handle the uploaded resource
@@ -484,10 +487,14 @@ def download(request, resource_id): # 2 parameters
 
 
 # Latest Resource Information list
+# url:/resource/latest/
 @csrf_exempt
 def latest_resource_info(request):
     if(request.method == 'POST'):
-        data = json.loads(request.POST)
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        #print(type(data))
+        #print(request.POST['course_id'])
         course_id = int(data.get('course_id'))
         number = int(data.get('number'))
         result = interface.resource_information_list(course_id, number)

@@ -145,4 +145,3 @@ def resource_information_list(course_id, number):
         if(count == number):
             break
     return result
-

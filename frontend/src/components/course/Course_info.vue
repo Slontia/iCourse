@@ -89,9 +89,11 @@
               <p style="padding-bottom: 10px; font-size: large">最新资源</p>
           </el-col>
         </el-row>
+        <template v-for="i in total_resource_line">
               <el-row>
-                <el-col :span="7" v-for="(o,index) in 2" :key="o" :offset="index>0?1:0">
-                  <el-button type="text" class="card_button">
+                <el-col :span="7" v-show="card_data[i][0].show">
+                  <el-col :span="24">
+                  <el-button type="text" class="card_button" @click.native="card_clicked(i,0)">
                   <el-card :body-style="{ padding: '10px'} " class="card">
                     <el-row>
                       <el-col :span="4" style="">
@@ -99,22 +101,48 @@
                       </el-col>
                       <el-col :span="16" :offset="2">
                         <el-row>
-                          CHAPTER{{ o }}
+                          card_data[i][0].title
                         </el-row>
                         <el-row>
-                          上传者:Aletheia
+                          card_data[i][0].uploader
                         </el-row>
                         <el-row>
-                          下载次数:11
+                          card_data[i][0].frequency
                         </el-row>
                       </el-col>
                     </el-row>
                   </el-card>
                 </el-button>
                 </el-col>
+                </el-col>
 
-                <el-col :span="7" v-for="(o,index) in 1" :key="o" :offset="1">
-                  <el-button type="text" class="card_button">
+                <el-col :span="7" :offset="1" v-show="card_data[i][1].show">
+                  <el-col :span="24">
+                  <el-button type="text" class="card_button" @click.native="card_clicked(i,1)">
+                  <el-card :body-style="{ padding: '10px'} " class="card">
+                    <el-row>
+                      <el-col :span="4" style="">
+                        <img :src="img" style="width: 50px; height:50px;"></img>
+                      </el-col>
+                      <el-col :span="16" :offset="2">
+                        <el-row>
+                          card_data[i][1].title
+                        </el-row>
+                        <el-row>
+                          card_data[i][1].uploader
+                        </el-row>
+                        <el-row>
+                          card_data[i][1].frequency
+                        </el-row>
+                      </el-col>
+                    </el-row>
+                  </el-card>
+                </el-button>
+                </el-col>
+                </el-col>
+
+                <el-col :span="7" :offset="1" v-show="card_data[i][2].show">
+                  <el-button type="text" class="card_button" @click.native="card_clicked(i,2)">
                   <el-card :body-style="{ padding: '10px'}" class="card">
                     <el-row>
                       <el-col :span="4" style="">
@@ -122,13 +150,13 @@
                       </el-col>
                       <el-col :span="16" :offset="2">
                         <el-row>
-                          CHAPTER{{ o }}
+                          card_data[i][2].title
                         </el-row>
                         <el-row>
-                          上传者:Aletheia
+                          card_data[i][2].uploader
                         </el-row>
                         <el-row>
-                          下载次数:11
+                          card_data[i][2].frequency
                         </el-row>
                       </el-col>
                     </el-row>
@@ -136,6 +164,7 @@
                 </el-button>
                 </el-col>
       </el-row>
+    </template>
     </div>
   <el-dialog title="上传资源" :visible.sync="uploadDialogVisible" size="tiny">
     <el-upload class="upload-demo" ref="upload" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
@@ -205,27 +234,34 @@ export default {
       dataType: 'json',
       url: get_url('')
     })
-    // loading the resource
-    $.ajax({
-      ContentType: 'application/json; charset=utf-8',
-      dataType: 'json',
-      url: ''
-    })
     */
+    // loading the resource
   },
   data () {
     return {
-      course_name: '软件工程基础',
-      teacher: '罗杰',
-      academy: '计算机学院',
-      hours: '32',
-      intro_info: '计算机学院开设的软件工程课',
+      course_name: '',
+      teacher: '',
+      academy: '',
+      hours: '',
+      intro_info: '',
       visit_count: -1,
       img: Img,
       history_contribution_data: [],
       latest_contribution_data: [],
       uploadDialogVisible: false,
-      fileList: []
+      fileList: [],
+      total_resource_line: 3,
+      card_data: [
+        [{ title: '', uploader: '', frequency: '', show: false, id: '' },
+         { title: '', uploader: '', frequency: '', show: false, id: '' },
+         { title: '', uploader: '', frequency: '', show: false, id: '' }],
+        [{ title: '', uploader: '', frequency: '', show: false, id: '' },
+         { title: '', uploader: '', frequency: '', show: false, id: '' },
+         { title: '', uploader: '', frequency: '', show: false, id: '' }],
+        [{ title: '', uploader: '', frequency: '', show: false, id: '' },
+         { title: '', uploader: '', frequency: '', show: false, id: '' },
+         { title: '', uploader: '', frequency: '', show: false, id: '' }]
+      ]
     }
   },
   methods: {
@@ -245,6 +281,27 @@ export default {
     check_all_resource_clicked: function () {
       this.$router.push({ path: 'resource/' })
     }
+  },
+  mounted () {
+    var course_id = this.$route.params.course_id
+    var postData = { 'course_id': course_id, 'number': this.total_resource_line }
+    console.log(postData)
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: get_url('/resource/latest/'),
+      type: 'POST',
+      data: postData,
+      success: function (data) {
+        // 根据resource_id和number返回满足数量的课程资源的(resource_id, 上传用户名（若没有用户名则显示为匿名用户）, 下载次数，资源名称) 并且已经按上传时间排好了序
+        // var pos = 2 // pos of latest resource
+        var info = data['result']
+        console.log(info)
+      },
+      error: function () {
+        alert('拉取资源列表失败')
+      }
+    })
   }
 }
 </script>
