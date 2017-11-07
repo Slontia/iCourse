@@ -165,7 +165,7 @@ export default {
   beforeCreate () {
     var self = this
     var course_id = this.$route.params.course_id
-    var postData = { 'course_id': course_id}
+    var postData = { 'course_id': course_id }
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
@@ -198,6 +198,7 @@ export default {
         alert('点击次数链接异常')
       }
     })
+    /*
     // loading the contribution_list
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
@@ -210,6 +211,7 @@ export default {
       dataType: 'json',
       url: ''
     })
+    */
   },
   data () {
     return {

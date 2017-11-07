@@ -14,9 +14,9 @@
                             <section>
                               <!-- tools bar above -->
                               <el-col :span="24" class="tools_bar_top" style="padding-bottom: 0px;">
-                                <el-form :inline="true" :model="filters">
+                                <el-form :inline="true" :model="filters" >
                                   <el-form-item>
-                                    <el-input v-model = "filters.name" placeholder="支持课程名、课程号"></el-input>
+                                    <el-input type="text" v-model = "filters.name" placeholder="支持课程名、课程号" @keydown.enter.native.prevent="search_course_clicked" ></el-input>
                                   </el-form-item>
                                   <el-form-item>
                                     <el-button type="primary" v-on:click="search_course_clicked" icon="search">搜索</el-button>
