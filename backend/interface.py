@@ -104,32 +104,32 @@ def user_information(username):
 # EFFECTS: 返回资源是属于course_id的所有资源的id,以list形式返回
 
 def resource_courseid_list(course_id):
-    print("****",course_id)
-    c_c = Course.objects.filter(id=course_id)
-    print("####", c_c)
-    c_c = c_c.values()[0]
-#    print(c_c)
-#    print(c_c['course_code'])
-    c_c=c_c['course_code']
-    result = Resource.objects.filter(course_code=c_c)
-#    print(result)
     ans = []
+    #print("****",course_id)
+    c_c = Course.objects.filter(id=course_id)
+    #print("LLLENNNNN", len(c_c))
+    if (len(c_c) == 0):
+        return ans
+    #print("####", c_c)
+    c_c = c_c.values()[0]
+    #print(c_c)
+    #print("@@@@",c_c)
+    c_c=c_c['course_code']
+    #print("~~~~",c_c)
+    result = Resource.objects.filter(course_code=c_c)
+    #print("!!!!",result)
     for i in result:
-#        print(i)
-#        print(str(i))
+        #print("^^^",str(i))
+        #        print(str(i))
         ans_id_i = str(i)
-#        print(int(ans_id_i),'!!!',int(ans_id_i)+1)
+        #        print(int(ans_id_i),'!!!',int(ans_id_i)+1)
         ans.append(int(ans_id_i))
     return ans
 
 # 根据resource_id和number返回满足数量的课程资源的(resource_id, 上传用户名（若没有用户名则显示为匿名用户）, 下载次数，资源名称) 并且已经按上传时间排好了序
 # 返回类型为list,list中元素的类型为tuple
 def resource_information_list(course_id, number):
-    course_id = list(Course.objects.filter(id=course_id).values_list('course_code', flat=True))
-    if(len(course_id) == 0):
-        return []
-    else:
-        course_id = course_id[0]
+    course_id = list(Course.objects.filter(id=course_id).values_list('course_code', flat=True))[0]
     count = 0
     result = []
     temp = list(Resource.objects.filter(course_code=course_id).values_list('id', 'upload_user_id','download_count','name', 'upload_time'))
@@ -145,4 +145,3 @@ def resource_information_list(course_id, number):
         if(count == number):
             break
     return result
-

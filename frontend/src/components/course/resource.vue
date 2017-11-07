@@ -53,7 +53,7 @@
       </el-row>
       <el-row style="margin:20px 0px 0px 0px;">
         <el-col :span="6" :offset="2">          
-        <el-row v-for="item in resourcesData" v-if="item.col1" class="hoverChange"  @click.native="dialogVisible=true">
+        <el-row v-for="item in resourcesData" v-if="item.col1" class="hoverChange"  @click.native="dialogVisible=true" style="height:300px;">
           <el-row style="margin:20px 0px 0px 0px;" >
             <el-col :span="8" :offset="1">
               <img :src="zipImg" style="height:100px;"></img>
@@ -85,17 +85,16 @@
             </el-col>
           </el-row>
           <el-row style="margin:10px 0px 0px 0px;">
-            <el-col :span="11" :offset="13" style="color:#d3d3d3;">
+            <el-col :span="18" :offset="6" style="color:#d3d3d3;">
               上传时间:{{ item.time }}
             </el-col>
           </el-row>
           <el-row style="margin:5px 0px 0px 0px;height:1px;background-color:black;"></el-row>
         </el-row>        
-        </el-col>
-         
+        </el-col>         
 
         <el-col :span="6" :offset="1">
-          <el-row v-for="item in resourcesData" v-if="item.col2" class="hoverChange"  @click.native="dialogVisible=true">
+          <el-row v-for="item in resourcesData" v-if="item.col2" class="hoverChange"  @click.native="dialogVisible=true" style="height:300px;">
           <el-row style="margin:20px 0px 0px 0px;" >
             <el-col :span="8" :offset="1">
               <img :src="zipImg" style="height:100px;"></img>
@@ -127,7 +126,7 @@
             </el-col>
           </el-row>
           <el-row style="margin:10px 0px 0px 0px;">
-            <el-col :span="11" :offset="13" style="color:#d3d3d3;">
+            <el-col :span="18" :offset="6" style="color:#d3d3d3;">
               上传时间:{{ item.time }}
             </el-col>
           </el-row>
@@ -135,7 +134,7 @@
         </el-row>
         </el-col>
         <el-col :span="6" :offset="1">
-          <el-row v-for="item in resourcesData" v-if="item.col3" class="hoverChange" @click.native="dialogVisible=true">
+          <el-row v-for="item in resourcesData" v-if="item.col3" class="hoverChange" @click.native="dialogVisible=true" style="height:300px;">
           <el-row style="margin:20px 0px 0px 0px;" >
             <el-col :span="8" :offset="1">
               <img :src="zipImg" style="height:100px;"></img>
@@ -167,7 +166,7 @@
             </el-col>
           </el-row>
           <el-row style="margin:10px 0px 0px 0px;">
-            <el-col :span="11" :offset="13" style="color:#d3d3d3;">
+            <el-col :span="18" :offset="6" style="color:#d3d3d3;">
               上传时间:{{ item.time }}
             </el-col>
           </el-row>
@@ -185,9 +184,6 @@
         <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
       </span>
     </el-dialog>
-
-
-
   </div>
 </template>
 
@@ -218,56 +214,7 @@ export default {
       ],
       sortMode: '按上传时间排序',
       zipImg: ZipImg,
-      resourcesData: [
-        {
-          col1: false,
-          col2: true,
-          col3: false,
-          name: '全部课件.zip',
-          intro: '里面整合了1~13章课件，全部是pdf格式',
-          collections: 23,
-          downloads: 56,
-          messages: 2,
-          author: '果冻',
-          time: '2017-3-26'
-        },
-        {
-          col1: false,
-          col2: false,
-          col3: true,
-          name: '全部课件.zip',
-          intro: '里面整合了1~13章课件，全部是pdf格式',
-          collections: 23,
-          downloads: 56,
-          messages: 2,
-          author: '果冻',
-          time: '2017-3-26'
-        },
-        {
-          col1: true,
-          col2: false,
-          col3: false,
-          name: '全部课件.zip',
-          intro: '里面整合了1~13章课件，全部是pdf格式',
-          collections: 23,
-          downloads: 56,
-          messages: 2,
-          author: '果冻',
-          time: '2017-3-26'
-        },
-        {
-          col1: true,
-          col2: false,
-          col3: false,
-          name: '全部课件.zip',
-          intro: '里面整合了1~13章课件，全部是pdf格式',
-          collections: 23,
-          downloads: 56,
-          messages: 2,
-          author: '果冻',
-          time: '2017-3-26'
-        }
-      ]
+      resourcesData: []
     }
   },
   methods: {
@@ -277,32 +224,63 @@ export default {
     }
   },
   created: function () {
+    let resourceSelf = []
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
       url: '/resource/id/list/',
       type: 'POST',
+      async: false,
       data: {'course_id': 1},
       success: function (data) {
-        alert(data['resource_id_list'].length)
+        for (var i = 0; i < data['resource_id_list'].length; i++) {
+          $.ajax({
+            ContentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            url: '/resource/information/',
+            type: 'POST',
+            async: false,
+            data: {'resource_id': data['resource_id_list'][i]},
+            success: function (rdata) {
+              var tt = {
+                col1: false,
+                col2: false,
+                col3: false,
+                name: '全部课件.zip',
+                intro: '里面整合了1~13章课件，全部是pdf格式',
+                collections: 0,
+                downloads: 56,
+                messages: 0,
+                author: '果冻',
+                time: '2017-3-26'
+              }
+              if (i % 3 === 0) {
+                tt.col1 = true
+              }
+              if (i % 3 === 1) {
+                tt.col2 = true
+              }
+              if (i % 3 === 2) {
+                tt.col3 = true
+              }
+              tt.name = rdata['resource_info']['name']
+              tt.intro = rdata['resource_info']['intro']
+              tt.downloads = rdata['resource_info']['download_count']
+              tt.author = rdata['resource_info']['upload_user_id']
+              tt.time = rdata['resource_info']['upload_time']
+              resourceSelf.push(tt)
+            },
+            error: function () {
+              alert('fail')
+            }
+          })
+        }
       },
       error: function () {
         alert('fail')
       }
     })
-    /* $.ajax({
-      ContentType: 'application/json; charset=utf-8',
-      dataType: 'json',
-      url: '/resource/information/',
-      type: 'POST',
-      data: {'resource_id': 1},
-      success: function (data) {
-        alert(data['resource_info']['id'])
-      },
-      error: function () {
-        alert('fail')
-      }
-    }) */
+    this.resourcesData = resourceSelf
   }
 }
 </script>
