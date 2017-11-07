@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 该文件为一系列和数据库的接口
 
 from backend.models import *
