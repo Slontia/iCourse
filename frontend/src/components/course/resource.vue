@@ -352,6 +352,19 @@ export default {
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
+      url: '/resource/id/list',
+      type: 'POST',
+      data: {'keyword': 1},
+      success: function (data) {
+        alert(data['query_list'].length)
+      },
+      error: function () {
+        alert('fail')
+      }
+    })
+    /* $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
       url: '/resource/information/',
       type: 'POST',
       data: {'resource_id': 1},
@@ -361,7 +374,7 @@ export default {
       error: function () {
         alert('fail')
       }
-    })
+    }) */
   }
 }
 </script>
