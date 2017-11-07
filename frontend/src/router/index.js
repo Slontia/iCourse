@@ -35,7 +35,7 @@ export default new Router({
       component: Courseinfo
     },
     {
-      path: '/resource',
+      path: '/course/page/:course_id/resource',
       name: 'resource',
       component: Resource
     },

@@ -109,7 +109,7 @@ export default {
     to_course_page (index) {
       alert(index)
       alert(this.courses[index]['college_id'])
-      this.$router.push({ path: ('/course/page/' + this.courses[index]['course_id']) })
+      this.$router.push({ path: ('/course/page/' + this.courses[index]['course_id'] + '/') })
     },
     handle_current_change (value) {
       this.page = value
@@ -227,7 +227,6 @@ export default {
     },
     add_course_clicked () {
       // todo: add course function
-      this.$router.push({ path: '/course/page/1' })
       alert('功能暂未开放,敬请期待')
     }
   },
