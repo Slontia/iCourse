@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 该文件为一系列和数据库的接口
 
 from backend.models import *
@@ -105,7 +104,9 @@ def user_information(username):
 # EFFECTS: 返回资源是属于course_id的所有资源的id,以list形式返回
 
 def resource_courseid_list(course_id):
+    print("****",course_id)
     c_c = Course.objects.filter(id=course_id)
+    print("####", c_c)
     c_c = c_c.values()[0]
 #    print(c_c)
 #    print(c_c['course_code'])

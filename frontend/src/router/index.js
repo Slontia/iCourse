@@ -21,6 +21,11 @@ export default new Router({
       component: Index
     },
     {
+      path: '/resource',
+      name: 'resource',
+      component: Resource
+    },
+    {
       path: '/',
       component: Index
     },
@@ -35,7 +40,7 @@ export default new Router({
       component: Courseinfo
     },
     {
-      path: '/resource',
+      path: '/course/page/:course_id/resource',
       name: 'resource',
       component: Resource
     },

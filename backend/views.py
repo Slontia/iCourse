@@ -10,6 +10,7 @@ from django.contrib import auth
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 from django.views.generic.base import View
+from django.shortcuts import render
 
 import requests
 import urllib.request
@@ -153,7 +154,7 @@ def refresh_visit_course_time(request):
         now_time = datetime.datetime.now()
         course = Course.objects.get(id=course_id)
         if (last_view_dict == None): # have not visited any courses
-            request.session['last_view'] = {course_id: 0}
+            request.session['last_view'] = {course_id: str(now_time)}
         else:
             print(last_view_dict)
             last_view = last_view_dict[str(course_id)]
@@ -162,10 +163,11 @@ def refresh_visit_course_time(request):
                 if (now_time >= last_visit_time + datetime.timedelta(hours=24)):
                     course.visit_count += 1
                     course.save()
+                    request.session['last_view'][course_id] = str(now_time)
             else: # have not visited the course
                 course.visit_count += 1
                 course.save()
-        request.session['last_view'][course_id] = str(now_time)
+                request.session['last_view'][course_id] = str(now_time)
         print(course.visit_count)
         
         return HttpResponse(json.dumps({'visit_count': course.visit_count}))
