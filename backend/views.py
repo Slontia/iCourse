@@ -10,6 +10,7 @@ from django.contrib import auth
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 from django.views.generic.base import View
+from django.shortcuts import render
 
 import requests
 import urllib.request
@@ -134,6 +135,42 @@ def course_information(request):
         course_id = int(data.get('course_id','0'))
         course_info = interface.course_information(course_id)
         return HttpResponse(json.dumps({'course_info': course_info}, cls=ComplexEncoder))
+'''
+def course_visit_count(request):
+    if(request.method == "POST"):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        course_id = int(data.get('course_id','0'))
+'''
+@csrf_exempt
+def refresh_visit_course_time(request):
+    if(request.method == "POST"):
+        
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        course_id = int(data.get('course_id'))
+        print (course_id)
+        last_view_dict = request.session.get('last_view')
+        now_time = datetime.datetime.now()
+        course = Course.objects.get(id=course_id)
+        if (last_view_dict == None): # have not visited any courses
+            request.session['last_view'] = {course_id: str(now_time)}
+        else:
+            print(last_view_dict)
+            last_view = last_view_dict[str(course_id)]
+            if (last_view != None): # has visited the course
+                last_visit_time = datetime.datetime.strptime(last_view[:-7], "%Y-%m-%d %H:%M:%S")
+                if (now_time >= last_visit_time + datetime.timedelta(hours=24)):
+                    course.visit_count += 1
+                    course.save()
+                    request.session['last_view'][course_id] = str(now_time)
+            else: # have not visited the course
+                course.visit_count += 1
+                course.save()
+                request.session['last_view'][course_id] = str(now_time)
+        print(course.visit_count)
+        
+        return HttpResponse(json.dumps({'visit_count': course.visit_count}))
 
 # User Information Interface
 # REQUIRES: the ajax data should be json data {'username': username}
@@ -319,7 +356,6 @@ def resource_id_list(request):
         print ('course_id: ' + course_id)
         res = interface.resource_courseid_list(course_id)
         return HttpResponse(json.dumps({'resource_id_list': res}, cls=ComplexEncoder))
-
 
 # Handle the uploaded resource
 def handle_upload_resource(f, path):

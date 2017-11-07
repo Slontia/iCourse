@@ -8,7 +8,7 @@
     <el-row style="margin:80px 0px 0px 0px;">
       <el-row>
         <el-col :span="8" :offset="1">
-          <el-button type="button"><i class="el-icon-d-arrow-left"></i>返回课程页面</el-button>
+          <el-button type="button" @click.native="return_course_info_page_clicked()"><i class="el-icon-d-arrow-left"></i>返回课程页面</el-button>
         </el-col>
         <el-col id="resourceTitle" :span="15">
           {{ course }}-课程资源
@@ -346,10 +346,26 @@ export default {
     }
   },
   methods: {
-    closed: function () { alert('还未开放') }
+    closed: function () { alert('还未开放') },
+    return_course_info_page_clicked () {
+      this.$router.push({ path: ('/course/page/' + this.$route.params.course_id + '/') })
+    }
   },
   created: function () {
     $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: '/resource/id/list/',
+      type: 'POST',
+      data: {'course_id': 1},
+      success: function (data) {
+        alert(data['resource_id_list'].length)
+      },
+      error: function () {
+        alert('fail')
+      }
+    })
+    /* $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
       url: '/resource/information/',
@@ -361,7 +377,7 @@ export default {
       error: function () {
         alert('fail')
       }
-    })
+    }) */
   }
 }
 </script>

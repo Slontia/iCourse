@@ -13,6 +13,7 @@
                 <el-row>
                   <el-col :span="8">
                     <p style="padding-top:30px;font-size: xx-large">{{ course_name }}</p>
+                    <p>点击: {{ visit_count }}</p>
                   </el-col>
                   <el-col :span="10">
                     <img :src="img" width="100px" height="100px" style="float:right">
@@ -65,10 +66,19 @@
       <hr style="margin-top: 20px;width:100%" />
         <el-row class="course_resource_head" style="margin-bottom: 20px">
           <el-col :span="24" style="margin-top: 20px">
-            <p style="float: left;font-size: x-large">课程资源</p>
-            <el-button type="primary" @click="check_all_resource_clicked" style="float: right;">
-              查看全部
-            </el-button>
+            <el-col :span="10">
+              <p style="float: left;font-size: x-large">课程资源</p>
+            </el-col> 
+            <el-col :span="2" :offset="9">
+              <el-button type="primary" @click="check_all_resource_clicked" style="float: right;">
+                查看全部
+              </el-button>
+            </el-col> 
+            <el-col :span="2" :offset="1">
+              <el-button type="primary" @click="uploadDialogVisible=true" style="float: right;">
+                上传资源
+              </el-button>
+            </el-col> 
           </el-col>
       </el-row>
         <el-row class = "resource_container" >
@@ -127,7 +137,19 @@
                 </el-col>
       </el-row>
     </div>
+  <el-dialog title="上传资源" :visible.sync="uploadDialogVisible" size="tiny">
+    <el-upload class="upload-demo" ref="upload" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
+      <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+      <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传</el-button>
+      <div slot="tip" class="el-upload__tip">只能上传pdf/ppt/doc/txt/zip文件，且不超过10Mb</div>
+    </el-upload>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="uploadDialogVisible=false">取 消</el-button>
+      <el-button type="primary" @click="uploadDialogVisible = false">确 定</el-button>
+    </span>
+  </el-dialog>
   </div>
+
 </template>
 
 <script type="text/javascript">
@@ -155,10 +177,23 @@ export default {
         self.academy = info['college_id']
         self.hours = info['hours']
         self.intro_info = undefined
-        self.img = undefined
+        self.img = Img
       },
       error: function () {
         alert('fail')
+      }
+    })
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: '/course/visit_count/',
+      type: 'POST',
+      data: postData,
+      success: function (data) {
+        self.visit_count = data['visit_count']
+      },
+      error: function () {
+        alert('点击次数链接异常')
       }
     })
   },
@@ -169,17 +204,31 @@ export default {
       academy: '计算机学院',
       hours: '32',
       intro_info: '计算机学院开设的软件工程课',
+      visit_count: -1,
       img: Img,
       history_contribution_data: [],
-      latest_contribution_data: []
+      latest_contribution_data: [],
+      uploadDialogVisible: false,
+      fileList: []
     }
   },
   methods: {
     return_course_page_clicked: function () {
-      this.$router.push({ path: '/course' })
+      this.$router.push({ path: '/course/' })
     },
     edit_course: function () {},
-    check_all_resource_clicked: function () {}
+    submitUpload () {
+      this.$refs.upload.submit()
+    },
+    handleRemove (file, fileList) {
+      console.log(file, fileList)
+    },
+    handlePreview (file) {
+      console.log(file)
+    },
+    check_all_resource_clicked: function () {
+      this.$router.push({ path: 'resource/' })
+    }
   }
 }
 </script>

@@ -47,6 +47,7 @@ class Course(models.Model):
     hours = models.SmallIntegerField()
     credit = models.SmallIntegerField()
     course_code = models.CharField(max_length=10)
+    visit_count = models.IntegerField()
 
     def __str__(self):
         return str(self.id)
