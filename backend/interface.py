@@ -121,3 +121,24 @@ def resource_courseid_list(course_id):
 #        print(int(ans_id_i),'!!!',int(ans_id_i)+1)
         ans.append(int(ans_id_i))
     return ans
+
+# 根据resource_id和number返回满足数量的课程资源的(resource_id, 上传用户名（若没有用户名则显示为匿名用户）, 下载次数，资源名称) 并且已经按上传时间排好了序
+# 返回类型为list,list中元素的类型为tuple
+def resource_information_list(course_id, number):
+    course_id = list(Course.objects.filter(id=course_id).values_list('course_code', flat=True))[0]
+    count = 0
+    result = []
+    temp = list(Resource.objects.filter(course_code=course_id).values_list('id', 'upload_user_id','download_count','name', 'upload_time'))
+    temp = sorted(temp, key=lambda x:x[4], reverse=True)
+    #print(temp)^M
+    for item in temp:
+        if(item[1] == None):
+            resource = (item[0], '匿名用户', item[2], item[3])
+        else:
+            resource = (item[0], User.objects.get(id=int(item[1])), item[2], item[3])
+        result.append(resource)
+        count += 1
+        if(count == number):
+            break
+    return result
+

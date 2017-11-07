@@ -45,7 +45,7 @@ class LoginForm(forms.Form):
 class ResourceUploadForm(forms.ModelForm):
     class Meta:
         model =  Resource
-        fields =  ['name', 'size', 'upload_user_id','course_id']
+        fields =  ['name', 'size', 'upload_user_id','course_code']
     
     def clean_size(self):
         # 2.5MB - 2621440
