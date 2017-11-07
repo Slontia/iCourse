@@ -336,6 +336,7 @@ def course_query(request):
         json_r = json.loads(bytes.decode(query_res))
         query_list = json_r['response']['docs']
         print (query_list)
+        print(len(query_list))
         return HttpResponse(json.dumps({'query_list': query_list}, cls=ComplexEncoder))
 
 # Course id list(by ohazyi)
