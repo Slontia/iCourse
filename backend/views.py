@@ -410,6 +410,8 @@ def download(request, resource_id): # 2 parameters
         download_record.save()
         '''
         resource = Resource.objects.get(id=resource_id)
+        resource.download_count +=1 # 下载量+1
+        resource.save()
         if(resource.only_url):    # 若仅保存了一个链接
             return HttpResponse(resource.url)
         link = resource.link.url
@@ -438,3 +440,13 @@ def download(request, resource_id): # 2 parameters
             return HttpResponse("未找到该文件")
         return response
 
+
+# Latest Resource Information list
+@crsf_exempt
+def latest_resource_info(request):
+    if(request.method == 'POST'):
+        data = json.loads(request.POST)
+        course_id = int(data.get('course_id'))
+        number = int(data.get('number'))
+        result = interface.resource_information_list(course_id, number)
+        return json.dumps({'result': result})

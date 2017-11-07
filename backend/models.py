@@ -58,7 +58,7 @@ class Resource(models.Model):
     name = models.CharField(blank=False,max_length=30)
     intro = models.TextField()
     upload_user_id = models.PositiveIntegerField(blank=False)
-    course_id = models.PositiveIntegerField(blank=False)
+    #course_id = models.PositiveIntegerField(blank=False)
     upload_time = models.DateTimeField(auto_now_add=True)
     only_url = models.BooleanField(blank=False)           # if only_url is True, link = None && url = uploaded url; else url = None && link = uploaded file.url
     url = models.CharField(blank=True, max_length=100)

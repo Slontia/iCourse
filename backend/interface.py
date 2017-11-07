@@ -110,6 +110,24 @@ def resource_courseid_list(course_id):
 #        print(i)
 #        print(str(i))
         ans_id_i = str(i)
-#        print(int(ans_id_i),'!!!',int(ans_id_i)+1)
+#       print(int(ans_id_i),'!!!',int(ans_id_i)+1)
         ans.append(int(ans_id_i))
     return ans
+
+def resource_information_list(course_id, number):
+    course_id = list(Course.objects.filter(id=course_id).values_list('course_code', flat=True))[0]
+    count = 0
+    result = []
+    temp = list(Resource.objects.filter(course_code=course_id).values_list('id', 'upload_user_id','download_count','name', 'upload_time'))
+    temp = sorted(temp, key=lambda x:x[4], reverse=True)
+    #print(temp)
+    for item in temp:
+        if(item[1] == None):
+            resource = (item[0], '匿名用户', item[2], item[3])
+        else:
+            resource = (item[0], User.objects.get(id=int(item[1])), item[2], item[3])
+        result.append(resource)
+        count += 1
+        if(count == number):
+            break
+    return result
