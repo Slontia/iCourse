@@ -214,10 +214,9 @@ export default {
   },
   methods: {
     return_course_page_clicked: function () {
-      this.$router.push({ path: '/course' })
+      this.$router.push({ path: '/course/' })
     },
     edit_course: function () {},
-    check_all_resource_clicked: function () {},
     submitUpload () {
       this.$refs.upload.submit()
     },
@@ -226,6 +225,9 @@ export default {
     },
     handlePreview (file) {
       console.log(file)
+    },
+    check_all_resource_clicked: function () {
+      this.$router.push({ path: 'resource/' })
     }
   }
 }
