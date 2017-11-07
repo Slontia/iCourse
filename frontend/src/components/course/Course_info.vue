@@ -165,7 +165,7 @@ export default {
   beforeCreate () {
     var self = this
     var course_id = this.$route.params.course_id
-    var postData = { 'course_id': course_id}
+    var postData = { 'course_id': course_id }
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
