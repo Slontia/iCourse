@@ -480,10 +480,14 @@ def download(request, resource_id): # 2 parameters
 
 
 # Latest Resource Information list
+# url:/resource/latest/
 @csrf_exempt
 def latest_resource_info(request):
     if(request.method == 'POST'):
-        data = json.loads(request.POST)
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        #print(type(data))
+        #print(request.POST['course_id'])
         course_id = int(data.get('course_id'))
         number = int(data.get('number'))
         result = interface.resource_information_list(course_id, number)
