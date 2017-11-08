@@ -40,8 +40,7 @@ class RegisterForm(forms.Form):
         gender = self.cleaned_data['gender']
         if(gender != '1' and gender != '2' and gender != '0'):    # '1':男 '2':女 '0':保密
             raise forms.ValidationError("性别错误")
-        return gender
-    
+        return gender   
 
 
 class LoginForm(forms.Form):
@@ -68,3 +67,22 @@ class ResourceUploadForm(forms.ModelForm):
         if(size > MAX_UPLOAD_SIZE):
             raise forms.ValidationError("文件不能超过10MB")
         return size
+
+
+class UserInfoModifyForm(forms.Form):
+    nickname = forms.CharField(required=False, max_length=20)
+    gender = forms.CharField(required=False, max_length=20)
+    intro = forms.CharField(required=False, max_length=100)
+    college_id = forms.IntegerField(required=False)
+
+    def clean_gender(self):
+        gender = self.cleaned_data['gender']
+        if(gender != '1' and gender != '2' and gender != '0'):    # '1':男 '2':女 '0':保密
+            raise forms.ValidationError("性别错误")
+        return gender
+
+    def clean_college_id(self):
+        college_id = int(self.cleaned_data['college_id'])
+        if(college_id <= 0):
+            raise forms.ValidationError("学院错误")
+        return college_id

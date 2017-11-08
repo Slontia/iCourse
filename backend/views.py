@@ -403,7 +403,7 @@ def resourceUpload(request):
             RUForm = ResourceUploadForm({'name':name, 'size':size, 'upload_user_id':upload_user_id, 'course_code':course_code})
             if(RUForm.is_valid()):
                 resource_up = Resource()
-                resource_ip.only_url = True
+                resource_up.only_url = True
                 resource_up.name = name
                 resource_up.size = size     # bytes
                 resource_up.intro = intro
@@ -506,3 +506,31 @@ def user_report(request):
         report = Report.objects.create(report_user_id=report_user_id, be_reported_resource_id=be_reported_resource_id)
         report.save()
         return HttpResponse(json.dumps({'error':0}))
+
+# User Information Modify Interface
+# REQUIRES: need {'nickname':nickname, 'gender':gender, 'intro':intro, 'college_id':college_id}
+# MODIFIES: modify user information in backend_userprofile
+# EFFECTS: if success, return {'error': 0}, else return {'error': 1}
+# URL:暂时未定
+@csrf_exempt
+def user_info_modify(request):
+    if(request.method == 'POST'):
+        if(not request.user.is_authenticated()):
+            return HttpResponse(json.dumps({'error':1}))
+        nickname = str(request.POST.get('nickname'))
+        gender = str(request.POST.get('gender'))
+        intro = str(request.POST.get('intro'))
+        college_id = int(request.POST.get('college_id'))
+        UIMForm = UserInfoModifyForm({'nickname':nickname, 'gender':gender, 'intro':intro, 'college_id':college_id})
+
+        if(UIMForm.is_valid()):
+            userprofile = UserProfile.objects.get(user_id=request.user.id)
+            userprofile.nickname = nickname
+            userprofile.gender = gender
+            userprofile.intro = intro
+            userprofile.college_id = college_id
+            userprofile.save()
+            print('Modify Success')
+            return HttpResponse(json.dumps({'error':0}))
+        else:         
+            return HttpResponse(json.dumps({'error':1}))
