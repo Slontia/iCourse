@@ -56,7 +56,7 @@
             <img :src="zipImg" style="height:120px;"></img>
           </el-row>
           <el-row style="text-align:center;">
-            <el-button type="primary">点击下载</el-button>
+            <el-button type="primary" @click.native="gotoDownload">点击下载</el-button>
           </el-row>
         </el-col>
       </el-row>
@@ -98,6 +98,9 @@ export default {
     }
   },
   methods: {
+    gotoDownload: function () {
+      window.open(this.$store.state.url)
+    }
   }
 }
 </script>
