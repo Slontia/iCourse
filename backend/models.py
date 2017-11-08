@@ -141,12 +141,12 @@ class R_Resource_User_Like(models.Model):
     def __str__(self):
         return str(self.id)
 
-# Report
+# Report Model
 class Report(models.Model):
     report_time = models.DateTimeField(auto_now_add=True)
-    report_user_id = models.PositiveIntegerField()
+    report_user_id = models.PositiveIntegerField(blank=True)
     be_reported_resource_id = models.PositiveIntegerField(blank=False)
-    already_handle = models.BooleanField(blank=False, default=False)
+    already_handle = models.BooleanField(blank=False, default=False)    # this field represents that if the administrator has handled the report, default=False, after handling, alter this field to True
 
     def __str__(self):
         return str(self.id)

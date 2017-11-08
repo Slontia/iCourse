@@ -490,3 +490,19 @@ def latest_resource_info(request):
         number = int(request.POST.get('number'))
         result = interface.resource_information_list(course_id, number)
         return HttpResponse(json.dumps({'result': result}))
+
+# Repost Interface
+# REQUIRES: POST method, only anthenticated user can report, need {'be_reported_resource_id': be_reported_resource_id}
+# MODIFIES: insert a record in backend_report table in database
+# EFFECTS: if success, return {'error': 0}, else return {'error': 1}
+# URL: 暂时未定
+@csrf_exempt
+def user_report(request):
+    if(request.method == 'POST'):
+        if(not request.user.is_authenticated()):
+            return HttpResponse(json.dumps({'error': 1}))
+        be_reported_resource_id = request.POST.get('be_reported_resource_id')
+        report_user_id = request.user.id
+        report = Report.objects.create(report_user_id=report_user_id, be_reported_resource_id=be_reported_resource_id)
+        report.save()
+        return HttpResponse(json.dumps({'error':0}))
