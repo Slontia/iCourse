@@ -329,7 +329,7 @@ def course_query(request):
         query = str(data.get('keyword'))
         print ('query: ' + query)
         cs_url = 'http://10.2.28.124:8080/solr/mynode/select?'#q=Bill&wt=json&indent=true'
-        param  = {'q':query, 'fl':'id,name,college_id,class_id,credit,hours', 'wt':'json', 'indent':'true'}
+        param  = {'q':query, 'fl':'id,name,college_id,class_id,credit,hours', 'rows':'10000', 'wt':'json', 'indent':'true'}
         
         r = requests.get(cs_url, params = param)
         
@@ -356,9 +356,6 @@ def resource_id_list(request):
         course_id = str(data.get('course_id'))
         print ('course_id: ' + course_id)
         res = interface.resource_courseid_list(course_id)
-        print("**********")
-        print(res)
-        print("**********")
         return HttpResponse(json.dumps({'resource_id_list': res}, cls=ComplexEncoder))
 
 # Handle the uploaded resource
@@ -486,8 +483,8 @@ def download(request, resource_id): # 2 parameters
 @csrf_exempt
 def latest_resource_info(request):
     if(request.method == 'POST'):
-        data = json.loads(request.POST)
-        course_id = int(data.get('course_id'))
-        number = int(data.get('number'))
+        # data = json.loads(request.POST)
+        course_id = int(request.POST.get('course_id'))
+        number = int(request.POST.get('number'))
         result = interface.resource_information_list(course_id, number)
-        return json.dumps({'result': result})
+        return HttpResponse(json.dumps({'result': result}))

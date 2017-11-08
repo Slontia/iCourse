@@ -200,7 +200,7 @@ export default {
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
-          url: get_url('/course/searching/'),
+          url: '/course/searching/',
           type: 'POST',
           data: post_data,
           success: function (data) {

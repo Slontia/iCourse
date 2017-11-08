@@ -129,7 +129,10 @@ def resource_courseid_list(course_id):
 # 根据resource_id和number返回满足数量的课程资源的(resource_id, 上传用户名（若没有用户名则显示为匿名用户）, 下载次数，资源名称) 并且已经按上传时间排好了序
 # 返回类型为list,list中元素的类型为tuple
 def resource_information_list(course_id, number):
-    course_id = list(Course.objects.filter(id=course_id).values_list('course_code', flat=True))[0]
+    course_id = list(Course.objects.filter(id=course_id).values_list('course_code', flat=True))
+    if(len(course_id) == 0):
+        return []
+    course_id = course_id[0]
     count = 0
     result = []
     temp = list(Resource.objects.filter(course_code=course_id).values_list('id', 'upload_user_id','download_count','name', 'upload_time'))
@@ -139,10 +142,9 @@ def resource_information_list(course_id, number):
         if(item[1] == None):
             resource = (item[0], '匿名用户', item[2], item[3])
         else:
-            resource = (item[0], User.objects.get(id=int(item[1])), item[2], item[3])
+            resource = {'resource_id':item[0], 'username':User.objects.get(id=int(item[1])), 'download_count':item[2], 'name':item[3]}
         result.append(resource)
         count += 1
         if(count == number):
             break
     return result
-
