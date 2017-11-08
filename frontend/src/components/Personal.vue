@@ -145,6 +145,7 @@ export default {
       type: 'POST',
       data: {'username': personalSelf.username},
       success: function (data) {
+        personalSelf.username = data['user_info']['username']
         personalSelf.nickname = data['user_info']['nickname']
         if (data['user_info']['gender'] === '1') {
           personalSelf.gender = '男'

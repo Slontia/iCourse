@@ -317,7 +317,8 @@ export default {
             switch (data['error']) {
               case 0:
                 self.login_form_visible = false
-                self.username = post_data['username']
+                // self.username = post_data['username']
+                self.username = data['username']
                 self.is_login = true
                 alert('登录成功')
                 break
