@@ -189,7 +189,7 @@
 import Header from '../general/Header.vue'
 import Img from '../../assets/pdf.png'
 import $ from 'jquery'
-import get_url from '../general/getUrl.js'
+// import get_url from '../general/getUrl.js'
 
 export default {
   name: 'course_info',
@@ -201,7 +201,7 @@ export default {
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: get_url('/course/course_info/'),
+      url: '/course/course_info/',
       type: 'POST',
       data: postData,
       success: function (data) {
@@ -220,7 +220,7 @@ export default {
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: get_url('/course/visit_count/'),
+      url: '/course/visit_count/',
       type: 'POST',
       data: postData,
       success: function (data) {
@@ -292,7 +292,7 @@ export default {
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: get_url('/resource/latest/'),
+      url: '/resource/latest/',
       type: 'POST',
       data: postData,
       success: function (data) {

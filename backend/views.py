@@ -146,33 +146,38 @@ def course_visit_count(request):
 '''
 @csrf_exempt
 def refresh_visit_course_time(request):
+    def refresh(now_time):
+        course = Course.objects.get(id=course_id)
+        course.visit_count += 1
+        course.save()
+        request.session.modified = True
+        request.session['last_view'][course_id] = str(now_time)
+        return HttpResponse(json.dumps({'visit_count': course.visit_count}))
+
     if(request.method == "POST"):
-        
         data = json.dumps(request.POST)
         data = json.loads(data)
         course_id = int(data.get('course_id'))
-        print (course_id)
+
         last_view_dict = request.session.get('last_view')
         now_time = datetime.datetime.now()
-        course = Course.objects.get(id=course_id)
         if (last_view_dict == None): # have not visited any courses
-            request.session['last_view'] = {course_id: str(now_time)}
+            request.session['last_view'] = {}
+            return refresh(now_time)
         else:
+            print (66666666)
             print(last_view_dict)
-            last_view = last_view_dict[str(course_id)]
+            last_view = last_view_dict.get(str(course_id))
             if (last_view != None): # has visited the course
                 last_visit_time = datetime.datetime.strptime(last_view[:-7], "%Y-%m-%d %H:%M:%S")
                 if (now_time >= last_visit_time + datetime.timedelta(hours=24)):
-                    course.visit_count += 1
-                    course.save()
-                    request.session['last_view'][course_id] = str(now_time)
+                    return refresh(now_time)
             else: # have not visited the course
-                course.visit_count += 1
-                course.save()
-                request.session['last_view'][course_id] = str(now_time)
-        print(course.visit_count)
+                print (5555555555)
+                return refresh(now_time)
+        return HttpResponse(json.dumps({'visit_count': Course.objects.get(id=course_id).visit_count}))
         
-        return HttpResponse(json.dumps({'visit_count': course.visit_count}))
+        
 
 # User Information Interface
 # REQUIRES: the ajax data should be json data {'username': username}
@@ -202,9 +207,9 @@ def resource_information(request):
         #data = json.loads(request.body.decode())
         resource_id = int(request.POST.get('resource_id'))
         resource_info = interface.resource_information(resource_id)
-        print("******************")
-        print(resource_info)
-        print("******************")
+        #print("******************")
+        #print(resource_info)
+        #print("******************")
         return HttpResponse(json.dumps({'resource_info': resource_info}, cls=ComplexEncoder))
 
 

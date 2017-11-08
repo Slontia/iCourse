@@ -79,7 +79,7 @@
 /* eslint-disable brace-style */
 /* eslint-disable camelcase */
 import $ from 'jquery'
-import get_url from './getUrl.js'
+// import get_url from './getUrl.js'
 // import json from 'json5'
 export default {
   name: 'Header',
@@ -88,7 +88,7 @@ export default {
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: get_url('/sign/logged_in/'),
+      url: '/sign/logged_in/',
       type: 'POST',
       success: function (data) {
         self.username = data['username']
@@ -277,7 +277,7 @@ export default {
       $.ajax({
         ContentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        url: get_url('/sign/logout/'),
+        url: '/sign/logout/',
         type: 'POST',
         success: function (data) {
           switch (data['error']) {
@@ -308,7 +308,7 @@ export default {
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
-          url: get_url('/sign/login/'),
+          url: '/sign/login/',
           type: 'POST',
           data: post_data,
           success: function (data) {
@@ -362,7 +362,7 @@ export default {
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
-          url: get_url('/sign/register/'),
+          url: '/sign/register/',
           type: 'POST',
           data: post_data,
           success: function (data) {

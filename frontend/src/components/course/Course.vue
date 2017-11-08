@@ -71,7 +71,7 @@
 /* eslint-disable camelcase */
 /* eslint-disable space-infix-ops */
 import Header from '../general/Header'
-import get_url from '../general/getUrl'
+// import get_url from '../general/getUrl'
 import $ from 'jquery'
 export default {
   name: 'Course',
@@ -146,7 +146,7 @@ export default {
             ContentType: 'application/json; charset=utf-8',
             dataType: 'json',
             type: 'POST',
-            url: get_url('/course/college_course/'),
+            url: '/course/college_course/',
             data: temp1,
             async: false,
             success: function (data) {
@@ -202,7 +202,7 @@ export default {
             ContentType: 'application/json; charset=utf-8',
             dataType: 'json',
             type: 'POST',
-            url: get_url('/course/classification_course/'),
+            url: '/course/classification_course/',
             data: temp2,
             success: function (data) {
               console.log('ok')
@@ -235,7 +235,7 @@ export default {
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
-          url: get_url('/course/searching/'),
+          url: '/course/searching/',
           type: 'POST',
           data: post_data,
           async: false,
