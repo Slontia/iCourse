@@ -206,12 +206,12 @@
 import Header from '../general/Header'
 import ResourceDialog from '../general/ResourceDialog'
 import DefaultImg from './../../assets/headportrait.jpg'
-import DocImg from './../../assets/doc.jpg'
-import PdfImg from './../../assets/pdf.jpg'
-import PptImg from './../../assets/ppt.jpg'
-import JpgImg from './../../assets/jpg.jpg'
-import ZipImg from './../../assets/zip.jpg'
-import RarImg from './../../assets/rar.jpg'
+import DocImg from './../../assets/fileico/docx_win.png'
+import PdfImg from './../../assets/fileico/pdf.png'
+import PptImg from './../../assets/fileico/pptx_win.png'
+import JpgImg from './../../assets/fileico/jpeg.png'
+import ZipImg from './../../assets/fileico/zip.png'
+import RarImg from './../../assets/fileico/rar.png'
 import $ from 'jquery'
 export default {
   name: 'resource',
