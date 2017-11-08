@@ -306,6 +306,20 @@ export default {
   },
   created: function () {
     var ss = this
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: '/course/course_info/',
+      type: 'POST',
+      async: false,
+      data: {'course_id': this.$route.params.course_id},
+      success: function (data) {
+        ss.course = data['course_info']['name']
+      },
+      error: function () {
+        alert('fail')
+      }
+    })
     let resourceSelf = []
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
@@ -313,7 +327,7 @@ export default {
       url: '/resource/id/list/',
       type: 'POST',
       async: false,
-      data: {'course_id': 1125},
+      data: {'course_id': this.$route.params.course_id},
       success: function (data) {
         for (var i = 0; i < data['resource_id_list'].length; i++) {
           $.ajax({
