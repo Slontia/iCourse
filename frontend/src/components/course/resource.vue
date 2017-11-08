@@ -56,7 +56,7 @@
         <el-row v-for="item in resourcesData" v-if="item.col1" class="hoverChange"  @click.native="openDialog(item.id)">
           <el-row style="margin:20px 0px 0px 0px;" >
             <el-col :span="8" :offset="1">
-              <img :src="zipImg" style="height:100px;"></img>
+              <img :src=item.img style="height:100px;"></img>
             </el-col>
             <el-col :span="14" :offset="1">
               <el-row class="resourseTitle">
@@ -78,7 +78,7 @@
               <i class="el-icon-message"></i>&nbsp;{{ item.messages }}
             </el-col>
             <el-col :span="2" :offset="5">
-              <img :src="zipImg" style="height:18px;"></img>
+              <img :src='defaultImg' style="height:18px;"></img>
             </el-col>
             <el-col :span="4">
               <a href="">{{ item.author }}</a>
@@ -97,7 +97,7 @@
           <el-row v-for="item in resourcesData" v-if="item.col2" class="hoverChange"  @click.native="openDialog(item.id)">
           <el-row style="margin:20px 0px 0px 0px;" >
             <el-col :span="8" :offset="1">
-              <img :src="zipImg" style="height:100px;"></img>
+              <img :src=item.img style="height:100px;"></img>
             </el-col>
             <el-col :span="14" :offset="1">
               <el-row class="resourseTitle">
@@ -119,7 +119,7 @@
               <i class="el-icon-message"></i>&nbsp;{{ item.messages }}
             </el-col>
             <el-col :span="2" :offset="5">
-              <img :src="zipImg" style="height:18px;"></img>
+              <img :src='defaultImg' style="height:18px;"></img>
             </el-col>
             <el-col :span="4">
               <a href="">{{ item.author }}</a>
@@ -137,7 +137,7 @@
           <el-row v-for="item in resourcesData" v-if="item.col3" class="hoverChange" @click.native="openDialog(item.id)">
           <el-row style="margin:20px 0px 0px 0px;" >
             <el-col :span="8" :offset="1">
-              <img :src="zipImg" style="height:100px;"></img>
+              <img :src=item.img style="height:100px;"></img>
             </el-col>
             <el-col :span="14" :offset="1">
               <el-row class="resourseTitle">
@@ -159,7 +159,7 @@
               <i class="el-icon-message"></i>&nbsp;{{ item.messages }}
             </el-col>
             <el-col :span="2" :offset="5">
-              <img :src="zipImg" style="height:18px;"></img>
+              <img :src='defaultImg' style="height:18px;"></img>
             </el-col>
             <el-col :span="4">
               <a href="">{{ item.author }}</a>
@@ -191,7 +191,13 @@
 <script>
 import Header from '../general/Header'
 import ResourceDialog from '../general/ResourceDialog'
-import ZipImg from './../../assets/headportrait.jpg'
+import DefaultImg from './../../assets/headportrait.jpg'
+import DocImg from './../../assets/doc.jpg'
+import PdfImg from './../../assets/pdf.jpg'
+import PptImg from './../../assets/ppt.jpg'
+import JpgImg from './../../assets/jpg.jpg'
+import ZipImg from './../../assets/zip.jpg'
+import RarImg from './../../assets/rar.jpg'
 import $ from 'jquery'
 export default {
   name: 'resource',
@@ -214,6 +220,12 @@ export default {
       ],
       sortMode: '按上传时间排序',
       zipImg: ZipImg,
+      pdfImg: PdfImg,
+      pptImg: PptImg,
+      docImg: DocImg,
+      jpgImg: JpgImg,
+      rarImg: RarImg,
+      defaultImg: DefaultImg,
       resourcesData: []
     }
   },
@@ -248,6 +260,7 @@ export default {
     }
   },
   created: function () {
+    var ss = this
     let resourceSelf = []
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
@@ -277,7 +290,8 @@ export default {
                 messages: 0,
                 author: '果冻',
                 time: '2017-3-26',
-                id: 0
+                id: 0,
+                img: ''
               }
               if (i % 3 === 0) {
                 tt.col1 = true
@@ -294,6 +308,26 @@ export default {
               tt.author = rdata['resource_info']['upload_user_id']
               tt.time = rdata['resource_info']['upload_time']
               tt.id = rdata['resource_info']['id']
+              tt.img = ss.defaultImg
+              var tL = tt.name.length
+              if (tt.name[tL - 3].toLowerCase() === 'd' && tt.name[tL - 2].toLowerCase() === 'o' && tt.name[tL - 1].toLowerCase() === 'c') {
+                tt.img = ss.docImg
+              }
+              if (tt.name[tL - 3].toLowerCase() === 'p' && tt.name[tL - 2].toLowerCase() === 'd' && tt.name[tL - 1].toLowerCase() === 'f') {
+                tt.img = ss.pdfImg
+              }
+              if (tt.name[tL - 3].toLowerCase() === 'p' && tt.name[tL - 2].toLowerCase() === 'p' && tt.name[tL - 1].toLowerCase() === 't') {
+                tt.img = ss.pptImg
+              }
+              if (tt.name[tL - 3].toLowerCase() === 'z' && tt.name[tL - 2].toLowerCase() === 'i' && tt.name[tL - 1].toLowerCase() === 'p') {
+                tt.img = ss.zipImg
+              }
+              if (tt.name[tL - 3].toLowerCase() === 'j' && tt.name[tL - 2].toLowerCase() === 'p' && tt.name[tL - 1].toLowerCase() === 'g') {
+                tt.img = ss.jpgImg
+              }
+              if (tt.name[tL - 3].toLowerCase() === 'r' && tt.name[tL - 2].toLowerCase() === 'a' && tt.name[tL - 1].toLowerCase() === 'r') {
+                tt.img = ss.rarImg
+              }
               resourceSelf.push(tt)
             },
             error: function () {

@@ -20,7 +20,7 @@
               上传者:
             </el-col>
             <el-col :span="16">
-              <img :src="zipImg" style="height:18px;"></img>
+              <img :src="defaultImg" style="height:18px;"></img>
               <a href="">{{ this.$store.state.author }}</a>
             </el-col>
           </el-row>
@@ -53,7 +53,7 @@
         </el-col>
         <el-col :span="7">
           <el-row style="text-align:center;">
-            <img :src="zipImg" style="height:120px;"></img>
+            <img :src='img' style="height:120px;"></img>
           </el-row>
           <el-row style="text-align:center;">
             <el-button type="primary" @click.native="gotoDownload">点击下载</el-button>
@@ -89,17 +89,52 @@
 </template>
 
 <script>
-import ZipImg from './../../assets/headportrait.jpg'
+import DefaultImg from './../../assets/headportrait.jpg'
+import DocImg from './../../assets/doc.jpg'
+import PdfImg from './../../assets/pdf.jpg'
+import PptImg from './../../assets/ppt.jpg'
+import JpgImg from './../../assets/jpg.jpg'
+import ZipImg from './../../assets/zip.jpg'
+import RarImg from './../../assets/rar.jpg'
 export default {
   name: 'ResourceDialog',
   data () {
     return {
-      zipImg: ZipImg
+      zipImg: ZipImg,
+      pdfImg: PdfImg,
+      pptImg: PptImg,
+      docImg: DocImg,
+      jpgImg: JpgImg,
+      rarImg: RarImg,
+      defaultImg: DefaultImg,
+      img: ''
     }
   },
   methods: {
     gotoDownload: function () {
       window.open(this.$store.state.url)
+    }
+  },
+  created: function () {
+    this.img = this.defaultImg
+    let tL = this.$store.state.name.length
+    if (this.$store.state.name[tL - 3].toLowerCase() === 'd' && this.$store.state.name[tL - 2].toLowerCase() === 'o' && this.$store.state.name[tL - 1].toLowerCase() === 'c') {
+      this.img = this.docImg
+    }
+    if (this.$store.state.name[tL - 3].toLowerCase() === 'p' && this.$store.state.name[tL - 2].toLowerCase() === 'p' && this.$store.state.name[tL - 1].toLowerCase() === 't') {
+      this.img = this.pptImg
+    }
+    if (this.$store.state.name[tL - 3].toLowerCase() === 'p' && this.$store.state.name[tL - 2].toLowerCase() === 'd' && this.$store.state.name[tL - 1].toLowerCase() === 'f') {
+      this.img = this.pdfImg
+    }
+    if (this.$store.state.name[tL - 3].toLowerCase() === 'z' && this.$store.state.name[tL - 2].toLowerCase() === 'i' && this.$store.state.name[tL - 1].toLowerCase() === 'p') {
+      this.img = this.zipImg
+    }
+    if (this.$store.state.name[tL - 3].toLowerCase() === 'r' && this.$store.state.name[tL - 2].toLowerCase() === 'a' && this.$store.state.name[tL - 1].toLowerCase() === 'r') {
+      this.img = this.rarImg
+    }
+    if (this.$store.state.name[tL - 3].toLowerCase() === 'j' && this.$store.state.name[tL - 2].toLowerCase() === 'p' && this.$store.state.name[tL - 1].toLowerCase() === 'g') {
+      this.img = this.jpgImg
     }
   }
 }
