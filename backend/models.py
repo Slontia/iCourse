@@ -141,4 +141,13 @@ class R_Resource_User_Like(models.Model):
     def __str__(self):
         return str(self.id)
 
+# Report
+class Report(models.Model):
+    report_time = models.DateTimeField(auto_now_add=True)
+    report_user_id = models.PositiveIntegerField()
+    be_reported_resource_id = models.PositiveIntegerField(blank=False)
+    already_handle = models.BooleanField(blank=False, default=False)
+
+    def __str__(self):
+        return str(self.id)
 
