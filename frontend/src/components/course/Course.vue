@@ -31,14 +31,15 @@
                             <!-- course table -->
                             <el-col :span="24">
                             <el-table :data="courses" highlight-current-row v-loading="load_courses" style="width: auto;" height="500" stripe>
-                              <el-table-column type="index" label="序号"width=""></el-table-column>
-                              <el-table-column prop="course_id" label="课程编号"  sortable></el-table-column>
-                              <el-table-column prop="course_name" label="课程名"  sortable></el-table-column>
-                              <el-table-column prop="course_academy" label="开设学院"  sortable></el-table-column>
-                              <el-table-column prop="course_class" label="课程分类"  sortable></el-table-column>
+                              <el-table-column type="index" label=" 序 号 " align="center" width="100"></el-table-column>
+                              <el-table-column prop="course_id" label="课程编号"  sortable align="center"></el-table-column>
+                              <el-table-column prop="course_name" label="课程名"  sortable align="center"></el-table-column>
+                              <el-table-column prop="course_academy" label="开设学院"  sortable align="center"></el-table-column>
+                              <el-table-column prop="course_class" label="课程分类"  sortable align="center"></el-table-column>
+                              <!--
                               <el-table-column prop="course_hours" label="学时"  sortable></el-table-column>
-                              <el-table-column prop="course_credit" label="学分"  sortable></el-table-column>
-                              <el-table-column label="操作">
+                            --><el-table-column prop="course_credit" label="学分"  sortable align="center"></el-table-column>
+                              <el-table-column label="操作" align="center">
                               <template slot-scope="scope">
                                 <el-button
                                   size="mini"
@@ -50,7 +51,7 @@
 
                             <!-- tools bar beneath-->
                             <el-col :span="24" class="tools_bar_bottom">
-                              <el-pagination layout="prev,pager,next" @current_change="handle_current_change" :page-size="20" :total="total" style="float:right;"></el-pagination>
+                              <el-pagination layout="prev,pager,next" @current-change="handle_current_change" :page-size="page_size" :total="total" :current-page.sync="current_page" style="float:right;"></el-pagination>
                             </el-col>
                             </section>
                           </transition>
@@ -68,6 +69,7 @@
 <script type="text/javascript">
 /* eslint-disable brace-style */
 /* eslint-disable camelcase */
+/* eslint-disable space-infix-ops */
 import Header from '../general/Header'
 import get_url from '../general/getUrl'
 import $ from 'jquery'
@@ -92,51 +94,84 @@ export default {
                    { label: '3系' },
                    { label: '4系' },
                    { label: '5系' },
-                   { label: '6系' }
+                   { label: '6系' },
+                   { label: '7系' },
+                   { label: '9系' },
+                   { label: '10系' },
+                   { label: '11系' },
+                   { label: '12系' },
+                   { label: '13系' },
+                   { label: '14系' },
+                   { label: '15系' },
+                   { label: '17系' },
+                   { label: '19系' },
+                   { label: '20系' },
+                   { label: '21系' },
+                   { label: '26系' },
+                   { label: '27系' }
         ]
       }],
       filters: {
         name: ''
       },
       total: 0, // total courses
-      page: 1, // current page
+      current_page: 1, // current page
+      page_size: 10,
       load_courses: false, // v-loading
       courses: [],
+      storage: [],
       course_bread_message: ''
     }
   },
   methods: {
     to_course_page (index) {
-      alert(index)
-      alert(this.courses[index]['college_id'])
       this.$router.push({ path: ('/course/page/' + this.courses[index]['course_id'] + '/') })
     },
     handle_current_change (value) {
-      this.page = value
-      // todo:get_courses
+      this.current_page = value
+      this.courses = []
+      for (var i = 0; i < this.page_size; i++) {
+        this.courses.push(this.storage[(value-1)*this.page_size+i])
+      }
     },
     course_tree_clicked (data, node) {
       // todo: use api to get the corresponding courses
       if (typeof (node.parent.label) !== 'undefined') {
         this.course_bread_message = node.parent.label + '->' + node.label
         this.load_courses = true
+        var self = this
         if (node.parent.label === '开设院系') {
-          var temp1 = { 'college_id': node.label[0] }
+          var temp1 = { 'college_id': node.label.substr(0, node.label.length-1) }
           $.ajax({
             ContentType: 'application/json; charset=utf-8',
             dataType: 'json',
             type: 'POST',
             url: get_url('/course/college_course/'),
             data: temp1,
+            async: false,
             success: function (data) {
-              this.courses = []
-              console.log('ok')
-              alert('success')
+              // 初始化storage和courses以及当前页数
+              var info_list = data['course_info_list']
+              self.storage = []
+              self.total = info_list.length
+              for (var i = 0; i < info_list.length; i++) {
+                var item = {
+                  'course_name': info_list[i]['name'],
+                  'course_id': info_list[i]['id'],
+                  'course_academy': info_list[i]['college_id'],
+                  'course_hours': info_list[i]['hours'],
+                  'course_credit': info_list[i]['credit'],
+                  'course_class': info_list[i]['class_id']
+                }
+                self.storage.push(item)
+              }
             },
             error: function () {
-              alert('错误')
+              alert('拉取信息失败!')
             }
           })
+          self.load_courses = false
+          self.handle_current_change(1)
         }
         else if (node.parent.label === '课程类别') {
           var temp2 = { 'class_id': '' }
@@ -181,7 +216,6 @@ export default {
         else {
           alert('结点不存在')
         }
-        this.load_courses = false
       }
       else {
         this.course_bread_message = node.label
@@ -192,6 +226,7 @@ export default {
         alert('搜索内容不能为空！')
       }
       else {
+        this.load_courses = true
         this.course_bread_message = this.filters.name
         var post_data = {
           'keyword': this.filters.name
@@ -200,16 +235,16 @@ export default {
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
-          url: '/course/searching/',
+          url: get_url('/course/searching/'),
           type: 'POST',
           data: post_data,
+          async: false,
           success: function (data) {
-            alert('成功！开始搜索')
             self.total = data['query_list'].length
-            self.courses = []
+            self.storage = []
             for (var i = 0; i < data['query_list'].length; i++) {
               var course = data['query_list'][i]
-              self.courses.push({
+              self.storage.push({
                 'course_name': course['name'],
                 'course_id': course['id'],
                 'course_academy': course['college_id'],
@@ -223,6 +258,8 @@ export default {
             alert('连接服务器异常')
           }
         })
+        self.load_courses = false
+        self.handle_current_change(1)
       }
     },
     add_course_clicked () {
@@ -252,7 +289,7 @@ export default {
         oveflow:hidden;
       }
       .course_tree {
-        height: 600px;
+        height: 800px;
         width: auto;
         min-width: 20%;
         margin-right: 10px;

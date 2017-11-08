@@ -94,10 +94,11 @@ def userRegister(request):
     
     return HttpResponse(json.dumps({'error': 0}))
 
+# modified by xdt 2017.11.8
 # the Interface of search course list by college id
 # REQUIRES: the ajax data should be json data {'college_id': class_id}
 # MODIFIES: None
-# EFFECTS: return json data {'course_id_list': course_id_list}, course_id_list is a list
+# EFFECTS: return json data {'course_info_list': course_info_list}, course_info_list is a list
 # URL: /course/college_course/
 @csrf_exempt
 def course_by_college(request):
@@ -105,14 +106,14 @@ def course_by_college(request):
         data = json.dumps(request.POST)
         data = json.loads(data)
         college_id = int(data.get('college_id'))
-        course_id_list = interface.college_course_list(6)
-        print(course_id_list)
-        return HttpResponse(json.dumps({'course_id_list': course_id_list}, cls=ComplexEncoder))
+        course_info_list = interface.college_course_list(college_id)
+        return HttpResponse(json.dumps({'course_info_list': course_info_list}, cls=ComplexEncoder))
 
+# modified by xdt 2017.11.8
 # the Interface of search course list by class id
 # REQUIRES: the ajax data should be json data {'class_id': class_id}
 # MODIFIES: None
-# EFFECTS: return json data {'course_id_list': course_id_list}, course_id_list is a list
+# EFFECTS: return json data {'course_info_list': course_info_list}, course_info_list is a list
 # URL: /course/classification_course/
 @csrf_exempt
 def course_by_class(request):
@@ -120,8 +121,8 @@ def course_by_class(request):
         data = json.dumps(request.POST)
         data = json.loads(data)
         class_id = int(data.get('class_id'))
-        course_id_list = interface.classification_course_list(class_id)
-        return HttpResponse(json.dumps({'course_id_list': course_id_list}, cls=ComplexEncoder))
+        course_info_list = interface.classification_course_list(class_id)
+        return HttpResponse(json.dumps({'course_info_list': course_info_list}, cls=ComplexEncoder))
 
 # Course Information Interface
 # REQUIRES: the ajax data should be json data {'course_id': class_id}
@@ -133,7 +134,7 @@ def course_information(request):
     if(request.method == "POST"):
         data = json.dumps(request.POST)
         data = json.loads(data)
-        course_id = int(data.get('course_id','0'))
+        course_id = int(data.get('course_id'))
         course_info = interface.course_information(course_id)
         return HttpResponse(json.dumps({'course_info': course_info}, cls=ComplexEncoder))
 '''
@@ -322,6 +323,26 @@ def http_get(url):
 #          query_list is a list whose element is dicts like (user_id, total scores),
 #          such as {'college_id': 10, 'class_id': 55, 'name': '安卓', 'credit': 5, 'id': 9, 'hours': 10}
 #          the list is ordered by id temporaily (can be modified to revelance)
+#@csrf_exempt
+#def course_query(request):
+#    if(request.method == "POST"):
+#        data = json.dumps(request.POST) # new
+#        data = json.loads(data)
+#        #data = json.loads(request.body.decode())
+#        query = str(data.get('keyword'))
+#        print ('query: ' + query)
+#        cs_url = 'http://10.2.28.124:8080/solr/mynode/select?'#q=Bill&wt=json&indent=true'
+#        param  = {'q':query, 'fl':'id,name,college_id,class_id,credit,hours', 'rows':'10000', 'wt':'json', 'indent':'true'}
+#        
+#        r = requests.get(cs_url, params = param)
+#        
+#        query_res = http_get(r.url)
+#        #json_r = bytes.decode(query_res)
+#        json_r = json.loads(bytes.decode(query_res))
+#        query_list = json_r['response']['docs']
+#        print (query_list)
+#        print(len(query_list))
+#        return HttpResponse(json.dumps({'query_list': query_list}, cls=ComplexEncoder))
 @csrf_exempt
 def course_query(request):
     if(request.method == "POST"):
@@ -331,17 +352,28 @@ def course_query(request):
         query = str(data.get('keyword'))
         print ('query: ' + query)
         cs_url = 'http://10.2.28.124:8080/solr/mynode/select?'#q=Bill&wt=json&indent=true'
-        param  = {'q':query, 'fl':'id,name,college_id,class_id,credit,hours', 'rows':'10000', 'wt':'json', 'indent':'true'}
-        
+        param  = {'q':query, 'fl':'id,name,college_id,class_id,credit,hours,score', 'rows':1500, 'wt':'json', 'indent':'true'}
+
         r = requests.get(cs_url, params = param)
-        
+
         query_res = http_get(r.url)
         #json_r = bytes.decode(query_res)
         json_r = json.loads(bytes.decode(query_res))
         query_list = json_r['response']['docs']
         print (query_list)
-        print(len(query_list))
-        return HttpResponse(json.dumps({'query_list': query_list}, cls=ComplexEncoder))
+        ans = []
+        for i in query_list:
+            #print("*****   ", i)
+            #print("$$$$$   ", i['score'])
+            if (i['score']>=5):
+                ans.append(i)
+        print("---------------------------------------")
+        print("All: ",len(query_list), "score > 5:",len(ans))
+        print(ans)
+        return HttpResponse(json.dumps({'query_list': ans}, cls=ComplexEncoder))
+        #print(json.dumps({'query_list': query_list}))
+        #print(json.dumps({'query_list': ans}))
+
 
 # Course id list(by ohazyi)
 # REQUIRES: the ajax data should be json data {'query': query}
@@ -391,7 +423,7 @@ def resourceUpload(request):
         if(not request.user.is_authenticated()):    # if the user is not authenticated
             return HttpResponse(json.dumps({'error':1}))
         upload_user_id = request.user.id
-        data = json.loads(request.POST)
+        data = request.POST
         intro = str(data.get('intro'))
         #course_id = int(data.get('course_id'))
         course_code = str(data.get('course_code'))

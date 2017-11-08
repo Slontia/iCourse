@@ -11,11 +11,10 @@
             <div slot="header" class = "clearfix">
               <span style="line-height:36px;text-align: left;">
                 <el-row>
-                  <el-col :span="8">
+                  <el-col :span="12">
                     <p style="padding-top:30px;font-size: xx-large">{{ course_name }}</p>
-                    <p>点击: {{ visit_count }}</p>
                   </el-col>
-                  <el-col :span="10">
+                  <el-col :span="6">
                     <img :src="img" width="100px" height="100px" style="float:right">
                   </el-col>
               </el-row>
@@ -32,6 +31,9 @@
             </div>
             <div class="text item">
               课程介绍: {{ intro_info }}
+            </div>
+            <div class="text item">
+              点击: {{ visit_count }}
             </div>
             <div class="text item">
               <el-button type="text" icon="edit" @click="edit_course" style="float: right">我来补充</el-button>
@@ -89,9 +91,9 @@
               <p style="padding-bottom: 10px; font-size: large">最新资源</p>
           </el-col>
         </el-row>
-        <template v-for="i in total_resource_line">
+        <template v-for="(i,index) in total_resource_line">
               <el-row>
-                <el-col :span="7" v-show="card_data[i][0].show">
+                <el-col :span="7" v-bind:style="{visibility:card_data[index][0].show}">
                   <el-col :span="24">
                   <el-button type="text" class="card_button" @click.native="card_clicked(i,0)">
                   <el-card :body-style="{ padding: '10px'} " class="card">
@@ -101,13 +103,13 @@
                       </el-col>
                       <el-col :span="16" :offset="2">
                         <el-row>
-                          card_data[i][0].title
+                          资源名：{{ card_data[index][0].title }}
                         </el-row>
                         <el-row>
-                          card_data[i][0].uploader
+                          上传者：{{card_data[index][0].uploader}}
                         </el-row>
                         <el-row>
-                          card_data[i][0].frequency
+                          下载次数：{{card_data[index][0].frequency}}
                         </el-row>
                       </el-col>
                     </el-row>
@@ -116,7 +118,7 @@
                 </el-col>
                 </el-col>
 
-                <el-col :span="7" :offset="1" v-show="card_data[i][1].show">
+                <el-col :span="7" :offset="1" v-bind:style="{visibility:card_data[index][1].show}">
                   <el-col :span="24">
                   <el-button type="text" class="card_button" @click.native="card_clicked(i,1)">
                   <el-card :body-style="{ padding: '10px'} " class="card">
@@ -126,13 +128,13 @@
                       </el-col>
                       <el-col :span="16" :offset="2">
                         <el-row>
-                          card_data[i][1].title
+                          资源名：{{card_data[index][1].title}}
                         </el-row>
                         <el-row>
-                          card_data[i][1].uploader
+                          上传者：{{card_data[index][1].uploader}}
                         </el-row>
                         <el-row>
-                          card_data[i][1].frequency
+                          下载次数：{{card_data[index][1].frequency}}
                         </el-row>
                       </el-col>
                     </el-row>
@@ -141,7 +143,7 @@
                 </el-col>
                 </el-col>
 
-                <el-col :span="7" :offset="1" v-show="card_data[i][2].show">
+                <el-col :span="7" :offset="1" v-bind:style="{visibility:card_data[index][2].show}">
                   <el-button type="text" class="card_button" @click.native="card_clicked(i,2)">
                   <el-card :body-style="{ padding: '10px'}" class="card">
                     <el-row>
@@ -150,13 +152,13 @@
                       </el-col>
                       <el-col :span="16" :offset="2">
                         <el-row>
-                          card_data[i][2].title
+                          资源名：{{card_data[index][2].title}}
                         </el-row>
                         <el-row>
-                          card_data[i][2].uploader
+                          上传者：{{card_data[index][2].uploader}}
                         </el-row>
                         <el-row>
-                          card_data[i][2].frequency
+                          下载次数：{{card_data[index][2].frequency}}
                         </el-row>
                       </el-col>
                     </el-row>
@@ -183,6 +185,7 @@
 
 <script type="text/javascript">
 /* eslint-disable camelcase */
+/* eslint-disable space-infix-ops */
 import Header from '../general/Header.vue'
 import Img from '../../assets/pdf.png'
 import $ from 'jquery'
@@ -252,15 +255,15 @@ export default {
       fileList: [],
       total_resource_line: 3,
       card_data: [
-        [{ title: '', uploader: '', frequency: '', show: false, id: '' },
-         { title: '', uploader: '', frequency: '', show: false, id: '' },
-         { title: '', uploader: '', frequency: '', show: false, id: '' }],
-        [{ title: '', uploader: '', frequency: '', show: false, id: '' },
-         { title: '', uploader: '', frequency: '', show: false, id: '' },
-         { title: '', uploader: '', frequency: '', show: false, id: '' }],
-        [{ title: '', uploader: '', frequency: '', show: false, id: '' },
-         { title: '', uploader: '', frequency: '', show: false, id: '' },
-         { title: '', uploader: '', frequency: '', show: false, id: '' }]
+        [{ title: '', uploader: '', frequency: '', show: 'hidden', id: '' },
+         { title: '', uploader: '', frequency: '', show: 'hidden', id: '' },
+         { title: '', uploader: '', frequency: '', show: 'hidden', id: '' }],
+        [{ title: '', uploader: '', frequency: '', show: 'hidden', id: '' },
+         { title: '', uploader: '', frequency: '', show: 'hidden', id: '' },
+         { title: '', uploader: '', frequency: '', show: 'hidden', id: '' }],
+        [{ title: '', uploader: '', frequency: '', show: 'hidden', id: '' },
+         { title: '', uploader: '', frequency: '', show: 'hidden', id: '' },
+         { title: '', uploader: '', frequency: '', show: 'hidden', id: '' }]
       ]
     }
   },
@@ -285,7 +288,7 @@ export default {
   mounted () {
     var course_id = this.$route.params.course_id
     var postData = { 'course_id': course_id, 'number': this.total_resource_line }
-    console.log(postData)
+    var self = this
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
@@ -293,10 +296,15 @@ export default {
       type: 'POST',
       data: postData,
       success: function (data) {
-        // 根据resource_id和number返回满足数量的课程资源的(resource_id, 上传用户名（若没有用户名则显示为匿名用户）, 下载次数，资源名称) 并且已经按上传时间排好了序
-        // var pos = 2 // pos of latest resource
+        var pos = 2 // pos of latest resource
         var info = data['result']
-        console.log(info)
+        for (var i = 0; i < info.length; i++) {
+          self.card_data[i][pos].title=info[i]['name']
+          self.card_data[i][pos].uploader=info[i]['username']
+          self.card_data[i][pos].frequency=info[i]['download_count']
+          self.card_data[i][pos].id = info[i]['resource_id']
+          self.card_data[i][pos].show = 'visible'
+        }
       },
       error: function () {
         alert('拉取资源列表失败')

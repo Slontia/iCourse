@@ -7,22 +7,28 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 import json
 
-# 获取某学院课程列表
+# 获取某学院课程列表(modefied by xdt 2017.11.8)
 # REQUIRES: type(col_id) == <class 'int'> && lower_value <= col_id <= upper_value
 # MODIFIES: None
-# EFFECTS: 返回学院编号为col_id的学院的课程列表,返回类型为list
+# EFFECTS: 返回学院编号为col_id的学院的课程信息列表，列表中的每个元素是字典
 
 def college_course_list(col_id):
-    result = Course.objects.filter(college_id=col_id).values_list("id", flat=True)
+    result = Course.objects.filter(college_id=col_id)
+    if(len(result) == 0):
+        return []
+    result = result.values()
     return list(result)
 
-# 通过某课程类别获取课程列表
+# 通过某课程类别获取课程列表(modefied by xdt 2017.11.8)
 # REQUIRES: type(cla_id) == <class 'int'>
 # MODIFIES: None
-# EFFECTS: 返回某种课程类别的课程列表,返回类型为list
+# EFFECTS: 返回某种课程类别的课程信息列表,列表中的每个元素是字典
 
 def classification_course_list(cla_id):
-    result = Course.objects.filter(class_id=cla_id).values_list("id", flat=True)
+    result = Course.objects.filter(class_id=cla_id)
+    if(len(result) == 0):
+        return []
+    result = result.values()
     return list(result)
 
 # 查询课程详细信息
@@ -148,7 +154,7 @@ def resource_information_list(course_id, number):
     #print(temp)^M
     for item in temp:
         if(item[1] == None):
-            resource = (item[0], '匿名用户', item[2], item[3])
+            resource = {'resource_id':item[0], 'username':'匿名用户', 'download_count':item[2], 'name':item[3]}
         else:
             resource = {'resource_id':item[0], 'username':User.objects.get(id=int(item[1])), 'download_count':item[2], 'name':item[3]}
         result.append(resource)
