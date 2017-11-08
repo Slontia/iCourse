@@ -38,12 +38,15 @@
         <el-col :span="2">
           <el-button type="button" @click.native="closed">降序排序</el-button>
         </el-col>
-         <el-col :span="4" :offset="6">
+         <el-col :span="4" :offset="4">
           <el-input v-model="input" placeholder="资源名称"></el-input>
-        </el-col>
+        </el-col>        
         <el-col :span="2" :offset="1">
           <el-button type="button" @click.native="closed">搜索资源</el-button>
-        </el-col>       
+        </el-col>
+        <el-col :span="2">
+          <el-button type="button" @click.native="uploadDialogVisible=true">上传资源</el-button>
+        </el-col>
       </el-row>
       <el-row>
         <el-col :span="20" :offset="2">
@@ -184,6 +187,17 @@
         <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog title="上传资源" :visible.sync="uploadDialogVisible" size="tiny">
+      
+        <input type="file" value="" id="file">
+        <el-button style="margin-left: 10px;" size="small" type="success" @click.native="upload">上传</el-button>
+       
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="uploadDialogVisible=false">取 消</el-button>
+        <el-button type="primary" @click="uploadDialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -204,6 +218,7 @@ export default {
   components: { Header, ResourceDialog },
   data () {
     return {
+      uploadDialogVisible: false,
       dialogVisible: false,
       course: '软件工程基础',
       options: [
@@ -226,7 +241,8 @@ export default {
       jpgImg: JpgImg,
       rarImg: RarImg,
       defaultImg: DefaultImg,
-      resourcesData: []
+      resourcesData: [],
+      fileList: []
     }
   },
   methods: {
@@ -257,6 +273,35 @@ export default {
           alert('fail')
         }
       })
+    },
+    upload: function () {
+      var formData = new FormData()
+      var fileObj = document.getElementById('file').files[0]
+      formData.append('file', fileObj)
+      formData.append('only_url', false)
+      formData.append('url', null)
+      formData.append('intro', 'for dxz test')
+      formData.append('course_code', 'E06B3120')
+      $.ajax({
+        url: '/resourceUpload/',
+        type: 'POST',
+        data: formData,
+        async: true,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function (rdata) {
+          rdata = JSON.parse(rdata)
+          if (rdata['error'] === 0) {
+            alert('上传文件成功！')
+          } else {
+            alert('上传失败！' + rdata['error'])
+          }
+        },
+        error: function () {
+          alert('fail')
+        }
+      })
     }
   },
   created: function () {
@@ -268,7 +313,7 @@ export default {
       url: '/resource/id/list/',
       type: 'POST',
       async: false,
-      data: {'course_id': 1},
+      data: {'course_id': 1125},
       success: function (data) {
         for (var i = 0; i < data['resource_id_list'].length; i++) {
           $.ajax({

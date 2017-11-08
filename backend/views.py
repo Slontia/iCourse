@@ -392,7 +392,7 @@ def resourceUpload(request):
         if(not request.user.is_authenticated()):    # if the user is not authenticated
             return HttpResponse(json.dumps({'error':1}))
         upload_user_id = request.user.id
-        data = json.loads(request.POST)
+        data = request.POST
         intro = str(data.get('intro'))
         #course_id = int(data.get('course_id'))
         course_code = str(data.get('course_code'))
@@ -404,7 +404,7 @@ def resourceUpload(request):
             RUForm = ResourceUploadForm({'name':name, 'size':size, 'upload_user_id':upload_user_id, 'course_code':course_code})
             if(RUForm.is_valid()):
                 resource_up = Resource()
-                resource_ip.only_url = True
+                resource_up.only_url = True
                 resource_up.name = name
                 resource_up.size = size     # bytes
                 resource_up.intro = intro
