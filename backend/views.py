@@ -94,10 +94,11 @@ def userRegister(request):
     
     return HttpResponse(json.dumps({'error': 0}))
 
+# modified by xdt 2017.11.8
 # the Interface of search course list by college id
 # REQUIRES: the ajax data should be json data {'college_id': class_id}
 # MODIFIES: None
-# EFFECTS: return json data {'course_id_list': course_id_list}, course_id_list is a list
+# EFFECTS: return json data {'course_info_list': course_info_list}, course_info_list is a list
 # URL: /course/college_course/
 @csrf_exempt
 def course_by_college(request):
@@ -105,14 +106,14 @@ def course_by_college(request):
         data = json.dumps(request.POST)
         data = json.loads(data)
         college_id = int(data.get('college_id'))
-        course_id_list = interface.college_course_list(6)
-        print(course_id_list)
-        return HttpResponse(json.dumps({'course_id_list': course_id_list}, cls=ComplexEncoder))
+        course_info_list = interface.college_course_list(college_id)
+        return HttpResponse(json.dumps({'course_info_list': course_info_list}, cls=ComplexEncoder))
 
+# modified by xdt 2017.11.8
 # the Interface of search course list by class id
 # REQUIRES: the ajax data should be json data {'class_id': class_id}
 # MODIFIES: None
-# EFFECTS: return json data {'course_id_list': course_id_list}, course_id_list is a list
+# EFFECTS: return json data {'course_info_list': course_info_list}, course_info_list is a list
 # URL: /course/classification_course/
 @csrf_exempt
 def course_by_class(request):
@@ -120,8 +121,8 @@ def course_by_class(request):
         data = json.dumps(request.POST)
         data = json.loads(data)
         class_id = int(data.get('class_id'))
-        course_id_list = interface.classification_course_list(class_id)
-        return HttpResponse(json.dumps({'course_id_list': course_id_list}, cls=ComplexEncoder))
+        course_info_list = interface.classification_course_list(class_id)
+        return HttpResponse(json.dumps({'course_info_list': course_info_list}, cls=ComplexEncoder))
 
 # Course Information Interface
 # REQUIRES: the ajax data should be json data {'course_id': class_id}
@@ -133,7 +134,7 @@ def course_information(request):
     if(request.method == "POST"):
         data = json.dumps(request.POST)
         data = json.loads(data)
-        course_id = int(data.get('course_id','0'))
+        course_id = int(data.get('course_id'))
         course_info = interface.course_information(course_id)
         return HttpResponse(json.dumps({'course_info': course_info}, cls=ComplexEncoder))
 '''
