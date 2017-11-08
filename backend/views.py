@@ -58,6 +58,7 @@ def userRegister(request):
             password2 = str(data.get('password2'))
             email = str(data.get('email'))
             gender = str(data.get('gender'))
+            print(gender)
             nickname = str(data.get('nickname'))
             intro = str(data.get('intro'))
             
@@ -271,7 +272,7 @@ def userLogin(request):
                 auth.login(request, user)
                 request.session['username'] = username # store in session
                 print ('success')
-                return HttpResponse(json.dumps({'error': 0}))
+                return HttpResponse(json.dumps({'error': 0, 'username':user.username}))
             else:
                 return HttpResponse(json.dumps({'error': 101})) # username not exists
         else:
@@ -305,8 +306,9 @@ def userLogout(request):
 @csrf_exempt
 def isLoggedIn(request):
     if(request.method == "POST"):
+        username = interface.get_username(request.session.get('username',default=None))['username']
         return HttpResponse(json.dumps({
-                                       'username': request.session.get('username',default=None),
+                                       'username': username,
                                        }))
 
 def http_get(url):

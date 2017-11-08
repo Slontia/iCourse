@@ -35,6 +35,13 @@ class RegisterForm(forms.Form):
         if(password2 != password1):
             raise forms.ValidationError("两次输入的密码不一致")
         return password2
+    
+    def clean_gender(self):
+        gender = self.cleaned_data['gender']
+        if(gender != '1' and gender != '2' and gender != '0'):    # '1':男 '2':女 '0':保密
+            raise forms.ValidationError("性别错误")
+        return gender
+    
 
 
 class LoginForm(forms.Form):

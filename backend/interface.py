@@ -88,10 +88,18 @@ def resource_information(resource_id):
 # EFFECTS: 返回某个用户的一些信息,返回类型为dict,若用户不存在则返回空字典
 
 def user_information(username):
+    is_email = False
     result = User.objects.filter(username=username)
     if(len(result) == 0):
-        return {}
-    profile = User.objects.get(username=username).userprofile
+        result = User.objects.filter(email=username)
+        if(len(result) == 0):
+            return {}
+        else:
+            is_email = True
+    if(is_email):
+        profile = User.objects.get(email=username).userprofile
+    else:
+        profile = User.objects.get(username=username).userprofile
     result = result.values('username', 'email')[0]
     result['nickname'] = profile.nickname
     result['gender'] = profile.gender
@@ -148,3 +156,13 @@ def resource_information_list(course_id, number):
         if(count == number):
             break
     return result
+
+# 根据前端传来的username(可能为用户名或邮箱)，返回正确的用户名username
+def get_username(username_or_email):
+    result = User.objects.filter(username=username_or_email)
+    if(len(result) == 0):
+        result = User.objects.filter(email=username_or_email)
+        if(len(result) == 0):
+            return {}
+    return result.values('username')[0]
+
