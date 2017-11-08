@@ -323,6 +323,26 @@ def http_get(url):
 #          query_list is a list whose element is dicts like (user_id, total scores),
 #          such as {'college_id': 10, 'class_id': 55, 'name': '安卓', 'credit': 5, 'id': 9, 'hours': 10}
 #          the list is ordered by id temporaily (can be modified to revelance)
+#@csrf_exempt
+#def course_query(request):
+#    if(request.method == "POST"):
+#        data = json.dumps(request.POST) # new
+#        data = json.loads(data)
+#        #data = json.loads(request.body.decode())
+#        query = str(data.get('keyword'))
+#        print ('query: ' + query)
+#        cs_url = 'http://10.2.28.124:8080/solr/mynode/select?'#q=Bill&wt=json&indent=true'
+#        param  = {'q':query, 'fl':'id,name,college_id,class_id,credit,hours', 'rows':'10000', 'wt':'json', 'indent':'true'}
+#        
+#        r = requests.get(cs_url, params = param)
+#        
+#        query_res = http_get(r.url)
+#        #json_r = bytes.decode(query_res)
+#        json_r = json.loads(bytes.decode(query_res))
+#        query_list = json_r['response']['docs']
+#        print (query_list)
+#        print(len(query_list))
+#        return HttpResponse(json.dumps({'query_list': query_list}, cls=ComplexEncoder))
 @csrf_exempt
 def course_query(request):
     if(request.method == "POST"):
@@ -332,17 +352,28 @@ def course_query(request):
         query = str(data.get('keyword'))
         print ('query: ' + query)
         cs_url = 'http://10.2.28.124:8080/solr/mynode/select?'#q=Bill&wt=json&indent=true'
-        param  = {'q':query, 'fl':'id,name,college_id,class_id,credit,hours', 'rows':'10000', 'wt':'json', 'indent':'true'}
-        
+        param  = {'q':query, 'fl':'id,name,college_id,class_id,credit,hours,score', 'rows':1500, 'wt':'json', 'indent':'true'}
+
         r = requests.get(cs_url, params = param)
-        
+
         query_res = http_get(r.url)
         #json_r = bytes.decode(query_res)
         json_r = json.loads(bytes.decode(query_res))
         query_list = json_r['response']['docs']
         print (query_list)
-        print(len(query_list))
-        return HttpResponse(json.dumps({'query_list': query_list}, cls=ComplexEncoder))
+        ans = []
+        for i in query_list:
+            #print("*****   ", i)
+            #print("$$$$$   ", i['score'])
+            if (i['score']>=5):
+                ans.append(i)
+        print("---------------------------------------")
+        print("All: ",len(query_list), "score > 5:",len(ans))
+        print(ans)
+        return HttpResponse(json.dumps({'query_list': ans}, cls=ComplexEncoder))
+        #print(json.dumps({'query_list': query_list}))
+        #print(json.dumps({'query_list': ans}))
+
 
 # Course id list(by ohazyi)
 # REQUIRES: the ajax data should be json data {'query': query}
