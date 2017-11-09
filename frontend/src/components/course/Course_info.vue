@@ -202,7 +202,7 @@ import RarImg from './../../assets/fileico/rar.png'
 import ResourceDialog from '../general/ResourceDialog.vue'
 import $ from 'jquery'
 // 请不要删除和get_url相关的行，如果你真的需要请告诉我下原因。by xindetai
-import get_url from '../general/getUrl.js'
+// import get_url from '../general/getUrl.js'
 
 export default {
   name: 'course_info',
@@ -214,7 +214,7 @@ export default {
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: get_url('/course/course_info/'),
+      url: '/course/course_info/',
       type: 'POST',
       data: postData,
       success: function (data) {

@@ -227,10 +227,22 @@ def user_information(request):
         #data = json.loads(request.POST)
         #data = json.loads(request.body.decode())
         #data = request.POST
-        username = str(request.POST.get('username'))
+        if ('username' in request.POST.keys()):
+            username = str(request.POST.get('username'))
+            user_info = interface.user_information_by_username(username)
+        elif ('id' in request.POST.keys()):
+            user_id - str(request.POST.get('id'))
+            user_info = interface.user_information_by_id(user_id)
+        else:
+            return HttpResponse(json.dumps({}))
         
-        user_info = interface.user_information(username)
         return HttpResponse(json.dumps({'user_info': user_info}, cls=ComplexEncoder))
+
+@csrf_exempt
+def get_username(request):
+    if(request.method == "POST"):
+        user_id = str(request.POST.get('id'))
+
 
 # Resource Information Interface
 # REQUIRES: the ajax data should be json data {'resource_id': resource_id}
