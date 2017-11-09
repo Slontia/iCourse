@@ -232,7 +232,7 @@ export default {
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: get_url('/course/visit_count/'),
+      url: '/course/visit_count/',
       type: 'POST',
       data: postData,
       success: function (data) {
@@ -310,7 +310,7 @@ export default {
       $.ajax({
         ContentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        url: get_url('/resource/information/'),
+        url: '/resource/information/',
         type: 'POST',
         async: false,
         data: {'resource_id': resourceDialogSelf.card_data[i][j].id},
@@ -336,7 +336,7 @@ export default {
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: get_url('/resource/latest/'),
+      url: '/resource/latest/',
       type: 'POST',
       data: postData,
       success: function (data) {

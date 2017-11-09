@@ -118,11 +118,7 @@ def user_information_by_id(user_id):
     result = User.objects.filter(id=user_id)
     if(len(result) == 0):
         return {}
-    profile = User.objects.get(id=user_id).userprofile
     result = result.values('username', 'email')[0]
-    result['nickname'] = profile.nickname
-    result['gender'] = profile.gender
-    result['intro'] = profile.intro
     return result
 
 

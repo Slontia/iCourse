@@ -274,12 +274,13 @@ export default {
             data: {id: rdata['resource_info']['upload_user_id']},
             async: false,
             success: function (data) {
+              data = JSON.parse(data)
               resourceDialogSelf.$store.state.author = data['user_info']['username']
             },
             error: function () {
               alert('fail')
             }
-          })          
+          })
           resourceDialogSelf.$store.state.size = rdata['resource_info']['size']
           resourceDialogSelf.$store.state.time = rdata['resource_info']['upload_time']
           resourceDialogSelf.$store.state.intro = rdata['resource_info']['intro']
@@ -384,7 +385,19 @@ export default {
               tt.name = rdata['resource_info']['name']
               tt.intro = rdata['resource_info']['intro']
               tt.downloads = rdata['resource_info']['download_count']
-              tt.author = rdata['resource_info']['upload_user_id']
+              $.ajax({
+                url: '/user/information/',
+                type: 'POST',
+                data: {id: rdata['resource_info']['upload_user_id']},
+                async: false,
+                success: function (data) {
+                  data = JSON.parse(data)
+                  tt.author = data['user_info']['username']
+                },
+                error: function () {
+                  alert('fail')
+                }
+              })
               tt.time = rdata['resource_info']['upload_time']
               tt.id = rdata['resource_info']['id']
               tt.img = ss.defaultImg

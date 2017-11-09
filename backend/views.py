@@ -231,11 +231,13 @@ def user_information(request):
             username = str(request.POST.get('username'))
             user_info = interface.user_information_by_username(username)
         elif ('id' in request.POST.keys()):
-            user_id - str(request.POST.get('id'))
+            user_id = str(request.POST.get('id'))
             user_info = interface.user_information_by_id(user_id)
         else:
             return HttpResponse(json.dumps({}))
-        
+        print("******************")
+        print(user_info)
+        print("******************")
         return HttpResponse(json.dumps({'user_info': user_info}, cls=ComplexEncoder))
 
 @csrf_exempt
@@ -256,9 +258,6 @@ def resource_information(request):
         #data = json.loads(request.body.decode())
         resource_id = int(request.POST.get('resource_id'))
         resource_info = interface.resource_information(resource_id)
-        print("******************")
-        print(resource_info)
-        print("******************")
         return HttpResponse(json.dumps({'resource_info': resource_info}, cls=ComplexEncoder))
 
 
@@ -579,7 +578,7 @@ def latest_resource_info(request):
         course_id = int(request.POST.get('course_id'))
         number = int(request.POST.get('number'))
         result = interface.resource_information_list(course_id, number)
-        return HttpResponse(json.dumps({'result': result}))
+        return HttpResponse(json.dumps({'result': result}, cls=ComplexEncoder))
 
 # Repost Interface
 # REQUIRES: POST method, only anthenticated user can report, need {'be_reported_resource_id': be_reported_resource_id}
