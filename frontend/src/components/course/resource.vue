@@ -267,6 +267,7 @@ export default {
           resourceDialogSelf.$store.state.time = rdata['resource_info']['upload_time']
           resourceDialogSelf.$store.state.intro = rdata['resource_info']['intro']
           resourceDialogSelf.$store.state.url = rdata['resource_info']['url']
+          resourceDialogSelf.$store.state.download_count = rdata['resource_info']['download_count']
           resourceDialogSelf.dialogVisible = true
         },
         error: function () {

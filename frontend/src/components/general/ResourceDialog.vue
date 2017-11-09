@@ -72,7 +72,7 @@
         <el-col :span="1" :offset="1"><i class="el-icon-star-off"></i></el-col>
         <el-col :span="1">23</el-col>
         <el-col :span="1" :offset="1"><i class="el-icon-arrow-down"></i></el-col>
-        <el-col :span="1">656</el-col>
+        <el-col :span="1">{{ this.$store.state.download_count }}</el-col>
       </el-row>
       <el-row style="margin:20px 0px 0px 0px;">
         <el-col :span="6" :offset="1" style="height:20px;font-weight:bold;font-size:20px;">全部评论</el-col>
@@ -96,6 +96,7 @@ import PptImg from './../../assets/fileico/pptx_win.png'
 import JpgImg from './../../assets/fileico/jpeg.png'
 import ZipImg from './../../assets/fileico/zip.png'
 import RarImg from './../../assets/fileico/rar.png'
+import $ from 'jquery'
 export default {
   name: 'ResourceDialog',
   data () {
@@ -113,6 +114,19 @@ export default {
   methods: {
     gotoDownload: function () {
       window.open(this.$store.state.url)
+      $.ajax({
+        ContentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: '/resource/download_count/',
+        type: 'POST',
+        data: { 'download_count': this.$store.state.id },
+        success: function (data) {
+          this.$store.state.id = data['download_count']
+        },
+        error: function () {
+          alert('拉取资源列表失败')
+        }
+      })
     }
   },
   created: function () {

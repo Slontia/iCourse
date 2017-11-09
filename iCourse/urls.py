@@ -48,9 +48,10 @@ urlpatterns = [
     url(r'^user/home/.*/$', backend_views.home),
     url(r'^course/page/.*/$', backend_views.home),
     url(r'^course/page/.*/resource/$', backend_views.home),
-    url(r'^course/visit_count/$', backend_views.refresh_visit_course_time),
+    url(r'^course/visit_count/$', backend_views.refresh_visit_course_count),
     url(r'^resource/information/$', backend_views.resource_information, name='resource_information'),
     url(r'^resource/id/list/$', backend_views.resource_id_list, name='resource_id_list'),
     url(r'^resource/latest/$',backend_views.latest_resource_info,name='latest_resource_info'),
-    url(r'^resourceUpload/$',backend_views.resourceUpload,name='resourceUpload')
+    url(r'^resourceUpload/$',backend_views.resourceUpload,name='resourceUpload'),
+    url(r'^resource/download_count/$',backend_views.refresh_download_resource_count)
 ]
