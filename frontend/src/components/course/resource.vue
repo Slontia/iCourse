@@ -63,7 +63,7 @@
             </el-col>
             <el-col :span="14" :offset="1">
               <el-row class="resourseTitle">
-                <textarea style="font-weight: bold;font-size: 20px;">{{ item.name }}</textarea>
+                <textarea readonly style="font-weight: bold;font-size: 20px;">{{ item.name }}</textarea>
               </el-row>
               <el-row class="resourseIntro">
                 {{ item.intro }}
@@ -104,7 +104,7 @@
             </el-col>
             <el-col :span="14" :offset="1">
               <el-row class="resourseTitle">
-                <textarea style="font-weight: bold;font-size: 20px;">{{ item.name }}</textarea>
+                <textarea readonly style="font-weight: bold;font-size: 20px;">{{ item.name }}</textarea>
               </el-row>
               <el-row class="resourseIntro">
                 {{ item.intro }}
@@ -144,7 +144,7 @@
             </el-col>
             <el-col :span="14" :offset="1">
               <el-row class="resourseTitle">
-                <textarea style="font-weight: bold;font-size: 20px;">{{ item.name }}</textarea>
+                <textarea readonly style="font-weight: bold;font-size: 20px;">{{ item.name }}</textarea>
               </el-row>
               <el-row class="resourseIntro">
                 {{ item.intro }}

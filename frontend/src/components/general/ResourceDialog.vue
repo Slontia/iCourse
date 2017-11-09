@@ -12,7 +12,7 @@
               资源名称:
             </el-col>
             <el-col :span="16">
-              {{ this.$store.state.name }}
+              <textarea readonly>{{ this.$store.state.name }}</textarea>
             </el-col>
           </el-row>
           <el-row>
@@ -113,15 +113,16 @@ export default {
   },
   methods: {
     gotoDownload: function () {
+      var sh = this
       window.open(this.$store.state.url)
       $.ajax({
         ContentType: 'application/json; charset=utf-8',
         dataType: 'json',
         url: '/resource/download_count/',
         type: 'POST',
-        data: { 'download_count': this.$store.state.id },
+        data: { 'download_count': sh.$store.state.id },
         success: function (data) {
-          this.$store.state.id = data['download_count']
+          sh.$store.state.id = data['download_count']
         },
         error: function () {
           alert('拉取资源列表失败')
