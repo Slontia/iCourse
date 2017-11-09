@@ -182,3 +182,20 @@ def get_username(username_or_email):
             return {}
     return result.values('username')[0]
 
+def refresh_ip_visit_info(ip):
+    ip_obj = IpVisitInfo.objects.get(ip=ip)
+    nowdate = str(datetime.datetime.now().strftime("%Y-%m-%d"))
+    if (ip_obj == None):
+        IpVisitInfo.objects.create(
+            ip = str(ip), 
+            visit_count = 1,
+            first_date = nowdate,
+            latest_date = nowdate
+        )
+        return
+    latest_date = ip_obj['latest_date']
+    if(latest_date != nowdate):
+        ip_obj.latest_date = nowdate
+        ip_obj.visit_count += 1
+        ip_obj.save()
+

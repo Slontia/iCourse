@@ -55,5 +55,6 @@ urlpatterns = [
     url(r'^resource/latest/$',backend_views.latest_resource_info,name='latest_resource_info'),
     url(r'^resourceUpload/$',backend_views.resourceUpload,name='resourceUpload'),
     url(r'^resource/download_count/$',backend_views.refresh_download_resource_count),
-    url(r'^download/(\d+)/$',backend_views.download,name='download')
+    url(r'^download/(\d+)/$',backend_views.download,name='download'),
+    url(r'^sign/iprecord/$',backend_views.ip_record)
 ]

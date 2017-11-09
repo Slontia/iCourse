@@ -152,3 +152,11 @@ class Report(models.Model):
     def __str__(self):
         return str(self.id)
 
+class IpVisitInfo(models.Model):
+    ip = models.CharField(max_length=20)
+    early_date = models.CharField(max_length=20)
+    latest_date = models.CharField(max_length=20)
+    visit_count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return str(self.id)

@@ -102,7 +102,16 @@ export default {
         }
       },
       error: function () {
-        // alert('加载导航栏连接服务器失败')
+        alert('加载导航栏连接服务器失败')
+      }
+    })
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: '/sign/iprecord/',
+      type: 'POST',
+      error: function () {
+        alert('ip记录链接失败')
       }
     })
   },

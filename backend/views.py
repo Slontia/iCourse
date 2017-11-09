@@ -623,3 +623,14 @@ def user_info_modify(request):
             return HttpResponse(json.dumps({'error':0}))
         else:         
             return HttpResponse(json.dumps({'error':1}))
+
+@csrf_exempt
+def ip_record(request):
+    if (request.method == 'POST'):
+        if ('HTTP_X_FORWARDED_FOR' in request.META.keys()):  
+            ip = request.META['HTTP_X_FORWARDED_FOR']  
+        else:  
+            ip = request.META['REMOTE_ADDR']  
+        print('ip:', ip)
+        interface.refresh_ip_visit_info(str(ip))
+        return HttpResponse(json.dumps({'result':0}))
