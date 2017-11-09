@@ -284,6 +284,7 @@ export default {
       var formData = new FormData()
       var fileObj = document.getElementById('file').files[0]
       formData.append('file', fileObj)
+      formData.append('name', fileObj.name)
       formData.append('only_url', false)
       formData.append('url', null)
       formData.append('intro', this.resourceIntro)
