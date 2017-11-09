@@ -63,7 +63,7 @@
             </el-col>
             <el-col :span="14" :offset="1">
               <el-row class="resourseTitle">
-                {{ item.name }}
+                <textarea style="font-weight: bold;font-size: 20px;">{{ item.name }}</textarea>
               </el-row>
               <el-row class="resourseIntro">
                 {{ item.intro }}
@@ -104,7 +104,7 @@
             </el-col>
             <el-col :span="14" :offset="1">
               <el-row class="resourseTitle">
-                {{ item.name }}
+                <textarea style="font-weight: bold;font-size: 20px;">{{ item.name }}</textarea>
               </el-row>
               <el-row class="resourseIntro">
                 {{ item.intro }}
@@ -144,7 +144,7 @@
             </el-col>
             <el-col :span="14" :offset="1">
               <el-row class="resourseTitle">
-                {{ item.name }}
+                <textarea style="font-weight: bold;font-size: 20px;">{{ item.name }}</textarea>
               </el-row>
               <el-row class="resourseIntro">
                 {{ item.intro }}
@@ -285,6 +285,7 @@ export default {
       var formData = new FormData()
       var fileObj = document.getElementById('file').files[0]
       formData.append('file', fileObj)
+      formData.append('name', fileObj.name)
       formData.append('only_url', false)
       formData.append('url', null)
       formData.append('intro', this.resourceIntro)
@@ -416,12 +417,8 @@ export default {
   #resourceTitle {
     font-size: 25px;
     font-weight: bold;
-    height: 60px;
-    line-height: 30px;
-  }
-  .resourseTitle {
-    font-weight: bold;
-    font-size: 20px;
+    height: 100px;
+    line-height: 60px;
   }
   .resourseIntro {
     margin: 10px 0px 0px 0px;
