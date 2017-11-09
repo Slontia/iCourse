@@ -2,8 +2,8 @@
   <div id="header">
 <el-row class = "container">
   <el-col :span="24" class="header">
-    <el-col :span="4" class="logo">
-      {{ logo_name }}
+    <el-col :span="4">
+      <el-button type="text" @click.native="logo_clicked" class="logo">{{ logo_name }}</el-button>
     </el-col>
     <el-col :span="16" class="menu">
       <el-menu class="el-menu" theme="light" mode="horizontal" @select="handle_select" style="background-color: white;">
@@ -275,6 +275,7 @@ export default {
     login: function () { this.login_form_visible = true },
     personal_space: function () { this.$router.push({ path: ('/user/home/' + this.username) }) },
     register: function () { this.register_form_visible = true },
+    logo_clicked: function () { this.$router.push({ path: ('/index') }) },
     logout: function () {
       var self = this
       $.ajax({
