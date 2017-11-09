@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^sign/get_user/$', backend_views.get_user, name='get_user'),    # for check user status
     url(r'^sign/login/$', backend_views.userLogin, name='userLogin'),    # for user login
     url(r'^sign/logout/$', backend_views.userLogout, name='userLogout'),    # for user logout
+    url(r'^download/(\d+)/$', backend_views.download, name='download'),
 
     url(r'^admin/', admin.site.urls),
     url(r'^$', TemplateView.as_view(template_name='index.html')), # NEW

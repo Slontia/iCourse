@@ -86,6 +86,8 @@ def resource_information(resource_id):
     if(len(result) == 0):
         return {}
     result = result.values()[0]
+    if(not result['only_url']):
+        result['url'] = '/download/' + str(result['id']) + '/'
     return result
 
 # 查询个人信息
