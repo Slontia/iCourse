@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='resource',
             name='url',
-            field=models.CharField(blank=True, max_length=100),
+            field=models.CharField(blank=True, max_length=1000),
         ),
         migrations.AlterField(
             model_name='resource',
