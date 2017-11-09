@@ -479,7 +479,13 @@ def resourceUpload(request):
         intro = str(data.get('intro'))
         #course_id = int(data.get('course_id'))
         course_code = str(data.get('course_code'))
-        only_url = bool(data.get('only_url'))     # only_url = True 表示只上传了一个链接,该链接应当保存在resource的url字段,link字段应该为None
+        only_url = str(data.get('only_url'))     # only_url = True 表示只上传了一个链接,该链接应当保存在resource的url字段,link字段应该为None
+        if(only_url == 'True' or only_url == 'true'):
+            only_url = True
+        elif(only_url == 'False' or only_url == 'false'):
+            only_url = False
+        else:
+            return HttpResponse(json.dumps({'error':1}))
         if(only_url):
             url = str(data.get('url'))
             name = str(data.get('name'))
