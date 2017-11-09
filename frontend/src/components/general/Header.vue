@@ -2,14 +2,16 @@
   <div id="header">
 <el-row class = "container">
   <el-col :span="24" class="header">
-    <el-col :span="4" class="logo">
-      {{ logo_name }}
+    <el-col :span="4">
+      <el-button type="text" @click.native="logo_clicked" class="logo">{{ logo_name }}</el-button>
     </el-col>
     <el-col :span="16" class="menu">
       <el-menu class="el-menu" theme="light" mode="horizontal" @select="handle_select" style="background-color: white;">
         <el-menu-item index="index" class = "el-menu-item" style="margin-right: 20px;">首页</el-menu-item>
         <el-menu-item index="course" class = "el-menu-item"style="margin-right: 20px">课程</el-menu-item>
+        <!--
         <el-menu-item index="about" class = "el-menu-item">联系我们</el-menu-item>
+      -->
       </el-menu>
     </el-col>
     <el-col :span="4" class="userinfo">
@@ -79,6 +81,7 @@
 /* eslint-disable brace-style */
 /* eslint-disable camelcase */
 import $ from 'jquery'
+// 请不要删除和get_url相关的行，如果你真的需要请告诉我下原因。by xindetai
 import get_url from './getUrl.js'
 // import json from 'json5'
 export default {
@@ -272,6 +275,7 @@ export default {
     login: function () { this.login_form_visible = true },
     personal_space: function () { this.$router.push({ path: ('/user/home/' + this.username) }) },
     register: function () { this.register_form_visible = true },
+    logo_clicked: function () { this.$router.push({ path: ('/index') }) },
     logout: function () {
       var self = this
       $.ajax({

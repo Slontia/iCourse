@@ -61,7 +61,6 @@
                 </div>
             </section>
         </el-col>
-
 </div>
 </template>
 
@@ -71,6 +70,7 @@
 /* eslint-disable camelcase */
 /* eslint-disable space-infix-ops */
 import Header from '../general/Header'
+// 请不要删除和get_url相关的行，如果你真的需要请告诉我下原因。by xindetai
 import get_url from '../general/getUrl'
 import $ from 'jquery'
 export default {
@@ -130,7 +130,10 @@ export default {
     handle_current_change (value) {
       this.current_page = value
       this.courses = []
-      for (var i = 0; i < this.page_size; i++) {
+      var len = this.storage.length < value*this.page_size ? this.storage.length % this.page_size : this.page_size
+      console.log(this.storage.length)
+
+      for (var i = 0; i < len; i++) {
         this.courses.push(this.storage[(value-1)*this.page_size+i])
       }
     },
@@ -264,7 +267,10 @@ export default {
     },
     add_course_clicked () {
       // todo: add course function
-      alert('功能暂未开放,敬请期待')
+      this.$message({
+        showClose: true,
+        message: '功能暂未开放，敬请期待'
+      })
     }
   },
   mounted () {
@@ -273,7 +279,6 @@ export default {
 </script>
 
 <style type="text/css" scpoed>
-
     .tools_bar_above {
       width: auto;
       float: left;

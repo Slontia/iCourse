@@ -27,7 +27,7 @@ new Vue({
   router,
   render: h => h(App)
 })
-
+/*
 new Vue({
   el: '#personal',
   router,
@@ -39,3 +39,4 @@ new Vue({
   router,
   render: h => h(App)
 })
+*/

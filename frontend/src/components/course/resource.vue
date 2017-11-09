@@ -189,14 +189,19 @@
     </el-dialog>
 
     <el-dialog title="上传资源" :visible.sync="uploadDialogVisible" size="tiny">
-      
-        <input type="file" value="" id="file">
-        <el-button style="margin-left: 10px;" size="small" type="success" @click.native="upload">上传</el-button>
-       
+      <el-form label-position="left">
+        <el-form-item type="text" label="资源介绍" :label-width="form_label_width">
+          <el-input v-model="resourceIntro" auto_complete="off" placeholder="请输入资源介绍"></el-input>
+        </el-form-item>
+        <el-form-item :label-width="form_label_width">
+          <input type="file" value="" id="file">
+          <el-button style="margin-left: 10px;" size="small" type="success" @click.native="upload">上传</el-button>
+        </el-form-item>     
+      </el-form>  
       <span slot="footer" class="dialog-footer">
         <el-button @click="uploadDialogVisible=false">取 消</el-button>
         <el-button type="primary" @click="uploadDialogVisible = false">确 定</el-button>
-      </span>
+      </span>      
     </el-dialog>
   </div>
 </template>
@@ -206,12 +211,12 @@
 import Header from '../general/Header'
 import ResourceDialog from '../general/ResourceDialog'
 import DefaultImg from './../../assets/headportrait.jpg'
-import DocImg from './../../assets/doc.jpg'
-import PdfImg from './../../assets/pdf.jpg'
-import PptImg from './../../assets/ppt.jpg'
-import JpgImg from './../../assets/jpg.jpg'
-import ZipImg from './../../assets/zip.jpg'
-import RarImg from './../../assets/rar.jpg'
+import DocImg from './../../assets/fileico/docx_win.png'
+import PdfImg from './../../assets/fileico/pdf.png'
+import PptImg from './../../assets/fileico/pptx_win.png'
+import JpgImg from './../../assets/fileico/jpeg.png'
+import ZipImg from './../../assets/fileico/zip.png'
+import RarImg from './../../assets/fileico/rar.png'
 import $ from 'jquery'
 export default {
   name: 'resource',
@@ -242,7 +247,8 @@ export default {
       rarImg: RarImg,
       defaultImg: DefaultImg,
       resourcesData: [],
-      fileList: []
+      fileList: [],
+      resourceIntro: ''
     }
   },
   methods: {
@@ -267,6 +273,7 @@ export default {
           resourceDialogSelf.$store.state.time = rdata['resource_info']['upload_time']
           resourceDialogSelf.$store.state.intro = rdata['resource_info']['intro']
           resourceDialogSelf.$store.state.url = rdata['resource_info']['url']
+          resourceDialogSelf.$store.state.download_count = rdata['resource_info']['download_count']
           resourceDialogSelf.dialogVisible = true
         },
         error: function () {
@@ -280,8 +287,8 @@ export default {
       formData.append('file', fileObj)
       formData.append('only_url', false)
       formData.append('url', null)
-      formData.append('intro', 'for dxz test')
-      formData.append('course_code', 'E06B3120')
+      formData.append('intro', this.resourceIntro)
+      formData.append('course_code', this.$store.state.course_code)
       $.ajax({
         url: '/resourceUpload/',
         type: 'POST',
@@ -315,6 +322,7 @@ export default {
       data: {'course_id': this.$route.params.course_id},
       success: function (data) {
         ss.course = data['course_info']['name']
+        ss.$store.state.course_code = data['course_info']['course_code']
       },
       error: function () {
         alert('fail')

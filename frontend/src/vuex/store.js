@@ -11,7 +11,8 @@ const store = new Vuex.Store({
     intro: '',
     author: '',
     time: '',
-    url: ''
+    url: '',
+    course_code: ''
   },
   mutations: {
   }
