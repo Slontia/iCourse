@@ -5,14 +5,14 @@
     <!-- course introduction -->
     <el-row :gutter="50" class="course_introduction">
         <el-col :span="18" >
-            <el-button type="primary" icon = "arrow-left" @click="return_course_page_clicked" style="margin-top: 20px">返回课程页面</el-button>
+            <el-button type="primary" icon = "arrow-left" @click="return_course_page_clicked" style="margin-top: 20px;margin-bottom: 10px">返回课程页面</el-button>
           <div class="info_card">
             <el-card class="box-card">
             <div slot="header" class = "clearfix">
               <span style="line-height:36px;text-align: left;">
                 <el-row>
                   <el-col :span="12">
-                    <p style="padding-top:30px;font-size: xx-large">{{ course_name }}</p>
+                    <p style="padding-top:10px;font-size: xx-large;">{{ course_name }}</p>
                   </el-col>
               </el-row>
               </span>
@@ -409,5 +409,8 @@ export default {
     height:100%;
     text-align:left;
     color: black;
+  }
+  .text{
+    padding-bottom: 5px;
   }
 </style>

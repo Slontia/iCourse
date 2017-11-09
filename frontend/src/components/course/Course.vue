@@ -131,7 +131,10 @@ export default {
     handle_current_change (value) {
       this.current_page = value
       this.courses = []
-      for (var i = 0; i < this.page_size; i++) {
+      var len = this.storage.length < value*this.page_size ? this.storage.length % this.page_size : this.page_size
+      console.log(this.storage.length)
+
+      for (var i = 0; i < len; i++) {
         this.courses.push(this.storage[(value-1)*this.page_size+i])
       }
     },
