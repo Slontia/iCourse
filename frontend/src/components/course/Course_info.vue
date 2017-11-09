@@ -5,17 +5,14 @@
     <!-- course introduction -->
     <el-row :gutter="50" class="course_introduction">
         <el-col :span="18" >
-            <el-button type="primary" icon = "arrow-left" @click="return_course_page_clicked" style="margin-top: 20px">返回课程页面</el-button>
+            <el-button type="primary" icon = "arrow-left" @click="return_course_page_clicked" style="margin-top: 20px;margin-bottom: 10px">返回课程页面</el-button>
           <div class="info_card">
             <el-card class="box-card">
             <div slot="header" class = "clearfix">
               <span style="line-height:36px;text-align: left;">
                 <el-row>
                   <el-col :span="12">
-                    <p style="padding-top:30px;font-size: xx-large">{{ course_name }}</p>
-                  </el-col>
-                  <el-col :span="6">
-                    <img :src="img" width="100px" height="100px" style="float:right">
+                    <p style="padding-top:10px;font-size: xx-large;">{{ course_name }}</p>
                   </el-col>
               </el-row>
               </span>
@@ -95,11 +92,11 @@
               <el-row>
                 <el-col :span="7" v-bind:style="{visibility:card_data[index][0].show}">
                   <el-col :span="24">
-                  <el-button type="text" class="card_button" @click.native="card_clicked(i,0)">
+                  <el-button type="text" class="card_button" @click.native="card_clicked(index,0)">
                   <el-card :body-style="{ padding: '10px'} " class="card">
                     <el-row>
                       <el-col :span="4" style="">
-                        <img :src="img" style="width: 50px; height:50px;"></img>
+                        <img :src="card_data[index][0].img" style="width: 50px; height:50px;"></img>
                       </el-col>
                       <el-col :span="16" :offset="2">
                         <el-row>
@@ -120,11 +117,11 @@
 
                 <el-col :span="7" :offset="1" v-bind:style="{visibility:card_data[index][1].show}">
                   <el-col :span="24">
-                  <el-button type="text" class="card_button" @click.native="card_clicked(i,1)">
+                  <el-button type="text" class="card_button" @click.native="card_clicked(index,1)">
                   <el-card :body-style="{ padding: '10px'} " class="card">
                     <el-row>
                       <el-col :span="4" style="">
-                        <img :src="img" style="width: 50px; height:50px;"></img>
+                        <img :src="card_data[index][1].img" style="width: 50px; height:50px;"></img>
                       </el-col>
                       <el-col :span="16" :offset="2">
                         <el-row>
@@ -144,11 +141,11 @@
                 </el-col>
 
                 <el-col :span="7" :offset="1" v-bind:style="{visibility:card_data[index][2].show}">
-                  <el-button type="text" class="card_button" @click.native="card_clicked(i,2)">
+                  <el-button type="text" class="card_button" @click.native="card_clicked(index,2)">
                   <el-card :body-style="{ padding: '10px'}" class="card">
                     <el-row>
                       <el-col :span="4" style="">
-                        <img :src="img" style="width: 50px; height:50px;"></img>
+                        <img :src="card_data[index][2].img" style="width: 50px; height:50px;"></img>
                       </el-col>
                       <el-col :span="16" :offset="2">
                         <el-row>
@@ -179,6 +176,15 @@
       <el-button type="primary" @click="uploadDialogVisible = false">确 定</el-button>
     </span>
   </el-dialog>
+
+  <!-- 资源具体信息dialog -->
+  <el-dialog title="资源信息" :visible.sync="dialogVisible" v-if="dialogVisible" size="tiny">
+      <ResourceDialog></ResourceDialog>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible=false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+  </el-dialog>
   </div>
 
 </template>
@@ -187,13 +193,20 @@
 /* eslint-disable camelcase */
 /* eslint-disable space-infix-ops */
 import Header from '../general/Header.vue'
-import Img from '../../assets/pdf.png'
+import DocImg from './../../assets/fileico/docx_win.png'
+import PdfImg from './../../assets/fileico/pdf.png'
+import PptImg from './../../assets/fileico/pptx_win.png'
+import JpgImg from './../../assets/fileico/jpeg.png'
+import ZipImg from './../../assets/fileico/zip.png'
+import RarImg from './../../assets/fileico/rar.png'
+import ResourceDialog from '../general/ResourceDialog.vue'
 import $ from 'jquery'
-// import get_url from '../general/getUrl.js'
+// 请不要删除和get_url相关的行，如果你真的需要请告诉我下原因。by xindetai
+import get_url from '../general/getUrl.js'
 
 export default {
   name: 'course_info',
-  components: { Header },
+  components: { Header, ResourceDialog },
   beforeCreate () {
     var self = this
     var course_id = this.$route.params.course_id
@@ -201,7 +214,7 @@ export default {
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: '/course/course_info/',
+      url: get_url('/course/course_info/'),
       type: 'POST',
       data: postData,
       success: function (data) {
@@ -211,7 +224,6 @@ export default {
         self.academy = info['college_id']
         self.hours = info['hours']
         self.intro_info = undefined
-        self.img = Img
       },
       error: function () {
         alert('fail')
@@ -220,7 +232,7 @@ export default {
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: '/course/visit_count/',
+      url: get_url('/course/visit_count/'),
       type: 'POST',
       data: postData,
       success: function (data) {
@@ -248,23 +260,30 @@ export default {
       hours: '',
       intro_info: '',
       visit_count: -1,
-      img: Img,
       history_contribution_data: [],
       latest_contribution_data: [],
       uploadDialogVisible: false,
       fileList: [],
       total_resource_line: 3,
+      dialogVisible: false,
       card_data: [
-        [{ title: '', uploader: '', frequency: '', show: 'hidden', id: '' },
-         { title: '', uploader: '', frequency: '', show: 'hidden', id: '' },
-         { title: '', uploader: '', frequency: '', show: 'hidden', id: '' }],
-        [{ title: '', uploader: '', frequency: '', show: 'hidden', id: '' },
-         { title: '', uploader: '', frequency: '', show: 'hidden', id: '' },
-         { title: '', uploader: '', frequency: '', show: 'hidden', id: '' }],
-        [{ title: '', uploader: '', frequency: '', show: 'hidden', id: '' },
-         { title: '', uploader: '', frequency: '', show: 'hidden', id: '' },
-         { title: '', uploader: '', frequency: '', show: 'hidden', id: '' }]
-      ]
+        [{ title: '', uploader: '', frequency: '', show: 'hidden', id: '', img: '' },
+         { title: '', uploader: '', frequency: '', show: 'hidden', id: '', img: '' },
+         { title: '', uploader: '', frequency: '', show: 'hidden', id: '', img: '' }],
+        [{ title: '', uploader: '', frequency: '', show: 'hidden', id: '', img: '' },
+         { title: '', uploader: '', frequency: '', show: 'hidden', id: '', img: '' },
+         { title: '', uploader: '', frequency: '', show: 'hidden', id: '', img: '' }],
+        [{ title: '', uploader: '', frequency: '', show: 'hidden', id: '', img: '' },
+         { title: '', uploader: '', frequency: '', show: 'hidden', id: '', img: '' },
+         { title: '', uploader: '', frequency: '', show: 'hidden', id: '', img: '' }]
+      ],
+      img: { zip: ZipImg,
+        pdf: PdfImg,
+        ppt: PptImg,
+        doc: DocImg,
+        jpg: JpgImg,
+        rar: RarImg
+      }
     }
   },
   methods: {
@@ -283,6 +302,31 @@ export default {
     },
     check_all_resource_clicked: function () {
       this.$router.push({ path: 'resource/' })
+    },
+    card_clicked (i, j) {
+      console.log(this.card_data[i][j].id)
+      this.$store.state.id = this.card_data[i][j].id
+      var resourceDialogSelf = this
+      $.ajax({
+        ContentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: get_url('/resource/information/'),
+        type: 'POST',
+        async: false,
+        data: {'resource_id': resourceDialogSelf.card_data[i][j].id},
+        success: function (rdata) {
+          resourceDialogSelf.$store.state.name = rdata['resource_info']['name']
+          resourceDialogSelf.$store.state.author = rdata['resource_info']['upload_user_id']
+          resourceDialogSelf.$store.state.size = rdata['resource_info']['size']
+          resourceDialogSelf.$store.state.time = rdata['resource_info']['upload_time']
+          resourceDialogSelf.$store.state.intro = rdata['resource_info']['intro']
+          resourceDialogSelf.$store.state.url = rdata['resource_info']['url']
+          resourceDialogSelf.dialogVisible = true
+        },
+        error: function () {
+          alert('拉取资源信息失败')
+        }
+      })
     }
   },
   mounted () {
@@ -292,7 +336,7 @@ export default {
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: '/resource/latest/',
+      url: get_url('/resource/latest/'),
       type: 'POST',
       data: postData,
       success: function (data) {
@@ -304,6 +348,14 @@ export default {
           self.card_data[i][pos].frequency=info[i]['download_count']
           self.card_data[i][pos].id = info[i]['resource_id']
           self.card_data[i][pos].show = 'visible'
+          for (var t in self.img) {
+            var temp = '.'+t+'$'
+            var reg = new RegExp(temp)
+            if (reg.test(info[i]['name'])) {
+              self.card_data[i][pos].img = self.img[t]
+              break
+            }
+          }
         }
       },
       error: function () {
@@ -357,5 +409,8 @@ export default {
     height:100%;
     text-align:left;
     color: black;
+  }
+  .text{
+    padding-bottom: 5px;
   }
 </style>

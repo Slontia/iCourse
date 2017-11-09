@@ -71,7 +71,8 @@
 /* eslint-disable camelcase */
 /* eslint-disable space-infix-ops */
 import Header from '../general/Header'
-// import get_url from '../general/getUrl'
+// 请不要删除和get_url相关的行，如果你真的需要请告诉我下原因。by xindetai
+import get_url from '../general/getUrl'
 import $ from 'jquery'
 export default {
   name: 'Course',
@@ -130,7 +131,10 @@ export default {
     handle_current_change (value) {
       this.current_page = value
       this.courses = []
-      for (var i = 0; i < this.page_size; i++) {
+      var len = this.storage.length < value*this.page_size ? this.storage.length % this.page_size : this.page_size
+      console.log(this.storage.length)
+
+      for (var i = 0; i < len; i++) {
         this.courses.push(this.storage[(value-1)*this.page_size+i])
       }
     },
@@ -146,7 +150,7 @@ export default {
             ContentType: 'application/json; charset=utf-8',
             dataType: 'json',
             type: 'POST',
-            url: '/course/college_course/',
+            url: get_url('/course/college_course/'),
             data: temp1,
             async: false,
             success: function (data) {
@@ -202,7 +206,7 @@ export default {
             ContentType: 'application/json; charset=utf-8',
             dataType: 'json',
             type: 'POST',
-            url: '/course/classification_course/',
+            url: get_url('/course/classification_course/'),
             data: temp2,
             success: function (data) {
               console.log('ok')
@@ -235,7 +239,7 @@ export default {
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
-          url: '/course/searching/',
+          url: get_url('/course/searching/'),
           type: 'POST',
           data: post_data,
           async: false,

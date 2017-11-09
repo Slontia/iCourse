@@ -189,14 +189,19 @@
     </el-dialog>
 
     <el-dialog title="上传资源" :visible.sync="uploadDialogVisible" size="tiny">
-      
-        <input type="file" value="" id="file">
-        <el-button style="margin-left: 10px;" size="small" type="success" @click.native="upload">上传</el-button>
-       
+      <el-form label-position="left">
+        <el-form-item type="text" label="资源介绍" :label-width="form_label_width">
+          <el-input v-model="resourceIntro" auto_complete="off" placeholder="请输入资源介绍"></el-input>
+        </el-form-item>
+        <el-form-item :label-width="form_label_width">
+          <input type="file" value="" id="file">
+          <el-button style="margin-left: 10px;" size="small" type="success" @click.native="upload">上传</el-button>
+        </el-form-item>     
+      </el-form>  
       <span slot="footer" class="dialog-footer">
         <el-button @click="uploadDialogVisible=false">取 消</el-button>
         <el-button type="primary" @click="uploadDialogVisible = false">确 定</el-button>
-      </span>
+      </span>      
     </el-dialog>
   </div>
 </template>
@@ -242,7 +247,8 @@ export default {
       rarImg: RarImg,
       defaultImg: DefaultImg,
       resourcesData: [],
-      fileList: []
+      fileList: [],
+      resourceIntro: ''
     }
   },
   methods: {
@@ -281,8 +287,8 @@ export default {
       formData.append('file', fileObj)
       formData.append('only_url', false)
       formData.append('url', null)
-      formData.append('intro', 'for dxz test')
-      formData.append('course_code', 'E06B3120')
+      formData.append('intro', this.resourceIntro)
+      formData.append('course_code', this.$store.state.course_code)
       $.ajax({
         url: '/resourceUpload/',
         type: 'POST',
@@ -316,6 +322,7 @@ export default {
       data: {'course_id': this.$route.params.course_id},
       success: function (data) {
         ss.course = data['course_info']['name']
+        ss.$store.state.course_code = data['course_info']['course_code']
       },
       error: function () {
         alert('fail')
