@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 # 前后端衔接用
 from django.http import HttpResponse
 import json
+import datetime
 
 # 获取某学院课程列表(modefied by xdt 2017.11.8)
 # REQUIRES: type(col_id) == <class 'int'> && lower_value <= col_id <= upper_value
@@ -183,18 +184,18 @@ def get_username(username_or_email):
     return result.values('username')[0]
 
 def refresh_ip_visit_info(ip):
-    ip_obj = IpVisitInfo.objects.get(ip=ip)
+    ip_obj = IpVisitInfo.objects.filter(ip=ip)
     nowdate = str(datetime.datetime.now().strftime("%Y-%m-%d"))
-    if (ip_obj == None):
+    if (len(ip_obj) == 0):
         IpVisitInfo.objects.create(
             ip = str(ip), 
             visit_count = 1,
-            first_date = nowdate,
+            early_date = nowdate,
             latest_date = nowdate
         )
         return
-    latest_date = ip_obj['latest_date']
-    if(latest_date != nowdate):
+    ip_obj = ip_obj[0]
+    if(ip_obj.latest_date != nowdate):
         ip_obj.latest_date = nowdate
         ip_obj.visit_count += 1
         ip_obj.save()

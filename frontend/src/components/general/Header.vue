@@ -110,6 +110,8 @@ export default {
       dataType: 'json',
       url: '/sign/iprecord/',
       type: 'POST',
+      success: function (data) {
+      },
       error: function () {
         alert('ip记录链接失败')
       }

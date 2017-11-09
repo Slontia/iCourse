@@ -575,7 +575,7 @@ def latest_resource_info(request):
         course_id = int(request.POST.get('course_id'))
         number = int(request.POST.get('number'))
         result = interface.resource_information_list(course_id, number)
-        return HttpResponse(json.dumps({'result': result}, cls=ComplexEncoder))
+        return HttpResponse(json.dumps({'result': result}))
 
 # Repost Interface
 # REQUIRES: POST method, only anthenticated user can report, need {'be_reported_resource_id': be_reported_resource_id}
