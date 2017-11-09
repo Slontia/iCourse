@@ -399,7 +399,7 @@ export default {
     width: auto;
   }
   .card:hover{
-    background-color: #409EFF;
+    background-color: #58B7FF;
   }
   .card_button{
     padding-top:0px;

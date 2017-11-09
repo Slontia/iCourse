@@ -61,7 +61,6 @@
                 </div>
             </section>
         </el-col>
-
 </div>
 </template>
 
@@ -268,7 +267,10 @@ export default {
     },
     add_course_clicked () {
       // todo: add course function
-      alert('功能暂未开放,敬请期待')
+      this.$message({
+        showClose: true,
+        message: '功能暂未开放，敬请期待'
+      })
     }
   },
   mounted () {
@@ -277,7 +279,6 @@ export default {
 </script>
 
 <style type="text/css" scpoed>
-
     .tools_bar_above {
       width: auto;
       float: left;
