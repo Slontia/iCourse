@@ -244,9 +244,9 @@ def resource_information(request):
         #data = json.loads(request.body.decode())
         resource_id = int(request.POST.get('resource_id'))
         resource_info = interface.resource_information(resource_id)
-        #print("******************")
-        #print(resource_info)
-        #print("******************")
+        print("******************")
+        print(resource_info)
+        print("******************")
         return HttpResponse(json.dumps({'resource_info': resource_info}, cls=ComplexEncoder))
 
 
