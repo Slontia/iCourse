@@ -268,6 +268,7 @@ export default {
         data: {'resource_id': id},
         success: function (rdata) {
           resourceDialogSelf.$store.state.name = rdata['resource_info']['name']
+          /*
           $.ajax({
             url: '/user/information/',
             type: 'POST',
@@ -281,6 +282,8 @@ export default {
               alert('fail')
             }
           })
+          */
+          resourceDialogSelf.$store.state.author = rdata['user_info']['username']
           resourceDialogSelf.$store.state.size = rdata['resource_info']['size']
           resourceDialogSelf.$store.state.time = rdata['resource_info']['upload_time']
           resourceDialogSelf.$store.state.intro = rdata['resource_info']['intro']

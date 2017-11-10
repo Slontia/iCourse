@@ -168,7 +168,7 @@ def resource_information_list(course_id, number):
             resource = {'resource_id':item[0], 'username':'匿名用户', 'download_count':item[2], 'name':item[3]}
         else:
             #resource = {'resource_id':item[0], 'username':User.objects.get(id=int(item[1])), 'download_count':item[2], 'name':item[3]}
-            resource = {'resource_id':item[0], 'username':item[1], 'download_count':item[2], 'name':item[3]}
+            resource = {'resource_id':item[0], 'username':User.objects.get(id=int(item[1])).username, 'download_count':item[2], 'name':item[3]}
         result.append(resource)
         count += 1
         if(count == number):
