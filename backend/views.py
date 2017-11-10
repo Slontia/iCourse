@@ -58,7 +58,6 @@ def userRegister(request):
             password2 = str(data.get('password2'))
             email = str(data.get('email'))
             gender = str(data.get('gender'))
-            print(gender)
             nickname = str(data.get('nickname'))
             intro = str(data.get('intro'))
             
@@ -66,13 +65,12 @@ def userRegister(request):
             
             if(not registerForm.is_valid()):
                 return HttpResponse(json.dumps({'error': 201}, cls=ComplexEncoder))
-        
+
             user=User()
             user.username = username
             user.set_password(password1)
             user.email = email
             user.save()
-            
             #用户扩展信息 profile
             profile=UserProfile()
             profile.user_id = user.id # user_id
@@ -80,7 +78,6 @@ def userRegister(request):
             profile.nickname = nickname
             profile.intro = intro
             profile.save()
-            
             '''
                 #注册成功以后自动进行登录，登录前需要先验证，去掉注释后需要修改your url，HttpResponseRedirect进行页面重定向
                 newUser=auth.authenticate(username=username,password=password1)
