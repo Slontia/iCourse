@@ -348,10 +348,11 @@ export default {
           self.card_data[i][pos].frequency=info[i]['download_count']
           self.card_data[i][pos].id = info[i]['resource_id']
           self.card_data[i][pos].show = 'visible'
+          var name = info[i]['name'].toLowerCase()
           for (var t in self.img) {
             var temp = '.'+t+'$'
             var reg = new RegExp(temp)
-            if (reg.test(info[i]['name'])) {
+            if (reg.test(name)) {
               self.card_data[i][pos].img = self.img[t]
               break
             }
