@@ -64,13 +64,13 @@
         <el-col :span="2" :offset="1">标签:</el-col>
         <el-col :span="3">课件:</el-col>
         <el-col :span="2" :offset="11"><a href="">好评</a></el-col>
-        <el-col :span="1">21</el-col>
+        <el-col :span="1">0</el-col>
         <el-col :span="2" :offset="1"><a href="">差评</a></el-col>
-        <el-col :span="1">2</el-col>
+        <el-col :span="1">0</el-col>
       </el-row>
       <el-row style="margin:10px 0px 0px 0px;">
         <el-col :span="1" :offset="1"><i class="el-icon-star-off"></i></el-col>
-        <el-col :span="1">23</el-col>
+        <el-col :span="1">0</el-col>
         <el-col :span="1" :offset="1"><i class="el-icon-arrow-down"></i></el-col>
         <el-col :span="1">{{ this.$store.state.download_count }}</el-col>
       </el-row>
@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import DefaultImg from './../../assets/headportrait.jpg'
+import DefaultImg from './../../assets/fileico/generic.png'
 import DocImg from './../../assets/fileico/docx_win.png'
 import PdfImg from './../../assets/fileico/pdf.png'
 import PptImg from './../../assets/fileico/pptx_win.png'

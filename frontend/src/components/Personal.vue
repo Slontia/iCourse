@@ -88,7 +88,7 @@ export default {
   data () {
     return {
       spaceName: this.username + '的花园',
-      signature: '一只有情怀的程序猿',
+      signature: '',
       username: '',
       nickname: '',
       gender: '',
@@ -98,20 +98,8 @@ export default {
       personalIntro: 'NULL',
       tableData: [
         {
-          course: '工科数学分析',
+          course: '敬请期待',
           points: '100'
-        },
-        {
-          course: '软件工程基础',
-          points: '38'
-        },
-        {
-          course: '工科高等代数',
-          points: '19'
-        },
-        {
-          course: 'C++/C#程序设计',
-          points: '3'
         }
       ],
       headPortrait: hp

@@ -210,7 +210,7 @@
 <script>
 import Header from '../general/Header'
 import ResourceDialog from '../general/ResourceDialog'
-import DefaultImg from './../../assets/headportrait.jpg'
+import DefaultImg from './../../assets/fileico/generic.png'
 import DocImg from './../../assets/fileico/docx_win.png'
 import PdfImg from './../../assets/fileico/pdf.png'
 import PptImg from './../../assets/fileico/pptx_win.png'
