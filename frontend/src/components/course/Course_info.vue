@@ -227,7 +227,7 @@ export default {
         self.academy = info['college_id']
         self.hours = info['hours']
         self.intro_info = undefined
-        self.$store.state.course_code = data['course_code']
+        self.$store.state.course_code = info['course_code']
       },
       error: function () {
         alert('fail')
