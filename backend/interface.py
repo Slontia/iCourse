@@ -95,7 +95,7 @@ def resource_information(resource_id):
 # MODIFIES: None
 # EFFECTS: 返回某个用户的一些信息,返回类型为dict,若用户不存在则返回空字典
 
-def user_information(username):
+def user_information_by_username(username):
     is_email = False
     result = User.objects.filter(username=username)
     if(len(result) == 0):
@@ -113,6 +113,14 @@ def user_information(username):
     result['gender'] = profile.gender
     result['intro'] = profile.intro
     return result
+
+def user_information_by_id(user_id):
+    result = User.objects.filter(id=user_id)
+    if(len(result) == 0):
+        return {}
+    result = result.values('username', 'email')[0]
+    return result
+
 
 # 根据课程id查询相应的资源信息
 # REQUIRES: type(course_id) == <class 'int'>
