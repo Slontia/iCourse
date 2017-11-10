@@ -9,6 +9,7 @@
       <el-menu class="el-menu" theme="light" mode="horizontal" @select="handle_select" style="background-color: white;">
         <el-menu-item index="index" class = "el-menu-item" style="margin-right: 20px;">首页</el-menu-item>
         <el-menu-item index="course" class = "el-menu-item"style="margin-right: 20px">课程</el-menu-item>
+        <a target="_blank" class="el-menu-item" href="//shang.qq.com/wpa/qunwpa?idkey=c0e5ff3fb2a14d7101b8e76edcc8aa58be1e7e46d82f47271e4068726bacaeb5"  style="text-decoration: none;">加入QQ群</a>
         <!--
         <el-menu-item index="about" class = "el-menu-item">联系我们</el-menu-item>
       -->
