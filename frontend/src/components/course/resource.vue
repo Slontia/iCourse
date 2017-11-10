@@ -195,12 +195,11 @@
         </el-form-item>
         <el-form-item :label-width="form_label_width">
           <input type="file" value="" id="file">
-          <el-button style="margin-left: 10px;" size="small" type="success" @click.native="upload">上传</el-button>
         </el-form-item>     
       </el-form>  
       <span slot="footer" class="dialog-footer">
         <el-button @click="uploadDialogVisible=false">取 消</el-button>
-        <el-button type="primary" @click="uploadDialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click.native="upload">上 传</el-button>
       </span>      
     </el-dialog>
   </div>
@@ -281,6 +280,7 @@ export default {
               alert('fail')
             }
           })
+          // resourceDialogSelf.$store.state.author = rdata['user_info']['username']
           resourceDialogSelf.$store.state.size = rdata['resource_info']['size']
           resourceDialogSelf.$store.state.time = rdata['resource_info']['upload_time']
           resourceDialogSelf.$store.state.intro = rdata['resource_info']['intro']

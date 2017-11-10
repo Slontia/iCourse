@@ -166,16 +166,19 @@
     </template>
     </div>
   <el-dialog title="上传资源" :visible.sync="uploadDialogVisible" size="tiny">
-    <el-upload class="upload-demo" ref="upload" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
-      <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-      <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传</el-button>
-      <div slot="tip" class="el-upload__tip">只能上传pdf/ppt/doc/txt/zip文件，且不超过10Mb</div>
-    </el-upload>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="uploadDialogVisible=false">取 消</el-button>
-      <el-button type="primary" @click="uploadDialogVisible = false">确 定</el-button>
-    </span>
-  </el-dialog>
+      <el-form label-position="left">
+        <el-form-item type="text" label="资源介绍" :label-width="form_label_width">
+          <el-input v-model="resourceIntro" auto_complete="off" placeholder="请输入资源介绍"></el-input>
+        </el-form-item>
+        <el-form-item :label-width="form_label_width">
+          <input type="file" value="" id="file">
+        </el-form-item>     
+      </el-form>  
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="uploadDialogVisible=false">取 消</el-button>
+        <el-button type="primary" @click.native="upload">上 传</el-button>
+      </span>      
+    </el-dialog>
 
   <!-- 资源具体信息dialog -->
   <el-dialog title="资源信息" :visible.sync="dialogVisible" v-if="dialogVisible" size="tiny">
@@ -224,6 +227,7 @@ export default {
         self.academy = info['college_id']
         self.hours = info['hours']
         self.intro_info = undefined
+        self.$store.state.course_code = info['course_code']
       },
       error: function () {
         alert('fail')
@@ -290,6 +294,36 @@ export default {
     return_course_page_clicked: function () {
       this.$router.push({ path: '/course/' })
     },
+    upload: function () {
+      var formData = new FormData()
+      var fileObj = document.getElementById('file').files[0]
+      formData.append('file', fileObj)
+      formData.append('name', fileObj.name)
+      formData.append('only_url', false)
+      formData.append('url', null)
+      formData.append('intro', this.resourceIntro)
+      formData.append('course_code', this.$store.state.course_code)
+      $.ajax({
+        url: '/resourceUpload/',
+        type: 'POST',
+        data: formData,
+        async: true,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function (rdata) {
+          rdata = JSON.parse(rdata)
+          if (rdata['error'] === 0) {
+            alert('上传文件成功！')
+          } else {
+            alert('上传失败！' + rdata['error'])
+          }
+        },
+        error: function () {
+          alert('fail')
+        }
+      })
+    },
     edit_course: function () {
       this.$message({
         showClose: true,
@@ -321,7 +355,20 @@ export default {
         data: {'resource_id': resourceDialogSelf.card_data[i][j].id},
         success: function (rdata) {
           resourceDialogSelf.$store.state.name = rdata['resource_info']['name']
-          resourceDialogSelf.$store.state.author = rdata['resource_info']['upload_user_id']
+          $.ajax({
+            url: '/user/information/',
+            type: 'POST',
+            data: {id: rdata['resource_info']['upload_user_id']},
+            async: false,
+            success: function (data) {
+              data = JSON.parse(data)
+              resourceDialogSelf.$store.state.author = data['user_info']['username']
+            },
+            error: function () {
+              alert('fail')
+            }
+          })
+          // resourceDialogSelf.$store.state.author = rdata['resource_info']['upload_user_id']
           resourceDialogSelf.$store.state.size = rdata['resource_info']['size']
           resourceDialogSelf.$store.state.time = rdata['resource_info']['upload_time']
           resourceDialogSelf.$store.state.intro = rdata['resource_info']['intro']

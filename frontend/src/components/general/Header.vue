@@ -339,10 +339,10 @@ export default {
                 alert('登录成功')
                 break
               case 101:
-                alert('用户名不存在或账号未被激活')
+                alert('登录失败：用户名不存在或密码不匹配')
                 break
               case 102:
-                alert('密码错误')
+                alert('登录失败：非法的输入')
                 break
               default:
                 alert('未知错误')
