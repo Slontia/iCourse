@@ -120,7 +120,7 @@ export default {
       load_courses: false, // v-loading
       courses: [],
       storage: [],
-      course_bread_message: ''
+      course_bread_message: '查找课程'
     }
   },
   methods: {
@@ -226,7 +226,10 @@ export default {
     },
     search_course_clicked () {
       if (!this.filters.name) {
-        alert('搜索内容不能为空！')
+        this.$message.error({
+          showClose: true,
+          message: '搜索内容不能为空!'
+        })
       }
       else {
         this.load_courses = true

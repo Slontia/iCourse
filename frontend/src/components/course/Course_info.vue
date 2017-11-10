@@ -290,7 +290,12 @@ export default {
     return_course_page_clicked: function () {
       this.$router.push({ path: '/course/' })
     },
-    edit_course: function () {},
+    edit_course: function () {
+      this.$message({
+        showClose: true,
+        message: '功能暂未开放，敬请期待'
+      })
+    },
     submitUpload () {
       this.$refs.upload.submit()
     },

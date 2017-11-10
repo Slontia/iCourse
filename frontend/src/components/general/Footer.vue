@@ -7,6 +7,8 @@
 				<a href="https://github.com/Slontia/iCourse/" target="_blank" class="footer_link">Github</a>
 				<a href="http://www.cnblogs.com/hotcode5/" target="_blank" class="footer_link">blog</a>
 			</p>
+			<p class="footer_qq">QQ群: 639199158</p>
+		</div>
 		</div>
 	</footer>
 </template>
@@ -42,5 +44,9 @@
 	.footer_copyright{
 		padding-top: 20px;
 		color:gray;
+	}
+	.footer_qq{
+		color:gray;
+		padding-top: 10px;
 	}
 </style>
