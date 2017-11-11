@@ -21,7 +21,7 @@
             </el-col>
             <el-col :span="16">
               <img :src="defaultImg" style="height:18px;"></img>
-              <a href="">{{ this.$store.state.author }}</a>
+              {{ this.$store.state.author }}
             </el-col>
           </el-row>
           <el-row style="margin:10px 0px 0px 0px;">
@@ -63,9 +63,9 @@
       <el-row style="margin:10px 0px 0px 0px;">
         <el-col :span="2" :offset="1">标签:</el-col>
         <el-col :span="3">课件:</el-col>
-        <el-col :span="2" :offset="11"><a href="">好评</a></el-col>
+        <el-col :span="2" :offset="11">好评</el-col>
         <el-col :span="1">0</el-col>
-        <el-col :span="2" :offset="1"><a href="">差评</a></el-col>
+        <el-col :span="2" :offset="1">差评</el-col>
         <el-col :span="1">0</el-col>
       </el-row>
       <el-row style="margin:10px 0px 0px 0px;">
@@ -97,6 +97,7 @@ import JpgImg from './../../assets/fileico/jpeg.png'
 import ZipImg from './../../assets/fileico/zip.png'
 import RarImg from './../../assets/fileico/rar.png'
 import $ from 'jquery'
+
 export default {
   name: 'ResourceDialog',
   data () {

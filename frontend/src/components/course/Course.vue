@@ -209,7 +209,7 @@ export default {
             data: temp2,
             success: function (data) {
               console.log('ok')
-              alert('success')
+              alert('十分抱歉，此功能暂未实现')
             },
             error: function () {
               alert('错误')
