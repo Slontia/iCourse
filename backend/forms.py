@@ -6,10 +6,10 @@ class RegisterForm(forms.Form):
     username = forms.CharField(required=True, max_length=20)
     password1 = forms.CharField(required=True, max_length=20)
     password2 = forms.CharField(required=True, max_length=20)
-    email = forms.EmailField(required=True, max_length=20)
+    email = forms.EmailField(required=True, max_length=254)
     nickname = forms.CharField(required=False, max_length=20)
     gender = forms.CharField(required=False, max_length=20)
-    intro = forms.CharField(required=False, max_length=100)
+    intro = forms.CharField(required=False, max_length=254)
 
     def clean_username(self):
         username = self.cleaned_data['username']
