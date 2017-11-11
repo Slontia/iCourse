@@ -22,21 +22,34 @@ from backend import views as backend_views
 
 
 urlpatterns = [
+    # interface
     url(r'^sign/register/$', backend_views.userRegister, name='userRegister'),    # for user register
-    url(r'^course/college_course/$', backend_views.course_by_college, name='course_by_college'),    # for searching course list by college_id
-    url(r'^course/classification_course/$', backend_views.course_by_class, name='course_by_class'),    # for searching course list by class_id
-    url(r'^course/course_info/$', backend_views.course_information, name='course_information'),    # for course information
     url(r'^sign/get_user/$', backend_views.get_user, name='get_user'),    # for check user status
     url(r'^sign/login/$', backend_views.userLogin, name='userLogin'),    # for user login
     url(r'^sign/logout/$', backend_views.userLogout, name='userLogout'),    # for user logout
+    url(r'^sign/iprecord/$',backend_views.ip_record),
+    url(r'^sign/logged_in/$', backend_views.isLoggedIn, name='isLoggedIn'),
+    url(r'^course/college_course/$', backend_views.course_by_college, name='course_by_college'),    # for searching course list by college_id
+    url(r'^course/classification_course/$', backend_views.course_by_class, name='course_by_class'),    # for searching course list by class_id
+    url(r'^course/course_info/$', backend_views.course_information, name='course_information'),    # for course information
+    url(r'^course/visit_count/$', backend_views.refresh_visit_course_count),
+    url(r'^course/searching/$', backend_views.course_query, name='course_searching'),
+    url(r'^download/(\d+)/$', backend_views.download, name='download'),
+    url(r'^resource/information/$', backend_views.resource_information, name='resource_information'),
+    url(r'^resource/id/list/$', backend_views.resource_id_list, name='resource_id_list'),
+    url(r'^resource/latest/$',backend_views.latest_resource_info,name='latest_resource_info'),
+    url(r'^resourceUpload/$',backend_views.resourceUpload,name='resourceUpload'),
+    url(r'^resource/download_count/$',backend_views.refresh_download_resource_count),
+    url(r'^user/information/$', backend_views.user_information, name='user_information'),
 
-    url(r'^admin/', admin.site.urls),
+    # page
     url(r'^$', TemplateView.as_view(template_name='index.html')), # NEW
-    # url(r'^course/$', backend_views.course, name='course'),
-    # url(r'^contact/$', backend_views.contact, name='contact'),
-    #url(r'^api/', include('backend.urls', namespace='api')) # NEW
-    #url( r'^testdb$', testdb.test ),
-
-    url(r'^sign/logged_in/$', backend_views.loggedIn, name='loggedIn')
-    #url(r'^/user/[username]/home/$')
+    url(r'^index/$', backend_views.home, name='index'),
+    url(r'^course/$', backend_views.course, name='course'),
+    url(r'^resource/$', backend_views.course, name='course'),
+    url(r'^contact/$', backend_views.contact, name='contact'), 
+    url(r'^admin/', admin.site.urls),
+    url(r'^user/home/.*/$', backend_views.home),
+    url(r'^course/page/.*/$', backend_views.home),
+    url(r'^course/page/.*/resource/$', backend_views.home)
 ]

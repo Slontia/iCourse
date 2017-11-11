@@ -46,19 +46,25 @@ class Course(models.Model):
     class_id = models.PositiveSmallIntegerField()
     hours = models.SmallIntegerField()
     credit = models.SmallIntegerField()
+    course_code = models.CharField(max_length=10)
+    visit_count = models.IntegerField()
 
     def __str__(self):
         return str(self.id)
 
 # Resource Model
 class Resource(models.Model):
-    size = models.IntegerField()
-    link = models.CharField(max_length=100) # 考虑能否用FileField
-    name = models.CharField(max_length=30)
+    size = models.IntegerField(blank=False)
+    link = models.FileField(blank=True, upload_to='uploads/%Y/%m')
+    name = models.CharField(blank=False,max_length=300)
     intro = models.TextField()
-    upload_user_id = models.PositiveIntegerField()
-    course_id = models.PositiveIntegerField()
+    upload_user_id = models.PositiveIntegerField(blank=False)
+    #course_id = models.PositiveIntegerField(blank=False)
     upload_time = models.DateTimeField(auto_now_add=True)
+    only_url = models.BooleanField(blank=False)           # if only_url is True, link = None && url = uploaded url; else url = None && link = uploaded file.url
+    url = models.CharField(blank=True, max_length=1000)
+    course_code = models.CharField(blank=True, max_length=10)
+    download_count = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.id)
@@ -99,6 +105,7 @@ class UserProfile(models.Model):
     gender = models.CharField(max_length=1)
     nickname = models.CharField(max_length=20)
     intro = models.TextField()
+    college_id = models.PositiveIntegerField(blank=True, default=None)
 
     def __str__(self):
         return str(self.user.id)
@@ -135,4 +142,21 @@ class R_Resource_User_Like(models.Model):
     def __str__(self):
         return str(self.id)
 
+# Report Model
+class Report(models.Model):
+    report_time = models.DateTimeField(auto_now_add=True)
+    report_user_id = models.PositiveIntegerField(blank=True)
+    be_reported_resource_id = models.PositiveIntegerField(blank=False)
+    already_handle = models.BooleanField(blank=False, default=False)    # this field represents that if the administrator has handled the report, default=False, after handling, alter this field to True
 
+    def __str__(self):
+        return str(self.id)
+
+class IpVisitInfo(models.Model):
+    ip = models.CharField(max_length=20)
+    early_date = models.CharField(max_length=20)
+    latest_date = models.CharField(max_length=20)
+    visit_count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return str(self.id)

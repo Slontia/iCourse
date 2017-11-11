@@ -12,6 +12,48 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RemoveField(
+            model_name='resource',
+            name='course_id',
+        ),
+        migrations.AddField(
+            model_name='course',
+            name='course_code',
+            field=models.CharField(default=0, max_length=10),
+            preserve_default=False,
+        ),
+        migrations.AddField(
+            model_name='resource',
+            name='course_code',
+            field=models.CharField(blank=True, max_length=10),
+        ),
+        migrations.AddField(
+            model_name='resource',
+            name='download_count',
+            field=models.IntegerField(default=0),
+        ),
+        migrations.AddField(
+            model_name='resource',
+            name='only_url',
+            field=models.BooleanField(default=False),
+            preserve_default=False,
+        ),
+        migrations.AddField(
+            model_name='resource',
+            name='url',
+            field=models.CharField(blank=True, max_length=1000),
+        ),
+        migrations.AlterField(
+            model_name='resource',
+            name='link',
+            field=models.FileField(blank=True, upload_to='uploads/%Y/%m'),
+        ),
+        migrations.AddField(
+            model_name='course',
+            name='visit_count',
+            field=models.IntegerField(default=0),
+            preserve_default=False,
+        ),
         migrations.CreateModel(
             name='R_Resource_Evaluation',
             fields=[

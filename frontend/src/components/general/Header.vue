@@ -2,14 +2,17 @@
   <div id="header">
 <el-row class = "container">
   <el-col :span="24" class="header">
-    <el-col :span="4" class="logo">
-      {{ logo_name }}
+    <el-col :span="4">
+      <el-button type="text" @click.native="logo_clicked" class="logo">{{ logo_name }}</el-button>
     </el-col>
     <el-col :span="16" class="menu">
       <el-menu class="el-menu" theme="light" mode="horizontal" @select="handle_select" style="background-color: white;">
         <el-menu-item index="index" class = "el-menu-item" style="margin-right: 20px;">首页</el-menu-item>
         <el-menu-item index="course" class = "el-menu-item"style="margin-right: 20px">课程</el-menu-item>
+        <a target="_blank" class="el-menu-item" href="//shang.qq.com/wpa/qunwpa?idkey=c0e5ff3fb2a14d7101b8e76edcc8aa58be1e7e46d82f47271e4068726bacaeb5"  style="text-decoration: none;">加入QQ群</a>
+        <!--
         <el-menu-item index="about" class = "el-menu-item">联系我们</el-menu-item>
+      -->
       </el-menu>
     </el-col>
     <el-col :span="4" class="userinfo">
@@ -76,10 +79,12 @@
 </template>
 
 <script>
-import $ from 'jquery'
-// import json from 'json5'
 /* eslint-disable brace-style */
 /* eslint-disable camelcase */
+import $ from 'jquery'
+// 请不要删除和get_url相关的行，如果你真的需要请告诉我下原因。by xindetai
+// import get_url from './getUrl.js'
+// import json from 'json5'
 export default {
   name: 'Header',
   beforeCreate: function () {
@@ -87,7 +92,7 @@ export default {
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: 'sign/logged_in/',
+      url: '/sign/logged_in/',
       type: 'POST',
       success: function (data) {
         self.username = data['username']
@@ -99,6 +104,17 @@ export default {
       },
       error: function () {
         alert('加载导航栏连接服务器失败')
+      }
+    })
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: '/sign/iprecord/',
+      type: 'POST',
+      success: function (data) {
+      },
+      error: function () {
+        alert('ip记录链接失败')
       }
     })
   },
@@ -269,9 +285,35 @@ export default {
       }
     },
     login: function () { this.login_form_visible = true },
-    personal_space: function () {},
+    personal_space: function () { this.$router.push({ path: ('/user/home/' + this.username) }) },
     register: function () { this.register_form_visible = true },
-    logout: function () {},
+    logo_clicked: function () { this.$router.push({ path: ('/index') }) },
+    logout: function () {
+      var self = this
+      $.ajax({
+        ContentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: '/sign/logout/',
+        type: 'POST',
+        success: function (data) {
+          switch (data['error']) {
+            case 0:
+              self.is_login = false
+              self.username = null
+              alert('登出成功')
+              break
+            case 301:
+              alert('登出失败')
+              break
+            default:
+              alert('未知错误')
+          }
+        },
+        error: function () {
+          alert('登出连接服务器失败')
+        }
+      })
+    },
     login_confirm_clicked: function (form_name) { this.$refs[form_name].validate((valid) => {
       if (valid) {
         var post_data = {
@@ -282,7 +324,7 @@ export default {
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
-          url: 'sign/login/',
+          url: '/sign/login/',
           type: 'POST',
           data: post_data,
           success: function (data) {
@@ -291,15 +333,16 @@ export default {
             switch (data['error']) {
               case 0:
                 self.login_form_visible = false
-                self.username = post_data['username']
+                // self.username = post_data['username']
+                self.username = data['username']
                 self.is_login = true
                 alert('登录成功')
                 break
               case 101:
-                alert('用户名不存在或账号未被激活')
+                alert('登录失败：用户名不存在或密码不匹配')
                 break
               case 102:
-                alert('密码错误')
+                alert('登录失败：非法的输入')
                 break
               default:
                 alert('未知错误')
@@ -335,7 +378,7 @@ export default {
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
-          url: 'sign/register/',
+          url: '/sign/register/',
           type: 'POST',
           data: post_data,
           success: function (data) {
@@ -367,10 +410,11 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
  .header{
     height: 60px;
     line-height: 60px;
+    background-color: white;
     }
   .container {
     height: 60px;
@@ -387,16 +431,19 @@ export default {
     margin-right: 50px;
     border-right-width: 0px;
     width:auto;
+    background-color: white;
   }
   .userinfo {
     text-align: right;
     float: right;
     width: auto;
     padding-right: 10px;
+    background-color: white;
   }
   .el-menu-item {
     font-size: 22px;
     font-family: Microsoft YaHei;
+    color:#5A5E66;
   }
   .el-dropdown-link{
     font-family: Microsoft YaHei;

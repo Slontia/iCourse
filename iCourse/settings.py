@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 
+import logging
+import django.utils.log
+import logging.handlers
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -24,7 +28,10 @@ SECRET_KEY = 'tsuw%ib$4i+6(=i3q#67g32nozrp)#1)h53c!$@+ra&pio42ez'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:8080'
+)
 ALLOWED_HOSTS = ['*']
 
 
@@ -38,9 +45,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'backend',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -140,3 +149,10 @@ AUTH_PROFILE_MODULE = 'backend.UserProfile'
 
 # Reload for login
 AUTHENTICATE_BACKENDS = {'backend.views.CustomBackend', }
+
+# Add for uploaded resources
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+DEFAULT_FILE_STORAGE = "iCourse.CustomFileField.storage.FileStorage" # to solve the filename problem
+

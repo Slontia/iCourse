@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('size', models.IntegerField()),
                 ('link', models.CharField(max_length=100)),
-                ('name', models.CharField(max_length=30)),
+                ('name', models.CharField(max_length=300)),
                 ('intro', models.TextField()),
                 ('upload_user_id', models.PositiveIntegerField()),
                 ('course_id', models.PositiveIntegerField()),
