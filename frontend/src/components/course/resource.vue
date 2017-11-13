@@ -177,6 +177,22 @@
         </el-row>
         </el-col>
       </el-row>
+      <!-- 分页按钮 -->
+      <el-row>
+        <el-col :span="2" :offset="17">
+          <el-button-group>
+            <el-button type="primary" size="small" @click.native="lastPage"><i class="el-icon-arrow-left"></i></el-button>
+            <el-button type="default" size="small">{{ nowPage }} / {{ pageLength }}</el-button>
+            <el-button type="primary" size="small" @click.native="nextPage"><i class="el-icon-arrow-right"></i></el-button>
+          </el-button-group>
+        </el-col>
+        <el-col :span="3">
+          <label>跳转到</label>
+          <el-input v-model="userPage" style="width:50px;"  size="small" />
+          <el-button type="primary" @click.native="jumpPage" size="small">跳转</el-button>
+        </el-col>
+      </el-row>
+
     </el-row>
 
     <!-- 资源详细信息窗口 -->
@@ -246,9 +262,16 @@ export default {
       rarImg: RarImg,
       defaultImg: DefaultImg,
       resourcesData: [],
+      resourcesIdList: [],
       fileList: [],
-      resourceIntro: ''
+      resourceIntro: '',
+      nowPage: 1,
+      pageLength: 0,
+      userPage: ''
     }
+  },
+  beforeCreate: function () {
+
   },
   methods: {
     closed: function () { alert('还未开放') },
@@ -322,6 +345,111 @@ export default {
           alert('fail')
         }
       })
+    },
+    updateResources: function () {
+      var ss = this
+      let resourceSelf = []
+      for (var i = (ss.nowPage - 1) * 9; i < ss.resourcesIdList.length && i < ss.nowPage * 9; i++) {
+        $.ajax({
+          ContentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          url: '/resource/information/',
+          type: 'POST',
+          async: false,
+          data: {'resource_id': ss.resourcesIdList[i]},
+          success: function (rdata) {
+            var tt = {
+              col1: false,
+              col2: false,
+              col3: false,
+              name: '全部课件.zip',
+              intro: '里面整合了1~13章课件，全部是pdf格式',
+              collections: 0,
+              downloads: 56,
+              messages: 0,
+              author: '果冻',
+              time: '2017-3-26',
+              id: 0,
+              img: ''
+            }
+            if (i % 3 === 0) {
+              tt.col1 = true
+            }
+            if (i % 3 === 1) {
+              tt.col2 = true
+            }
+            if (i % 3 === 2) {
+              tt.col3 = true
+            }
+            tt.name = rdata['resource_info']['name']
+            tt.intro = rdata['resource_info']['intro']
+            tt.downloads = rdata['resource_info']['download_count']
+            $.ajax({
+              url: '/user/information/',
+              type: 'POST',
+              data: {id: rdata['resource_info']['upload_user_id']},
+              async: false,
+              success: function (data) {
+                data = JSON.parse(data)
+                tt.author = data['user_info']['username']
+              },
+              error: function () {
+                alert('fail')
+              }
+            })
+            tt.time = rdata['resource_info']['upload_time']
+            tt.id = rdata['resource_info']['id']
+            tt.img = ss.defaultImg
+            var tL = tt.name.length
+            if (tt.name[tL - 3].toLowerCase() === 'd' && tt.name[tL - 2].toLowerCase() === 'o' && tt.name[tL - 1].toLowerCase() === 'c') {
+              tt.img = ss.docImg
+            }
+            if (tt.name[tL - 3].toLowerCase() === 'p' && tt.name[tL - 2].toLowerCase() === 'd' && tt.name[tL - 1].toLowerCase() === 'f') {
+              tt.img = ss.pdfImg
+            }
+            if (tt.name[tL - 3].toLowerCase() === 'p' && tt.name[tL - 2].toLowerCase() === 'p' && tt.name[tL - 1].toLowerCase() === 't') {
+              tt.img = ss.pptImg
+            }
+            if (tt.name[tL - 3].toLowerCase() === 'z' && tt.name[tL - 2].toLowerCase() === 'i' && tt.name[tL - 1].toLowerCase() === 'p') {
+              tt.img = ss.zipImg
+            }
+            if (tt.name[tL - 3].toLowerCase() === 'j' && tt.name[tL - 2].toLowerCase() === 'p' && tt.name[tL - 1].toLowerCase() === 'g') {
+              tt.img = ss.jpgImg
+            }
+            if (tt.name[tL - 3].toLowerCase() === 'r' && tt.name[tL - 2].toLowerCase() === 'a' && tt.name[tL - 1].toLowerCase() === 'r') {
+              tt.img = ss.rarImg
+            }
+            resourceSelf.push(tt)
+          },
+          error: function () {
+            alert('fail')
+          }
+        })
+      }
+      this.resourcesData = resourceSelf
+    },
+    lastPage: function () {
+      if (this.nowPage > 1) {
+        this.nowPage--
+        this.updateResources()
+      }
+    },
+    nextPage: function () {
+      if (this.nowPage < this.pageLength) {
+        this.nowPage++
+        this.updateResources()
+      }
+    },
+    jumpPage: function () {
+      var userPageNum = parseInt(this.userPage)
+      if (isNaN(userPageNum)) {
+        alert('请输入合法的页码！')
+      } else if (userPageNum < 1 || userPageNum > this.pageLength) {
+        alert('请输入合法的页码！')
+      } else {
+        this.nowPage = userPageNum
+        this.updateResources()
+      }
     }
   },
   created: function () {
@@ -341,7 +469,6 @@ export default {
         alert('fail')
       }
     })
-    let resourceSelf = []
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
@@ -350,89 +477,18 @@ export default {
       async: false,
       data: {'course_id': this.$route.params.course_id},
       success: function (data) {
-        for (var i = 0; i < data['resource_id_list'].length; i++) {
-          $.ajax({
-            ContentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            url: '/resource/information/',
-            type: 'POST',
-            async: false,
-            data: {'resource_id': data['resource_id_list'][i]},
-            success: function (rdata) {
-              var tt = {
-                col1: false,
-                col2: false,
-                col3: false,
-                name: '全部课件.zip',
-                intro: '里面整合了1~13章课件，全部是pdf格式',
-                collections: 0,
-                downloads: 56,
-                messages: 0,
-                author: '果冻',
-                time: '2017-3-26',
-                id: 0,
-                img: ''
-              }
-              if (i % 3 === 0) {
-                tt.col1 = true
-              }
-              if (i % 3 === 1) {
-                tt.col2 = true
-              }
-              if (i % 3 === 2) {
-                tt.col3 = true
-              }
-              tt.name = rdata['resource_info']['name']
-              tt.intro = rdata['resource_info']['intro']
-              tt.downloads = rdata['resource_info']['download_count']
-              $.ajax({
-                url: '/user/information/',
-                type: 'POST',
-                data: {id: rdata['resource_info']['upload_user_id']},
-                async: false,
-                success: function (data) {
-                  data = JSON.parse(data)
-                  tt.author = data['user_info']['username']
-                },
-                error: function () {
-                  alert('fail')
-                }
-              })
-              tt.time = rdata['resource_info']['upload_time']
-              tt.id = rdata['resource_info']['id']
-              tt.img = ss.defaultImg
-              var tL = tt.name.length
-              if (tt.name[tL - 3].toLowerCase() === 'd' && tt.name[tL - 2].toLowerCase() === 'o' && tt.name[tL - 1].toLowerCase() === 'c') {
-                tt.img = ss.docImg
-              }
-              if (tt.name[tL - 3].toLowerCase() === 'p' && tt.name[tL - 2].toLowerCase() === 'd' && tt.name[tL - 1].toLowerCase() === 'f') {
-                tt.img = ss.pdfImg
-              }
-              if (tt.name[tL - 3].toLowerCase() === 'p' && tt.name[tL - 2].toLowerCase() === 'p' && tt.name[tL - 1].toLowerCase() === 't') {
-                tt.img = ss.pptImg
-              }
-              if (tt.name[tL - 3].toLowerCase() === 'z' && tt.name[tL - 2].toLowerCase() === 'i' && tt.name[tL - 1].toLowerCase() === 'p') {
-                tt.img = ss.zipImg
-              }
-              if (tt.name[tL - 3].toLowerCase() === 'j' && tt.name[tL - 2].toLowerCase() === 'p' && tt.name[tL - 1].toLowerCase() === 'g') {
-                tt.img = ss.jpgImg
-              }
-              if (tt.name[tL - 3].toLowerCase() === 'r' && tt.name[tL - 2].toLowerCase() === 'a' && tt.name[tL - 1].toLowerCase() === 'r') {
-                tt.img = ss.rarImg
-              }
-              resourceSelf.push(tt)
-            },
-            error: function () {
-              alert('fail')
-            }
-          })
+        ss.resourcesIdList = data['resource_id_list']
+        ss.nowPage = 0
+        ss.pageLength = Math.ceil(ss.resourcesIdList.length / 9)
+        if (ss.pageLength !== 0) {
+          ss.nowPage = 1
         }
+        ss.updateResources()
       },
       error: function () {
         alert('fail')
       }
     })
-    this.resourcesData = resourceSelf
   }
 }
 </script>
