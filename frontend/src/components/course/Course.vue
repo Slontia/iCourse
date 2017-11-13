@@ -145,7 +145,6 @@ export default {
       this.current_page = value
       this.courses = []
       var len = this.storage.length < value*this.page_size ? this.storage.length % this.page_size : this.page_size
-      console.log(this.storage.length)
 
       for (var i = 0; i < len; i++) {
         this.courses.push(this.storage[(value-1)*this.page_size+i])
@@ -187,10 +186,15 @@ export default {
               alert('拉取信息失败!')
             }
           })
-          self.load_courses = false
           self.handle_current_change(1)
+          self.load_courses = false
         }
         else if (node.parent.label === '课程类别') {
+          this.$message({
+            showClose: true,
+            message: '课程类别暂未开放，敬请期待，当前可以使用搜索或者开设院系来查找课程~'
+          })
+          /*
           var temp2 = { 'class_id': '' }
           switch (node.label) {
             case ('一般通识课'):
@@ -214,7 +218,6 @@ export default {
             default:
               temp2.class_id = '-1'
           }
-
           $.ajax({
             ContentType: 'application/json; charset=utf-8',
             dataType: 'json',
@@ -223,12 +226,12 @@ export default {
             data: temp2,
             success: function (data) {
               console.log('ok')
-              alert('十分抱歉，此功能暂未实现')
             },
             error: function () {
               alert('错误')
             }
           })
+          */
         }
         else {
           alert('结点不存在')
@@ -278,8 +281,8 @@ export default {
             alert('连接服务器异常')
           }
         })
-        self.load_courses = false
         self.handle_current_change(1)
+        self.load_courses = false
       }
     },
     add_course_clicked () {
