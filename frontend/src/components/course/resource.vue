@@ -179,7 +179,8 @@
       </el-row>
       <!-- 分页按钮 -->
       <el-row>
-        <el-col :span="2" :offset="17">
+        <el-col :span="1" :offset="16" style="color:red;height:28px;line-height:28px;"><label v-if="jumpHintVisible">跳转中</label></el-col>
+        <el-col :span="2">
           <el-button-group>
             <el-button type="primary" size="small" @click.native="lastPage"><i class="el-icon-arrow-left"></i></el-button>
             <el-button type="default" size="small">{{ nowPage }} / {{ pageLength }}</el-button>
@@ -267,7 +268,8 @@ export default {
       resourceIntro: '',
       nowPage: 1,
       pageLength: 0,
-      userPage: ''
+      userPage: '',
+      jumpHintVisible: false
     }
   },
   beforeCreate: function () {
@@ -348,6 +350,7 @@ export default {
     },
     updateResources: function () {
       var ss = this
+      var ti = 0
       let resourceSelf = []
       for (var i = (ss.nowPage - 1) * 9; i < ss.resourcesIdList.length && i < ss.nowPage * 9; i++) {
         $.ajax({
@@ -355,7 +358,6 @@ export default {
           dataType: 'json',
           url: '/resource/information/',
           type: 'POST',
-          async: false,
           data: {'resource_id': ss.resourcesIdList[i]},
           success: function (rdata) {
             var tt = {
@@ -372,15 +374,16 @@ export default {
               id: 0,
               img: ''
             }
-            if (i % 3 === 0) {
+            if (ti % 3 === 0) {
               tt.col1 = true
             }
-            if (i % 3 === 1) {
+            if (ti % 3 === 1) {
               tt.col2 = true
             }
-            if (i % 3 === 2) {
+            if (ti % 3 === 2) {
               tt.col3 = true
             }
+            ti++
             tt.name = rdata['resource_info']['name']
             tt.intro = rdata['resource_info']['intro']
             tt.downloads = rdata['resource_info']['download_count']
@@ -420,23 +423,26 @@ export default {
               tt.img = ss.rarImg
             }
             resourceSelf.push(tt)
+            ss.resourcesData = resourceSelf
+            ss.jumpHintVisible = false
           },
           error: function () {
             alert('fail')
           }
         })
       }
-      this.resourcesData = resourceSelf
     },
     lastPage: function () {
       if (this.nowPage > 1) {
         this.nowPage--
+        this.jumpHintVisible = true
         this.updateResources()
       }
     },
     nextPage: function () {
       if (this.nowPage < this.pageLength) {
         this.nowPage++
+        this.jumpHintVisible = true
         this.updateResources()
       }
     },
@@ -448,6 +454,7 @@ export default {
         alert('请输入合法的页码！')
       } else {
         this.nowPage = userPageNum
+        this.jumpHintVisible = true
         this.updateResources()
       }
     }
