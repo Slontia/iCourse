@@ -352,6 +352,10 @@ export default {
       var ss = this
       var ti = 0
       let resourceSelf = []
+      if (this.pageLength === 0) {
+        ss.jumpHintVisible = false
+        return
+      }
       for (var i = (ss.nowPage - 1) * 9; i < ss.resourcesIdList.length && i < ss.nowPage * 9; i++) {
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
