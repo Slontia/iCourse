@@ -314,7 +314,7 @@ export default {
         oveflow:hidden;
       }
       .course_tree {
-        height: 800px;
+        height: auto;
         width: auto;
         min-width: 20%;
         margin-right: 10px;
