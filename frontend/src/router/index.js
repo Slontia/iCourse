@@ -7,6 +7,7 @@ import Resource from '@/components/course/resource'
 import Personal from '@/components/Personal'
 import PersonalData from '@/components/PersonalData'
 import Courseinfo from '@/components/course/Course_info'
+import TestEditor from '@/components/TestEditor'
 import Router from 'vue-router'
 
 Vue.use(ElementUI)
@@ -15,6 +16,11 @@ Vue.use(Router)
 export default new Router({
   mode: 'history',
   routes: [
+    {
+      path: '/editor',
+      name: 'editor',
+      component: TestEditor
+    },
     {
       path: '/index',
       name: 'index',

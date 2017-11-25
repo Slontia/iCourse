@@ -1,6 +1,7 @@
 import Vue from 'vue'
 // import axios from 'axios'
 import ElementUI from 'element-ui'
+import VueQuillEditor from 'vue-quill-editor'
 import 'element-ui/lib/theme-default/index.css'
 import App from './App'
 import Vuex from 'vuex'
@@ -9,6 +10,7 @@ import router from './router'
 
 Vue.use(ElementUI)
 Vue.use(Vuex)
+Vue.use(VueQuillEditor)
 // to index
 // Vue.prototype.$ajax = axios
 Vue.prototype.$goRoute = function (index) {
