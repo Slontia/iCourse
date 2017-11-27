@@ -422,13 +422,80 @@ time|datetime|发布时间
 ### 举报
 ### 审核
 
-
-**函数名：** 
-**URL：** /
+## 5. 博文
+### 发表博文
+**函数名：** posting_publish
+**URL：** /post/posting/publish/
 **前端**
 变量名|类型|说明
 :-:|:-:|:-:
+title|str|标题
+course_id|int|课程id
+category|int|分类码，如1表提问、2表文章、0表其它等
+content|longtext|内容
+user_id|int|发表人id
+post_time|datetime|发布时间
+editor|int|编辑器代码，0=quill,1=markdown
+
 
 **后端**
 变量名|类型|说明
 :-:|:-:|:-:
+error|int|0:成功<br>1:失败
+
+### 跟帖
+**函数名：** follow_publish
+**URL：** /post/follow/publish/
+**前端**
+变量名|类型|说明
+:-:|:-:|:-:
+post_id|int|帖子id
+content|longtext|内容
+user_id|int|发表人id
+post_time|datetime|发布时间
+editor|int|编辑器代码，0=quill,1=markdown
+published|bool|是否已经发布
+
+**后端**
+变量名|类型|说明
+:-:|:-:|:-:
+error|int|0:成功<br>1:失败
+
+### 评论
+**函数名：** comment_publish
+**URL：** /post/comment/publish/
+**前端**
+变量名|类型|说明
+:-:|:-:|:-:
+user\_id|int|发表人id
+follow_id|int|所属跟帖id
+to\_comment\_id|int|要回复的评论id，没有填-1
+content|textfield|评论内容
+post\_time|datetime|发表时间
+
+**后端**
+变量名|类型|说明
+:-:|:-:|:-:
+error|int|0:成功<br>1:失败
+
+### 赞同/反对
+**函数名：** follow_evaluate
+**URL：** /post/follow/evaluate
+**前端**
+变量名|类型|说明
+:-:|:-:|:-:
+user_id|int|评价人id
+follow_id|int|跟帖id
+grade|int|评价，1表赞同，-1表反对
+
+**后端**
+变量名|类型|说明
+:-:|:-:|:-:
+error|int|0:成功<br>1:失败
+
+### 获取跟帖信息列表（内容、评价情况、是否为发布人等）
+
+### 获取帖子信息列表（评价情况、跟帖数、*顶楼部分内容）
+
+### 获取评论信息列表
+
