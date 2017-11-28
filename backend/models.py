@@ -167,7 +167,8 @@ class Post(models.Model):
     title = models.CharField(max_length=30)
     main_follow_id = models.IntegerField()
     update_time = models.DateTimeField(auto_now=True)
-    follow_count = models.IntegerField(default=1)
+    follow_count = models.IntegerField(default=0)
+    click_count = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.id)
@@ -180,6 +181,9 @@ class Follow(models.Model):
     edit_time = models.DateTimeField(auto_now=True)
     editor = models.IntegerField()
     is_main = models.BooleanField()
+    pos_eva_count = models.IntegerField(default=0)
+    neg_eva_count = models.IntegerField(default=0)
+    comment_count = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.id)
