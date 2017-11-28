@@ -156,3 +156,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_FILE_STORAGE = "iCourse.CustomFileField.storage.FileStorage" # to solve the filename problem
 
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760
