@@ -293,7 +293,6 @@ type|str|资源类别: ppt、doc(txt)、pdf、pict、other、all
 :-:|:-:|:-:
 query_list|list[int]|一个由资源id组成的列表，课程信息是个字典，包含数据库课程表的所有字段
 
-
 ### 3.3 资源收藏
 **函数名：** resource\_like
 **URL：** /resource/like/add/
@@ -345,15 +344,12 @@ like|int|0:未收藏<br>1:已收藏
 :-:|:-:|:-:
 resource_id|int|资源id
 user_id|int|用户id
-comment| longtext    |评论，可为null
-| grade   | int|评分，好评1，差评-1，默认0
-注意不可comment为null且grade为0
+| grade   | int |评分，0~5
 
 **后端**
 变量名|类型|说明
 :-:|:-:|:-:
 error|int|0:成功<br>1:失败
-modified|int|0:之前进行过好评/差评，这次为修改评价<br>1:这是一次新的评价
 
 ### 3.7 获取资源评价情况
 **函数名：** resource\_evaluation\_grade\_count
@@ -367,11 +363,10 @@ user_id|int|用户id
 **后端**
 变量名|类型|说明
 :-:|:-:|:-:
-pos_count|int|好评数
-neg_count|int|差评数
-user_grade|int|0:未进行好评/差评<br>1:好评<br>2:差评
+avg_grade|int|评价平均分
+user_grade|int|用户给予的评价，未评价返回-1
 
-### 3.8 获取评论id列表
+### 3.8 获取评论id列表（暂废）
 **函数名：** resource\_evaluation\_comment\_idlist
 **URL：** /resource/evaluation/comment/idlist/
 **前端**
@@ -384,7 +379,7 @@ resoruce_id|int|资源id
 :-:|:-:|:-:
 idlist|list[int]|包含所有评论（必须写了文字的）id的列表
 
-### 3.9 获取评论内容
+### 3.9 获取评论内容（暂废）
 **函数名：** resource\_evaluation\_comment\_content
 **URL：** /resource/evaluation/comment/content/
 **前端**
