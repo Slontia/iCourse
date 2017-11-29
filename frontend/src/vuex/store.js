@@ -12,7 +12,10 @@ const store = new Vuex.Store({
     author: '',
     time: '',
     url: '',
-    course_code: ''
+    course_code: '',
+    // state relating to login
+    user_name: '',
+    is_login: false
   },
   mutations: {
   }

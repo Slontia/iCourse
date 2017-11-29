@@ -5,7 +5,8 @@
     <!-- course introduction -->
     <el-row :gutter="50" class="course_introduction">
         <el-col :span="18" >
-            <el-button type="primary" icon = "arrow-left" @click="return_course_page_clicked" style="margin-top: 20px;margin-bottom: 10px">返回课程页面</el-button>
+            <el-button type="primary" icon = "d-arrow-left" @click="return_course_page_clicked" style="margin-top: 20px;margin-bottom: 10px">返回课程页面</el-button>
+            <el-button type="primary" @click="enter_forum_clicked"style="float:right;margin-top: 20px; margin-bottom: 10px">进入课程论坛<i class="el-icon-d-arrow-right el-icon--right"></i></el-button>
           <div class="info_card">
             <el-card class="box-card">
             <div slot="header" class = "clearfix">
@@ -341,6 +342,9 @@ export default {
     },
     check_all_resource_clicked: function () {
       this.$router.push({ path: 'resource/' })
+    },
+    enter_forum_clicked: function () {
+      this.$router.push({ path: 'forum/' })
     },
     card_clicked (i, j) {
       console.log(this.card_data[i][j].id)

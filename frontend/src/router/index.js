@@ -7,6 +7,8 @@ import Resource from '@/components/course/resource'
 import Personal from '@/components/Personal'
 import PersonalData from '@/components/PersonalData'
 import Courseinfo from '@/components/course/Course_info'
+import Thread from '@/components/forum/Thread'
+import Forum from '@/components/forum/Forum'
 import Router from 'vue-router'
 
 Vue.use(ElementUI)
@@ -43,6 +45,16 @@ export default new Router({
       path: '/course/page/:course_id/resource',
       name: 'resource',
       component: Resource
+    },
+    {
+      path: '/course/page/:course_id/forum',
+      name: 'forum',
+      component: Forum
+    },
+    {
+      path: '/course/page/:course_id/forum/:thread_id',
+      name: 'thread',
+      component: Thread
     },
     {
       path: '/user/home/:username',

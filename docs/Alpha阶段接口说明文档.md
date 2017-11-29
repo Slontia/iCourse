@@ -1,4 +1,4 @@
-﻿# 接口说明文档
+﻿# Alpha阶段接口说明文档
 
 ## 1. 用户相关
 ### 1.1 记录访问ip
@@ -25,7 +25,7 @@ username|str|用户名
 password1|str|密码
 password2|str|确认密码（无必要）
 email|str|电子邮箱，暂定北航
-gender|str|性别，男/女/保密
+gender|int|性别，男1/女2/保密0
 nickname|str|姓名/昵称
 intro|str|个人介绍
 

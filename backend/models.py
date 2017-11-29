@@ -160,3 +160,48 @@ class IpVisitInfo(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+class Post(models.Model):
+    course_id = models.IntegerField()
+    category = models.IntegerField()
+    title = models.CharField(max_length=30)
+    main_follow_id = models.IntegerField()
+    update_time = models.DateTimeField(auto_now=True)
+    follow_count = models.IntegerField(default=0)
+    click_count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return str(self.id)
+
+class Follow(models.Model):
+    post_id = models.IntegerField()
+    user_id = models.IntegerField()
+    content = models.TextField()
+    post_time = models.DateTimeField(auto_now_add=True)
+    edit_time = models.DateTimeField(auto_now=True)
+    editor = models.IntegerField()
+    is_main = models.BooleanField()
+    pos_eva_count = models.IntegerField(default=0)
+    neg_eva_count = models.IntegerField(default=0)
+    comment_count = models.IntegerField(default=0)
+    
+    def __str__(self):
+        return str(self.id)
+
+class Follow_Evaluation(models.Model):
+    user_id = models.IntegerField()
+    follow_id = models.IntegerField()
+    grade = models.SmallIntegerField()
+
+    def __str__(self):
+        return str(self.id)
+
+class Follow_Comment(models.Model):
+    user_id = models.IntegerField()
+    follow_id = models.IntegerField()
+    to_comment_id = models.IntegerField(null=True)
+    content = models.TextField()
+    post_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.id)
