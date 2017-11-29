@@ -301,6 +301,8 @@ export default {
               self.is_login = false
               self.username = null
               alert('登出成功')
+              self.$store.state.is_login = false
+              self.$store.state.user_name = ''
               break
             case 301:
               alert('登出失败')
@@ -336,6 +338,8 @@ export default {
                 // self.username = post_data['username']
                 self.username = data['username']
                 self.is_login = true
+                self.$store.state.user_name = self.username
+                self.$store.state.is_login = true
                 alert('登录成功')
                 break
               case 101:

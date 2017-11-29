@@ -16,11 +16,13 @@
     </el-row>
     <el-row>
       <el-col :span="9" :offset="3">
-        <el-button-group>
+        <el-radio-group v-model="selected_filter" @change="handle_filter_change">
           <template v-for="term in search_terms">
-            <el-button type="plain" class="button_group_static">{{ term.text }}</el-button>
+            <el-radio-button class="button_group_static" :label="term.text">
+              {{ term.text }}
+            </el-radio-button>
           </template>
-        </el-button-group>
+        </el-radio-group>
       </el-col>
       <el-col :span="6" :offset="2">
         <el-input type="text" v-model = "search_text" placeholder="在当前条目下搜索" @keydown.enter.native.prevent="search_button_clicked" icon="search" :on-icon-click="search_button_clicked"></el-input>
@@ -54,7 +56,7 @@
         </el-col>
         <el-col :span="14" :offset="1">
           <el-row style="padding-bottom: 10px;">
-            <el-button type="text" class="title_button">
+            <el-button type="text" class="title_button" @click="enter_thread_button_clicked(thread.id)">
             <p style="">
               <span style="">{{ thread.type }} ·</span>
               <span style="">{{ thread.title }}</span>
@@ -69,7 +71,7 @@
           </el-row>
         </el-col>
       </el-row>
-      <center><hr width="80%" style="" /></center>
+      <center><hr width="80%"/></center>
     </template>
     <el-row type="flex" justify="center">
       <el-col :span="18">
@@ -88,15 +90,20 @@ import Header from '../general/Header'
 export default {
   name: 'Forum',
   components: { Header },
+  beforeCreate () {
+    // todo: load course name,load all thread info(or one page if pagination)
+  },
   data () {
     return {
       course_name: '软件工程',
       total_thread: 0,
       page_size: 10,
       current_page: 1,
+      selected_filter: '全部',
+      search_text: '',
       current_threads: [
-        { agree_num: 12, follow_num: 5, read_num: 100, type: '学习心得', title: '关于最大团问题的典型解法', description: '很惭愧，一点微小的工作', user_name: '果冻', time: '2017-11-29' },
-        { agree_num: 11, follow_num: 3, read_num: 110, type: '问题讨论', title: '如何评论最近上线的BUAA-iCourse?', description: '如题', user_name: 'Aletheia', time: '2017-11-29' }
+        { id: '0001', agree_num: 12, follow_num: 5, read_num: 100, type: '学习心得', title: '关于最大团问题的典型解法', description: '很惭愧，一点微小的工作', user_name: '果冻', time: '2017-11-29' },
+        { id: '0002', agree_num: 11, follow_num: 3, read_num: 110, type: '问题讨论', title: '如何评论最近上线的BUAA-iCourse?', description: '如题', user_name: 'Aletheia', time: '2017-11-29' }
       ],
       threads: [],
       search_terms: [
@@ -120,7 +127,13 @@ export default {
       })
     },
     handle_current_change: function (value) {
-
+      // handle the page changing of thread
+    },
+    handle_filter_change: function (value) {
+      // handle the filter changing of thread
+    },
+    enter_thread_button_clicked: function (value) {
+      console.log(value)
     }
   }
 }
@@ -136,7 +149,6 @@ export default {
     padding-bottom: 30px;
   }
   .button_group_static{
-    width: 100px;
     text-align: center;
   }
   .thread_info_num{
