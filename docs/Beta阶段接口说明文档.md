@@ -493,9 +493,113 @@ grade|int|评价，1表赞同，-1表反对
 :-:|:-:|:-:
 error|int|0:成功<br>1:失败
 
-### 获取跟帖信息列表（内容、评价情况、是否为发布人等）
+### 获取课程讨论版帖子id列表
+**函数名：** post\_id\_list
+**URL：** /post/id/list/
+**前端**
+变量名|类型|说明
+:-:|:-:|:-:
+course_id|int|课程id
+
+**后端**
+变量名|类型|说明
+:-:|:-:|:-:
+id_list|list[int]|该课程下所有帖子的id列表，按照更新时间排序
 
 ### 获取帖子信息列表（评价情况、跟帖数、*顶楼部分内容）
+**函数名：** post\_infor\_list
+**URL：** /post/information/list/
+**前端**
+变量名|类型|说明
+:-:|:-:|:-:
+id_list|list[int]|该课程下所有帖子的id列表
+get_content|bool|是否获取顶楼内容
+get_grade|bool|是否获取赞同情况
+get\_follow\_count|是否获取跟帖数
+
+**后端**
+变量名|类型|说明
+:-:|:-:|:-:
+info_list|list[dict{}]|信息列表
+
+字典包括：
+变量名|类型|说明
+:-:|:-:|:-:
+title|str|标题
+category|int|分类码
+user_id|int|用户id
+username|int|上传者用户名（冗余）
+read_count|int|阅读数
+update_time|datetime|更新时间
+content|textfield|顶楼内容（纯文本）
+grade_sum|int|所有跟帖的赞同数总和
+follow_count|int|跟帖数（顶楼不算在内）
+
+### 获取跟帖id列表
+**函数名：** follow\_id\_list
+**URL：** /follow/id/list/
+**前端**
+变量名|类型|说明
+:-:|:-:|:-:
+post_id|int|帖子id
+
+**后端**
+变量名|类型|说明
+:-:|:-:|:-:
+main_id|int|主楼id
+id\_list|list[int]|非主楼id列表，按照（赞同数-反对数）排序
+
+
+### 获取跟帖信息列表（内容、评价情况、是否为发布人等）
+**函数名：** follow\_info\_list
+**URL：** /follow/info/list/
+**前端**
+变量名|类型|说明
+:-:|:-:|:-:
+id_list|list[int]|跟帖id列表
+cur\_user\_id|int|浏览者id，未登录为-1
+
+**后端**
+变量名|类型|说明
+:-:|:-:|:-:
+info_list|list[dict{}]|信息列表
+
+字典包括：
+变量名|类型|说明
+:-:|:-:|:-:
+user_id|int|用户id
+username|str|用户名
+is_poster|bool|浏览者是否为发布者，未登录为false
+evaluated_grade|int|评价情况，1赞同，-1反对，未登录与未评价为0
+post_time|datetime|发布时间
+edit_time|datetime|编辑时间
+content|textfield|内容
+
+### 获取用户跟帖
+**函数名：** 
+**URL：** /
+**前端**
+变量名|类型|说明
+:-:|:-:|:-:
+post_id|int|帖子id
+user_id|int|用户id
+
+**后端**
+变量名|类型|说明
+:-:|:-:|:-:
+content|textfield|内容
+editor|int|编辑器编号
 
 ### 获取评论信息列表
+
+
+**函数名：** 
+**URL：** /
+**前端**
+变量名|类型|说明
+:-:|:-:|:-:
+
+**后端**
+变量名|类型|说明
+:-:|:-:|:-:
 
