@@ -52,6 +52,16 @@ class ResourceUploadForm(forms.ModelForm):
     class Meta:
         model =  Resource
         fields =  ['name', 'size', 'upload_user_id','course_code']
+
+    def clean_name(self):
+        count = 0
+        name = str(self.cleaned_data['name'])
+        for ch in name:
+            if(ch == '.'):
+                count += 1
+        if(count > 1):
+            raise forms.ValidationError("文件名中包含多余冒号")
+        return name
     
     def clean_size(self):
         # 2.5MB - 2621440

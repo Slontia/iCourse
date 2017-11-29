@@ -19,6 +19,8 @@ import datetime
 
 import os
 
+from django.utils.http import urlquote
+
 def page404(request):
     return
 # return HttpResponse(u"page not found: 404")
@@ -559,7 +561,14 @@ def download(request, resource_id): # 2 parameters
         try:
             response = StreamingHttpResponse(file_iterator(file_name, file_path))
             response['Content-Type'] = 'application/octet-stream'
-            response['Content-Disposition'] = 'attachment;filename="{0}"'.format(real_name) # display the real_name of the file when user download it
+            flag = False
+            for ch in real_name:
+                if(ord(ch) > 127):
+                    flag = True
+            if(flag):
+                response['Content-Disposition'] = 'attachment;filename="{0}"'.format(urlquote(real_name))
+            else:
+                response['Content-Disposition'] = 'attachment;filename="{0}"'.format(real_name) # display the real_name of the file when user download it
             #print(response)
         except Exception as e:
             #print(e)

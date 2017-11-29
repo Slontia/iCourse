@@ -184,7 +184,7 @@ class Follow(models.Model):
     pos_eva_count = models.IntegerField(default=0)
     neg_eva_count = models.IntegerField(default=0)
     comment_count = models.IntegerField(default=0)
-
+    
     def __str__(self):
         return str(self.id)
 
