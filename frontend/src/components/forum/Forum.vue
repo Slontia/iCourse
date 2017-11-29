@@ -55,14 +55,14 @@
         <el-col :span="14" :offset="1">
           <el-row style="padding-bottom: 10px;">
             <el-button type="text" class="title_button">
-            <p>
-              <span>{{ thread.type }} ·</span>
-              <span>{{ thread.title }}</span>
+            <p style="">
+              <span style="">{{ thread.type }} ·</span>
+              <span style="">{{ thread.title }}</span>
             </p>
           </el-button>
           </el-row>
           <el-row style="padding-bottom: 10px;">
-            <p style="color: grey"> {{ thread.description }} </p>
+            <p class="thread_description"> {{ thread.description }} </p>
           </el-row>
           <el-row>
             <p style="float: right;color:grey"> {{ thread.user_name }} 最后编辑于 {{ thread.time }}</p>
@@ -152,9 +152,12 @@ export default {
   }
   .title_button{
     padding: 0px 0px 0px 0px;
-    margin: 4px 0px 0px 0px;
+    margin: 4px 0px 0px 4px;
     color:black;
     font-size: 24px;
+    word-wrap: break-word;
+    word-break:break-all;
+    white-space: pre-wrap;
   }
   .title_button:hover{
     color: #58B7FF;
@@ -162,6 +165,12 @@ export default {
   }
   .thread_container{
     margin-top: 30px;
-    height: 100px;
+    height: auto;
+  }
+  .thread_description{
+    color: grey;
+    white-space: pre-wrap;
+    word-break: break-all;
+    word-wrap:break-word;
   }
 </style>
