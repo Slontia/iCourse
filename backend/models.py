@@ -45,9 +45,11 @@ class Course(models.Model):
     college_id = models.PositiveIntegerField()
     class_id = models.PositiveSmallIntegerField()
     hours = models.SmallIntegerField()
-    credit = models.SmallIntegerField()
+    credit = models.DecimalField(max_digits=2, decimal_places=1)
     course_code = models.CharField(max_length=10)
     visit_count = models.IntegerField()
+    teacher = models.CharField(max_length=100, null=True)
+    elective = models.SmallIntegerField(default=0)
 
     def __str__(self):
         return str(self.id)
