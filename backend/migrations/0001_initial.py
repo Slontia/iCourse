@@ -31,7 +31,6 @@ class Migration(migrations.Migration):
                 ('college_id', models.PositiveIntegerField()),
                 ('class_id', models.PositiveSmallIntegerField()),
                 ('hours', models.SmallIntegerField()),
-                ('credit', models.SmallIntegerField()),
             ],
         ),
         migrations.CreateModel(

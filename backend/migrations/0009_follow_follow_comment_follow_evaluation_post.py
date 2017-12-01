@@ -61,4 +61,15 @@ class Migration(migrations.Migration):
                 ('click_count', models.IntegerField(default=0)),
             ],
         ),
+        migrations.AddField(
+            model_name='course',
+            name='elective',
+            field=models.SmallIntegerField(default=0),
+        ),
+        migrations.AddField(
+            model_name='course',
+            name='teacher',
+            field=models.CharField(max_length=100, null=True),
+        ),
+
     ]
