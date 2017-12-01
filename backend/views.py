@@ -8,7 +8,7 @@ from .forms import *
 from django.contrib.auth.models import User
 from django.contrib import auth
 from django.contrib.auth.backends import ModelBackend
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.views.generic.base import View
 from django.shortcuts import render
 
@@ -671,6 +671,8 @@ def posting_publish(request):
             follow.editor = editor
             follow.is_main = True
             follow.save()
+            post.main_follow_id = follow.id # renew post.main_follow_id
+            post.save()
         else:
             post.delete()
             return HttpResponse(json.dumps({'error': 1}))
@@ -696,9 +698,165 @@ def follow_publish(request):
             follow.editor = editor
             follow.is_main = False
             follow.save()
-            post = Post.objects.get(id=post_id)
+            post = Post.objects.get(id=post_id) # renew post.follow_count
             post.follow_count += 1
             post.save()
         else:
             return HttpResponse(json.dumps({'error': 1}))
         return HttpResponse(json.dumps({'error': 0}))
+
+# Publish Comment Interface
+# URL: /post/comment/publish/
+@csrf_exempt
+def comment_publish(request):
+    if(request.method == 'POST'):
+        data = request.POST
+        user_id = request.user.id
+        follow_id = int(data.get('follow_id'))
+        to_comment_id = int(data.get('to_comment_id'))
+        content = str(data.get('content'))
+        follow_comment_form = FollowCommentForm({'user_id':user_id, 'follow_id':follow_id, 'content':content})
+        if(follow_comment_form.isvalid()):
+            follow_comment = Follow_Comment()
+            follow_comment.user_id = user_id
+            follow_comment.follow_id = follow_id
+            follow_comment.to_comment_id = to_comment_id
+            follow_comment.content = content
+            follow_comment.save()
+            follow = Follow.objects.get(id=follow_id) # renew follow.comment_count
+            follow.comment_count += 1
+            follow.save()
+        else:
+            return HttpResponse(json.dumps({'error': 1}))
+        return HttpResponse(json.dumps({'error': 0}))
+
+# Follow Evaluate Interface
+# URL: /post/follow/evaluate
+@csrf_exempt
+def follow_evaluate(request):
+    if(request.method == 'POST'):
+        data = request.POST
+        user_id = request.user.id
+        follow_id = int(data.get('follow_id'))
+        grade = int(data.get('grade'))
+        follow_evaluation_form = FollowEvaluationForm({'user_id':user_id, 'follow_id':follow_id, 'grade':grade})
+        if(follow_evaluation_form.isvalid()):
+            result = Follow_Evaluation.objects.filter(user_id=user_id, follow_id=follow_id)
+            if(len(result) > 0): # if the user has evaluated the follow
+                return HttpResponse(json.dumps({'error': 1}))
+            else:
+                follow_evaluation = Follow_Evaluation()
+                follow_evaluation.user_id = user_id
+                follow_evaluation.follow_id = follow_id
+                follow_evaluation.grade = grade
+                follow_evaluation.save()
+                follow = Follow.objects.get(id=follow_id) # renew follow pos_eva_count or neg_eav_count
+                if(grade == 1):
+                    follow.pos_eva_count += 1
+                else: # grade == -1
+                    follow.neg_eva_count += 1
+                follow.save()
+        else:
+            return HttpResponse(json.dumps({'error': 1}))
+        return HttpResponse(json.dumps({'error': 0}))
+
+# Get Post Id List Interface
+# URL: /post/id/list/
+@csrf_exempt
+def post_id_list(request):
+    if(request.method == 'POST'):
+        course_id = int(request.POST.get('course_id'))
+        id_list = list(Post.objects.filter(course_id=course_id).order_by('-update_time').values_list('id', flat=True))
+        return HttpResponse(json.dumps({'id_list': id_list}))
+
+# Post Information List Interface
+# URL: /post/information/list/
+@csrf_exempt
+def post_infor_list(request):
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        id_list = list(data.get('id_list'))
+        get_content = str(data.get('get_content'))
+        get_grade = str(data.get('get_grade'))
+        get_follow_count = str(data.get('get_follow_count'))
+        if(get_content == 'True' or get_content == 'true'):
+            get_content = True
+        elif(get_content == 'False' or get_content == 'false'):
+            get_content = False
+        else:
+            return HttpResponse(json.dumps({'error':1}))
+        if(get_grade == 'True' or get_grade == 'true'):
+            get_grade = True
+        elif(get_grade == 'False' or get_grade == 'false'):
+            get_grade = False
+        else:
+            return HttpResponse(json.dumps({'error':1}))
+        if(get_follow_count == 'True' or get_follow_count == 'true'):
+            get_follow_count = True
+        elif(get_follow_count == 'False' or get_follow_count == 'false'):
+            get_follow_count = False
+        else:
+            return HttpResponse(json.dumps({'error':1}))
+        info_list = []
+        for item in id_list:
+            item = int(item)
+            result = Post.objects.filter(id=item)
+            if(len(result) != 1):
+                # error
+                continue
+            post = result.values('title', 'category', 'click_count', 'update_time','follow_count', 'main_follow_id')[0]
+            post['grade_sum'] = Follow.objects.filter(post_id=item).aggregate(grade_sum=Sum('pos_eva_count'))['grade_sum']
+            main_follow = Follow.objects.get(id=post['main_follow_id'])
+            post['user_id'] = main_follow.user_id
+            post['content'] = main_follow.content
+            post['user_name'] = User.objects.get(id=post['user_id']).username
+            info_list.append(post)
+        return HttpResponse(json.dumps(info_list))
+
+# Get Follow Id List Interface
+# URL: /follow/id/list/
+@csrf_exempt
+def follow_id_list(request):
+    if(request.method == 'POST'):
+        post_id = int(request.POST.get('post_id'))
+        result = Post.objects.filter(id=post_id)
+        if(len(result) != 1):
+            return HttpResponse(json.dumps({'main_id':-1, 'id_list':[]}))
+        main_id = result[0].main_follow_id
+        id_list = list(Follow.objects.filter(post_id=post_id).order_by('-pos_eva_count','neg_pos_count').values_list('id', flat=True))
+        id_list.remove(main_id)
+        return HttpResponse(json.dumps({'main_id':main_id, 'id_list':id_list}))
+
+# Follow Information List Interface
+# URL: /follow/info/list/
+@csrf_exempt
+def follow_info_list(request):
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        id_list = list(data.get('id_list'))
+        cur_user_id = int(data.get('cur_user_id'))
+        info_list = []
+        for item in id_list:
+            item = int(item)
+            result = Follow.objects.filter(id=item)
+            if(len(result) != 1):
+                # error
+                continue
+            follow = result.values('user_id', 'psot_time', 'edit_time', 'content')[0]
+            follow['username'] = User.objects.get(id=follow['user_id']).username
+            if(follow['user_id'] == cur_user_id):
+                follow['is_poster'] = True
+            else:
+                follow['is_poster'] = False
+            if(cur_user_id == -1):
+                follow['evaluated_grade'] = 0
+            else:
+                result = Follow_Evaluation.objects.filter(user_id=cur_user_id, follow_id=item).values_list('grade', flat=True)
+                if(len(result) == 0):
+                    follow['evaluated_grade'] = 0
+                else:
+                    follow['evaluated_grade'] = result[0]
+            info_list.append(follow)
+        return HttpResponse(json.dumps(info_list))

@@ -191,18 +191,18 @@ class Follow(models.Model):
         return str(self.id)
 
 class Follow_Evaluation(models.Model):
-    user_id = models.IntegerField()
-    follow_id = models.IntegerField()
-    grade = models.SmallIntegerField()
+    user_id = models.IntegerField(blank=False)
+    follow_id = models.IntegerField(blank=False)
+    grade = models.SmallIntegerField(blank=False)
 
     def __str__(self):
         return str(self.id)
 
 class Follow_Comment(models.Model):
-    user_id = models.IntegerField()
-    follow_id = models.IntegerField()
+    user_id = models.IntegerField(blank=False)
+    follow_id = models.IntegerField(blank=False)
     to_comment_id = models.IntegerField(null=True)
-    content = models.TextField()
+    content = models.TextField(blank=False)
     post_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

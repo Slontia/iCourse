@@ -51,5 +51,15 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^user/home/.*/$', backend_views.home),
     url(r'^course/page/.*/$', backend_views.home),
-    url(r'^course/page/.*/resource/$', backend_views.home)
+    url(r'^course/page/.*/resource/$', backend_views.home),
+
+    # post follow follow_comment follow_evaluation
+    url(r'^post/posting/publish/$', backend_views.posting_publish, name='posting_publish'),
+    url(r'^post/follow/publish/$', backend_views.follow_publish, name='follow_publish'),
+    url(r'^post/comment/publish/$', backend_views.comment_publish, name='comment_publish'),
+    url(r'^post/follow/evaluate/$', backend_views.follow_evaluate, name='follow_evaluate'),
+    url(r'^post/id/list/$', backend_views.post_id_list, name='post_id_list'),
+    url(r'^post/information/list/$', backend_views.post_infor_list, name='post_infor_list'),
+    url(r'^follow/id/list/$', backend_views.follow_id_list, name='follow_id_list'),
+    url(r'^follow/info/list/$', backend_views.follow_info_list, name='follow_info_list'),
 ]

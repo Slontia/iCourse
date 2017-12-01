@@ -60,7 +60,7 @@ class ResourceUploadForm(forms.ModelForm):
             if(ch == '.'):
                 count += 1
         if(count > 1):
-            raise forms.ValidationError("文件名中包含多余冒号")
+            raise forms.ValidationError("文件名中包含多余'.'符号")
         return name
     
     def clean_size(self):
@@ -102,6 +102,13 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = ['title', 'course_id', 'category']
 
+    def clean_course_id(self):
+        course_id = int(self.cleaned_data['course_id'])
+        result = Course.objects.filter(id=course_id)
+        if(len(result) != 1):
+            raise forms.ValidationError("课程不存在")
+        return course_id
+
 class FollowForm(forms.ModelForm):
     class Meta:
         model = Follow
@@ -113,3 +120,54 @@ class FollowForm(forms.ModelForm):
         if(len(result) != 1):
             raise forms.ValidationError("帖子不存在")
         return post_id
+
+    def clean_user_id(self):
+        user_id = int(self.cleaned_data['user_id'])
+        result = User.objects.filter(id=user_id)
+        if(len(result) != 1):
+            raise forms.ValidationError("用户不存在")
+        return user_id
+
+class FollowCommentForm(forms.ModelForm):
+    class Meta:
+        model = Follow_Comment
+        fields = ['user_id', 'follow_id', 'content']
+
+    def clean_user_id(self):
+        user_id = int(self.cleaned_data['user_id'])
+        result = User.objects.filter(id=user_id)
+        if(len(result) != 1):
+            raise forms.ValidationError("用户不存在")
+        return user_id
+
+    def clean_follow_id(self):
+        follow_id = int(self.cleaned_data['follow_id'])
+        result = Follow.objects.filter(id=follow_id)
+        if(len(result) != 1):
+            raise forms.ValidationError("跟帖不存在")
+        return follow_id
+
+class FollowEvaluationForm(forms.ModelForm):
+    class Meta:
+        model = Follow_Evaluation
+        fields = ['user_id', 'follow_id', 'grade']
+
+    def clean_user_id(self):
+        user_id = int(self.cleaned_data['user_id'])
+        result = User.objects.filter(id=user_id)
+        if(len(result) != 1):
+            raise forms.ValidationError("用户不存在")
+        return user_id
+
+    def clean_follow_id(self):
+        follow_id = int(self.cleaned_data['follow_id'])
+        result = Follow.objects.filter(id=follow_id)
+        if(len(result) != 1):
+            raise forms.ValidationError("跟帖不存在")
+        return follow_id
+
+    def clean_grade(self):
+        grade = int(self.cleaned_data['grade'])
+        if(grade != 1 and grade != -1):
+            raise forms.ValidationError("评价数据错误")
+        return grade
