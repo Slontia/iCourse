@@ -640,3 +640,65 @@ def ip_record(request):
         print('ip:', ip)
         interface.refresh_ip_visit_info(str(ip))
         return HttpResponse(json.dumps({'result':0}))
+
+# Publish Post Interface
+# URL: /post/posting/publish/
+@csrf_exempt
+def posting_publish(request):
+    if(request.method == 'POST'):
+        data = request.POST
+        course_id = int(data.get('course_id'))
+        category = int(data.get('category'))
+        title = str(data.get('title'))
+        content = str(data.get('content'))
+        user_id = request.user.id
+        editor = int(data.get('editor'))
+        post_form = PostForm({'title':title, 'course_id':course_id, 'category':category})
+        if(post_form.isvalid()):
+            post = Post()
+            post.title = title
+            post.course_id = course_id
+            post.category = category
+            post.save()
+        else:
+            return HttpResponse(json.dumps({'error': 1}))
+        follow_form = FollowForm({'post_id':post.id, 'user_id':user_id, 'content':content, 'editor':editor})
+        if(follow_form.isvalid()):
+            follow = Follow()
+            follow.post_id = post.id
+            follow.user_id = user_id
+            follow.content = content
+            follow.editor = editor
+            follow.is_main = True
+            follow.save()
+        else:
+            post.delete()
+            return HttpResponse(json.dumps({'error': 1}))
+        return HttpResponse(json.dumps({'error': 0}))
+
+# Publish Follow Interface
+# URL: /post/follow/publish/
+@csrf_exempt
+def follow_publish(request):
+    if(request.method == 'POST'):
+        data = request.POST
+        post_id = int(data.get('post_id'))
+        contet = str(data.get('content'))
+        user_id = request.user.id
+        editor = int(data.get('editor'))
+        # published?
+        follow_form = FollowForm({'post_id':post_id, 'user_id':user_id, 'content':content, 'editor':editor})
+        if(follow_form.isvalid()):
+            follow = Follow()
+            follow.post_id = post_id
+            follow.user_id = user_id
+            follow.content = content
+            follow.editor = editor
+            follow.is_main = False
+            follow.save()
+            post = Post.objects.get(id=post_id)
+            post.follow_count += 1
+            post.save()
+        else:
+            return HttpResponse(json.dumps({'error': 1}))
+        return HttpResponse(json.dumps({'error': 0}))

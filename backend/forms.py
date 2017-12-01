@@ -1,7 +1,7 @@
 from django import forms
 import re
 from django.contrib.auth.models import User
-from .models import Resource
+from .models import *
 
 class RegisterForm(forms.Form):
     username = forms.CharField(required=True, max_length=20)
@@ -96,3 +96,20 @@ class UserInfoModifyForm(forms.Form):
         if(college_id <= 0):
             raise forms.ValidationError("学院错误")
         return college_id
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title', 'course_id', 'category']
+
+class FollowForm(forms.ModelForm):
+    class Meta:
+        model = Follow
+        fields = ['post_id', 'user_id', 'content', 'editor']
+
+    def clean_post_id(self):
+        post_id = int(self.cleaned_data['post_id'])
+        result = Post.objects.filter(id=post_id)
+        if(len(result) != 1):
+            raise forms.ValidationError("帖子不存在")
+        return post_id

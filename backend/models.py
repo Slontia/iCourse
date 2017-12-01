@@ -164,9 +164,9 @@ class IpVisitInfo(models.Model):
         return str(self.id)
 
 class Post(models.Model):
-    course_id = models.IntegerField()
-    category = models.IntegerField()
-    title = models.CharField(max_length=30)
+    course_id = models.IntegerField(blank=False)
+    category = models.IntegerField(blank=False)
+    title = models.CharField(max_length=30, blank=False)
     main_follow_id = models.IntegerField()
     update_time = models.DateTimeField(auto_now=True)
     follow_count = models.IntegerField(default=0)
@@ -176,13 +176,13 @@ class Post(models.Model):
         return str(self.id)
 
 class Follow(models.Model):
-    post_id = models.IntegerField()
-    user_id = models.IntegerField()
-    content = models.TextField()
+    post_id = models.IntegerField(blank=False)
+    user_id = models.IntegerField(blank=False)
+    content = models.TextField(blank=False)
     post_time = models.DateTimeField(auto_now_add=True)
     edit_time = models.DateTimeField(auto_now=True)
-    editor = models.IntegerField()
-    is_main = models.BooleanField()
+    editor = models.IntegerField(blank=False)
+    is_main = models.BooleanField(blank=False)
     pos_eva_count = models.IntegerField(default=0)
     neg_eva_count = models.IntegerField(default=0)
     comment_count = models.IntegerField(default=0)
