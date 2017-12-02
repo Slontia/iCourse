@@ -164,6 +164,37 @@
       <hr width="80%" style="margin-bottom: 20px;"/>
       </center>
     </template>
+    
+    <center>
+    <el-button class="bar" type="text">
+      <p class="all_text">查看全部{{response_num}}条回复</p>
+    </el-button>
+    </center>
+    
+    <!-- editor -->
+    <el-row type="flex" justify="center" class="response_info_row">
+      <el-col :span="20">
+        <p style="text-align: left; margin-bottom: 20px;">发表你的看法</p>
+      </el-col>
+    </el-row>
+    <el-row type="flex" justify="center" >
+      <el-col :span="20" class="editor_container">
+      <quill-editor v-model="editor.content" ref="quill" class="editor" :options="editor.option" @ready="on_editor_ready($event)" @blur="on_editor_blur($event)" @focus="on_editor_focus($event)">
+      </quill-editor>
+    </el-col>
+    </el-row>
+    <el-row type="flex" justify="center" >
+      <el-col :span="20" class="limit">
+        已经输入<span> {{ editor.current_text_length }} </span>个字符，还可以输入<span> {{ editor.current_available_text }} </span>个字符
+      </el-col>
+    </el-row>
+    <el-row type="flex">
+      <el-col :span="22">
+        <el-button type="primary" @click="post_submit_button_clicked" class="submit_button" size="large">
+          提交
+        </el-button>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -187,7 +218,13 @@ export default {
       responses: [
         { agree_num: 3, user_name: 'slontia', self_intro: 'buaa-icourse', avatar: default_img, content: '我也觉得很厉害', comments: [{ user_name: 'buaa_icourse', content: '你说对了！' }, { user_name: 'BUAA_ICOURSE', content: '说的很好。' }], time: '2017-11-29', comment_num: 2, comment_active: { display: 'none' }, input_comment: '' },
         { agree_num: 5, user_name: 'icourse', self_intro: 'buaa-icourse', avatar: default_img, content: '顶楼上', comments: [{ user_name: 'buaa_icourse', content: '你说对了！' }, { user_name: 'BUAA_ICOURSE', content: '说的很好。' }], time: '2017-11-29', comment_num: 2, comment_active: { display: 'none' }, input_comment: '' }
-      ]
+      ],
+      editor: {
+        content: '',
+        option: {},
+        current_text_length: 0,
+        current_available_text: 5000
+      }
     }
   },
   methods: {
@@ -234,7 +271,17 @@ export default {
         this.main.input_comment = ''
       }
     },
-    edit_comment_button_clicked: function () {}
+    edit_comment_button_clicked: function () {},
+    on_editor_ready: function () {
+    },
+    post_submit_button_clicked: function () {
+      console.log(this.editor.content)
+    }
+  },
+  computed: {
+    editor () {
+      return this.$refs.quill.quill
+    }
   }
 }
 </script>
@@ -305,5 +352,34 @@ export default {
   }
   .comment_input{
     margin-bottom: 10px;
+  }
+  .editor_container{
+    height: 500px;
+  }
+  .editor{
+    height: 435px;
+  }
+  .limit{
+    height: 30px;
+    border: 1px solid #ccc;
+    border-top: none;
+    line-height: 30px;
+    text-align: right;
+    margin-bottom: 20px;
+  }
+  .all_text{
+    text-align: center;
+    font-size: 24px;
+  }
+  .bar{
+    padding: 10px 30% 10px 30%;
+    border:1px solid #ccc;
+    margin-bottom: 30px;
+    margin-top:10px;
+  }
+  .submit_button{
+    float: right;
+    margin-bottom: 100px;
+    width: 100px;
   }
 </style>

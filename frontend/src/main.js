@@ -6,9 +6,11 @@ import App from './App'
 import Vuex from 'vuex'
 import store from './vuex/store'
 import router from './router'
+import VueQuillEditor from 'vue-quill-editor'
 
 Vue.use(ElementUI)
 Vue.use(Vuex)
+Vue.use(VueQuillEditor)
 // to index
 // Vue.prototype.$ajax = axios
 Vue.prototype.$goRoute = function (index) {
