@@ -598,7 +598,8 @@ def user_report(request):
             return HttpResponse(json.dumps({'error': 1}))
         be_reported_resource_id = request.POST.get('be_reported_resource_id')
         report_user_id = request.user.id
-        report = Report.objects.create(report_user_id=report_user_id, be_reported_resource_id=be_reported_resource_id)
+        report_content = request.POST.get('report_content', "用户未填写举报理由")
+        report = Report.objects.create(report_user_id=report_user_id, be_reported_resource_id=be_reported_resource_id, report_content = report_content)
         report.save()
         return HttpResponse(json.dumps({'error':0}))
 
