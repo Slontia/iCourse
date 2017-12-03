@@ -234,50 +234,58 @@ export default {
         target_list.unshift(main_id)
         post_url = (_this.dev ? get_url('/follow/info/list/') : '/follow/info/list/')
         post_data = { id_list: target_list }
-        console.log(target_list)
-        $.ajax({
-          ContentType: 'application/json; charset=utf-8',
-          dataType: 'json',
-          url: post_url,
-          type: 'POST',
-          data: post_data,
-          success: function (data) {
-            var info_list = data['info_list']
-            // load main
-            _this.main.id = target_list[0]
-            _this.main.title = '' // need to add
-            _this.main.agree_num = 0 // need to add
-            _this.main.user_name = info_list[0].username
-            _this.main.self_intro = '' // need
-            _this.main.avatar = default_img // need
-            _this.main.content = info_list[0].content
-            _this.main.time = String(info_list[0].edit_time)
-            _this.main.comment_active = {}
-            _this.main.comment_active.display = 'none'
-            _this.main.input_comment = ''
-            for (var j = 1; j < info_list.length; j++) {
-              var temp = {}
-              temp.id = target_list[j]
-              temp.agree_num = 0 // need
-              temp.user_name = info_list[j].username
-              temp.self_intro = '' // need
-              temp.avatar = default_img // need
-              temp.content = info_list[j].content
-              temp.time = String(info_list[j].edit_time)
-              temp.comment_active = {}
-              temp.comment_active.display = 'none'
-              temp.input_comment = ''
-              _this.responses.push(temp)
+        if (main_id !== -1) {
+          $.ajax({
+            ContentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            url: post_url,
+            type: 'POST',
+            data: post_data,
+            success: function (data) {
+              var info_list = data['info_list']
+              // load main
+              _this.main.id = target_list[0]
+              _this.main.title = '' // need to add
+              _this.main.agree_num = 0 // need to add
+              _this.main.user_name = info_list[0].username
+              _this.main.self_intro = '' // need
+              _this.main.avatar = default_img // need
+              _this.main.content = info_list[0].content
+              _this.main.time = String(info_list[0].edit_time)
+              _this.main.comment_active = {}
+              _this.main.comment_active.display = 'none'
+              _this.main.input_comment = ''
+              for (var j = 1; j < info_list.length; j++) {
+                var temp = {}
+                temp.id = target_list[j]
+                temp.agree_num = 0 // need
+                temp.user_name = info_list[j].username
+                temp.self_intro = '' // need
+                temp.avatar = default_img // need
+                temp.content = info_list[j].content
+                temp.time = String(info_list[j].edit_time)
+                temp.comment_active = {}
+                temp.comment_active.display = 'none'
+                temp.input_comment = ''
+                _this.responses.push(temp)
+              }
+            },
+            error: function () {
+              _this.$message({
+                showClose: true,
+                type: 'error',
+                message: '加载帖子信息失败'
+              })
             }
-          },
-          error: function () {
-            _this.$message({
-              showClose: true,
-              type: 'error',
-              message: '加载帖子信息失败'
-            })
-          }
-        })
+          })
+        }
+        else {
+          _this.$message({
+            showClose: true,
+            type: 'error',
+            message: '帖子不存在，大兄弟不要乱输域名'
+          })
+        }
       },
       error: function () {
         _this.$message({
