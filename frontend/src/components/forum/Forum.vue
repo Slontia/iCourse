@@ -24,7 +24,12 @@
           </template>
         </el-radio-group>
       </el-col>
-      <el-col :span="6" :offset="2">
+      <el-col :span="3" :offset="3">
+        <el-button type="primary" @click="post_button_clicked" icon="plus" style="width:150px;">
+          发表新帖子
+        </el-button>
+      </el-col>
+      <el-col :span="4" :offset="0">
         <el-input type="text" v-model = "search_text" placeholder="在当前条目下搜索" @keydown.enter.native.prevent="search_button_clicked" icon="search" :on-icon-click="search_button_clicked"></el-input>
       </el-col>
     </el-row>
@@ -87,6 +92,7 @@
 /* eslint-disable camelcase */
 /* eslint-disable space-infix-ops */
 import Header from '../general/Header'
+// import $ from 'jquery'
 export default {
   name: 'Forum',
   components: { Header },
@@ -134,6 +140,18 @@ export default {
     },
     enter_thread_button_clicked: function (value) {
       console.log(value)
+    },
+    post_button_clicked: function () {
+      if (this.$store.state.is_login === true) {
+        this.$router.push({path: '/course/page/' + this.$route.params.course_id + '/forum/new'})
+      }
+      else {
+        this.$message({
+          message: '请先登录再发帖',
+          showClose: true,
+          type: 'warning'
+        })
+      }
     }
   }
 }

@@ -9,6 +9,7 @@ import PersonalData from '@/components/PersonalData'
 import Courseinfo from '@/components/course/Course_info'
 import Thread from '@/components/forum/Thread'
 import Forum from '@/components/forum/Forum'
+import Editor from '@/components/forum/Editor'
 import Router from 'vue-router'
 
 Vue.use(ElementUI)
@@ -50,6 +51,11 @@ export default new Router({
       path: '/course/page/:course_id/forum',
       name: 'forum',
       component: Forum
+    },
+    {
+      path: '/course/page/:course_id/forum/new',
+      name: 'editor',
+      component: Editor
     },
     {
       path: '/course/page/:course_id/forum/:thread_id',

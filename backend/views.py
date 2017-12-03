@@ -654,7 +654,7 @@ def posting_publish(request):
         user_id = request.user.id
         editor = int(data.get('editor'))
         post_form = PostForm({'title':title, 'course_id':course_id, 'category':category})
-        if(post_form.isvalid()):
+        if(post_form.is_valid()):
             post = Post()
             post.title = title
             post.course_id = course_id
@@ -663,7 +663,7 @@ def posting_publish(request):
         else:
             return HttpResponse(json.dumps({'error': 1}))
         follow_form = FollowForm({'post_id':post.id, 'user_id':user_id, 'content':content, 'editor':editor})
-        if(follow_form.isvalid()):
+        if(follow_form.is_valid()):
             follow = Follow()
             follow.post_id = post.id
             follow.user_id = user_id
@@ -685,12 +685,12 @@ def follow_publish(request):
     if(request.method == 'POST'):
         data = request.POST
         post_id = int(data.get('post_id'))
-        contet = str(data.get('content'))
+        content = str(data.get('content'))
         user_id = request.user.id
         editor = int(data.get('editor'))
         # published?
         follow_form = FollowForm({'post_id':post_id, 'user_id':user_id, 'content':content, 'editor':editor})
-        if(follow_form.isvalid()):
+        if(follow_form.is_valid()):
             follow = Follow()
             follow.post_id = post_id
             follow.user_id = user_id

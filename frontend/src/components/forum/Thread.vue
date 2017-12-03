@@ -179,7 +179,7 @@
     </el-row>
     <el-row type="flex" justify="center" >
       <el-col :span="20" class="editor_container">
-      <quill-editor v-model="editor.content" ref="quill" class="editor" :options="editor.option" @ready="on_editor_ready($event)" @blur="on_editor_blur($event)" @focus="on_editor_focus($event)">
+      <quill-editor v-model="editor.content" ref="quill" class="editor" :options="editor.option" @change="on_editor_change">
       </quill-editor>
     </el-col>
     </el-row>
@@ -203,7 +203,9 @@
 /* eslint-disable camelcase */
 /* eslint-disable space-infix-ops */
 import Header from '../general/Header'
+import get_url from '../general/getUrl.js'
 import default_img from '../../assets/headportrait.jpg'
+import $ from 'jquery'
 export default {
   name: 'Thread',
   components: { Header },
@@ -221,10 +223,14 @@ export default {
       ],
       editor: {
         content: '',
-        option: {},
+        option: { placeholder: '保护健康，文明评论' },
         current_text_length: 0,
-        current_available_text: 5000
-      }
+        overflow: false,
+        current_available_text: 2000,
+        text_limit: 2000,
+        least: 10
+      },
+      dev: true
     }
   },
   methods: {
@@ -248,7 +254,8 @@ export default {
       if (target_content === '') {
         this.$message({
           showClose: true,
-          message: '评论内容不能为空！'
+          message: '评论内容不能为空！',
+          type: 'error'
         })
       }
       else {
@@ -258,7 +265,6 @@ export default {
       // todo: use ajax to send message back to synchronize the database
     },
     main_input_comment_button_clicked: function () {
-      var name = this.$store.state.is_login === true ? this.$store.state.user_name : '匿名用户'
       var target_content = this.main.input_comment
       if (target_content === '') {
         this.$message({
@@ -266,16 +272,62 @@ export default {
           message: '评论内容不能为空！'
         })
       }
-      else {
-        this.main.comments.push({ user_name: name, content: target_content })
-        this.main.input_comment = ''
-      }
     },
     edit_comment_button_clicked: function () {},
-    on_editor_ready: function () {
+    on_editor_change: function ({editor, html, text}) {
+      this.editor.current_text_length = text.length
+      this.editor.overflow = (text.length > this.editor.text_limit || text.length < this.editor.least)
+      this.editor.current_available_text = ((this.editor.text_limit - text.length) < 0 ? 0 : (this.editor.text_limit - text.length))
     },
     post_submit_button_clicked: function () {
-      console.log(this.editor.content)
+      if (this.editor.overflow) {
+        this.$message({
+          showClose: true,
+          message: '请控制评论的字符在10-2000之内',
+          type: 'error'
+        })
+      } else {
+        this.$confirm('确认发布评论？', '发布', {
+          confirmButtonText: '发布',
+          cancelButtonText: '取消',
+          type: 'info'
+        }).then(() => {
+          var post_url = (this.dev ? get_url('/post/follow/publish/') : '/post/follow/publish/')
+          var post_data = { post_id: this.$route.params.thread_id, content: this.editor.content, editor: 0 }
+          var _this = this
+          $.ajax({
+            ContentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            url: post_url,
+            type: 'POST',
+            data: post_data,
+            success: function (data) {
+              var code = Number(data['error'])
+              if (code === 0) {
+                _this.$message({
+                  showClose: true,
+                  type: 'success',
+                  message: '发布成功'
+                })
+                _this.$router.push({ path: '/course/page/' + this.$route.params.course_id + '/forum/' + this.$route.params.thread_id })
+              } else if (code === 1) {
+                _this.$message({
+                  showClose: true,
+                  type: 'error',
+                  message: '发布评论失败'
+                })
+              }
+            },
+            error: function () {
+              _this.$message({
+                showClose: true,
+                type: 'error',
+                message: '无法链接到服务器'
+              })
+            }
+          })
+        })
+      }
     }
   },
   computed: {

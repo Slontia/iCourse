@@ -82,17 +82,18 @@
 /* eslint-disable brace-style */
 /* eslint-disable camelcase */
 import $ from 'jquery'
-// 请不要删除和get_url相关的行，如果你真的需要请告诉我下原因。by xindetai
-// import get_url from './getUrl.js'
+// 请不要删除和geturl相关的行，直接把data中的dev更改成false就可以。by xindetai 12/3
+import get_url from './getUrl.js'
 // import json from 'json5'
 export default {
   name: 'Header',
   beforeCreate: function () {
     var self = this
+    var post_url = (this.dev ? get_url('/sign/logged_in/') : '/sign/logged_in/')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: '/sign/logged_in/',
+      url: post_url,
       type: 'POST',
       success: function (data) {
         self.username = data['username']
@@ -106,10 +107,11 @@ export default {
         alert('加载导航栏连接服务器失败')
       }
     })
+    post_url = (this.dev ? get_url('/sign/iprecord/') : '/sign/iprecord/')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: '/sign/iprecord/',
+      url: post_url,
       type: 'POST',
       success: function (data) {
       },
@@ -223,6 +225,7 @@ export default {
       register_form_visible: false,
       form_label_width: '80px',
       username: '',
+      dev: true,
       login_form: {
         username: '',
         password: ''
@@ -318,6 +321,7 @@ export default {
     },
     login_confirm_clicked: function (form_name) { this.$refs[form_name].validate((valid) => {
       if (valid) {
+        var post_url = (this.dev ? get_url('/sign/login/') : '/sign/login/')
         var post_data = {
           'username': this.login_form['username'],
           'password': this.login_form['password']
@@ -326,7 +330,7 @@ export default {
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
-          url: '/sign/login/',
+          url: post_url,
           type: 'POST',
           data: post_data,
           success: function (data) {
