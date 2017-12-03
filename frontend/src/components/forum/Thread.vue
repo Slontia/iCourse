@@ -286,6 +286,12 @@ export default {
           message: '请控制评论的字符在10-2000之内',
           type: 'error'
         })
+      } else if (!this.$store.state.login) {
+        this.$message({
+          showClose: true,
+          message: '请先登录再评论',
+          type: 'error'
+        })
       } else {
         this.$confirm('确认发布评论？', '发布', {
           confirmButtonText: '发布',
