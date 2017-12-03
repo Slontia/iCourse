@@ -80,7 +80,7 @@
     </template>
     <el-row type="flex" justify="center">
       <el-col :span="18">
-      <center><el-pagination layout="prev,pager,next" @current-change="handle_current_change" :page-size="page_size" :total="total_thread" :current-page.sync="current_page" style="margin-top: 40px"></el-pagination>
+      <center><el-pagination layout="prev,pager,next" @current-change="handle_current_change" :page-size="page_size" :total="total_threads" :current-page.sync="current_page" style="margin-top: 40px"></el-pagination>
       </center>
     </el-col>
     </el-row>
@@ -92,17 +92,91 @@
 /* eslint-disable camelcase */
 /* eslint-disable space-infix-ops */
 import Header from '../general/Header'
-// import $ from 'jquery'
+import get_url from '../general/getUrl.js'
+import $ from 'jquery'
 export default {
   name: 'Forum',
   components: { Header },
   beforeCreate () {
-    // todo: load course name,load all thread info(or one page if pagination)
+    this.dev = true
+    this.page_size = 10
+    var post_url = (this.dev ? get_url('/post/id/list/') : '/post/id/list/')
+    var post_data = { course_id: this.$route.params.course_id }
+    var _this = this
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: post_url,
+      type: 'POST',
+      data: post_data,
+      success: function (data) {
+        var id_list = data['id_list']
+        if (id_list.length !== 0) {
+          post_data = { id_list: id_list, get_content: true, get_grade: true, get_follow_count: true }
+          post_url = (_this.dev ? get_url('/post/information/list/') : '/post/information/list/')
+          $.ajax({
+            ContentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            url: post_url,
+            type: 'POST',
+            data: post_data,
+            success: function (data) {
+              var info_list = data['info_list']
+              _this.total_threads = info_list.length
+              for (var i = 0; i < info_list.length; i++) {
+                var type = (info_list[i].type === 1 ? '问题讨论' : (info_list[i].type === 2 ? '学习心得' : '其他'))
+              // need to cut description
+                var cut_description = (info_list[i].content.length < 100 ? info_list[i].content : info_list[i].content.substr(0, 100))
+                var thread = { id: id_list[i], agree_num: info_list[i].grade_sum, follow_num: info_list[i].follow_count, read_num: info_list[i].read_count, type: type, title: info_list[i].title, description: cut_description, user_name: info_list[i].username, time: info_list[i].update_time }
+                if (i < _this.page_size) {
+                  _this.current_threads.push(thread)
+                }
+                _this.threads.push(thread)
+              }
+            },
+            error: function () {
+              _this.$message({
+                showClose: true,
+                type: 'error',
+                message: '加载帖子信息失败'
+              })
+            }
+          })
+        }
+      },
+      error: function () {
+        _this.$message({
+          showClose: true,
+          type: 'error',
+          message: '加载帖子列表失败'
+        })
+      }
+    })
+    post_data = { 'course_id': this.$route.params.course_id }
+    post_url = (this.dev ? get_url('/course/course_info/') : '/course/course_info/')
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: post_url,
+      type: 'POST',
+      data: post_data,
+      success: function (data) {
+        var info = data['course_info']
+        _this.course_name = info.name
+      },
+      error: function () {
+        _this.message({
+          showClose: true,
+          type: 'error',
+          message: '获取课程信息失败'
+        })
+      }
+    })
   },
   data () {
     return {
-      course_name: '软件工程',
-      total_thread: 0,
+      course_name: '',
+      total_threads: 0,
       page_size: 10,
       current_page: 1,
       selected_filter: '全部',
@@ -133,7 +207,12 @@ export default {
       })
     },
     handle_current_change: function (value) {
-      // handle the page changing of thread
+      this.current_page = value
+      this.current_threads = []
+      var len = this.threads.length < value*this.page_size ? this.threads.length % this.page_size : this.page_size
+      for (var i = 0; i < len; i++) {
+        this.current_threads.push(this.threads[(value-1)*this.page_size+i])
+      }
     },
     handle_filter_change: function (value) {
       // handle the filter changing of thread

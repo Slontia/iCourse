@@ -716,7 +716,7 @@ def comment_publish(request):
         to_comment_id = int(data.get('to_comment_id'))
         content = str(data.get('content'))
         follow_comment_form = FollowCommentForm({'user_id':user_id, 'follow_id':follow_id, 'content':content})
-        if(follow_comment_form.isvalid()):
+        if(follow_comment_form.is_valid()):
             follow_comment = Follow_Comment()
             follow_comment.user_id = user_id
             follow_comment.follow_id = follow_id
@@ -740,7 +740,7 @@ def follow_evaluate(request):
         follow_id = int(data.get('follow_id'))
         grade = int(data.get('grade'))
         follow_evaluation_form = FollowEvaluationForm({'user_id':user_id, 'follow_id':follow_id, 'grade':grade})
-        if(follow_evaluation_form.isvalid()):
+        if(follow_evaluation_form.is_valid()):
             result = Follow_Evaluation.objects.filter(user_id=user_id, follow_id=follow_id)
             if(len(result) > 0): # if the user has evaluated the follow
                 return HttpResponse(json.dumps({'error': 1}))

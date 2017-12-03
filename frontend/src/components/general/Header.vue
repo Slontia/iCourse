@@ -88,6 +88,7 @@ import get_url from './getUrl.js'
 export default {
   name: 'Header',
   beforeCreate: function () {
+    this.dev = true
     var self = this
     var post_url = (this.dev ? get_url('/sign/logged_in/') : '/sign/logged_in/')
     $.ajax({
@@ -99,8 +100,12 @@ export default {
         self.username = data['username']
         if (self.username == null) {
           self.is_login = false
+          self.$store.state.is_login = false
+          self.$store.state.user_name = ''
         } else {
           self.is_login = true
+          self.$store.state.is_login = true
+          self.$store.state.user_name = self.username
         }
       },
       error: function () {

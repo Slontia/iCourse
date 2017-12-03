@@ -206,19 +206,21 @@ import RarImg from './../../assets/fileico/rar.png'
 import ResourceDialog from '../general/ResourceDialog.vue'
 import $ from 'jquery'
 // 请不要删除和get_url相关的行，如果你真的需要请告诉我下原因。by xindetai
-// import get_url from '../general/getUrl.js'
+import get_url from '../general/getUrl.js'
 
 export default {
   name: 'course_info',
   components: { Header, ResourceDialog },
   beforeCreate () {
+    this.dev = true
     var self = this
     var course_id = this.$route.params.course_id
+    var post_url = (this.dev ? get_url('/course/course_info/') : '/course/course_info/')
     var postData = { 'course_id': course_id }
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: '/course/course_info/',
+      url: post_url,
       type: 'POST',
       data: postData,
       success: function (data) {
@@ -269,6 +271,7 @@ export default {
       latest_contribution_data: [],
       uploadDialogVisible: false,
       fileList: [],
+      dev: true,
       total_resource_line: 3,
       dialogVisible: false,
       card_data: [
