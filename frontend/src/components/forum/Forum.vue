@@ -112,7 +112,13 @@ export default {
       success: function (data) {
         var id_list = data['id_list']
         if (id_list.length !== 0) {
-          post_data = { id_list: id_list, get_content: true, get_grade: true, get_follow_count: true }
+          _this.total_threads = id_list.length
+          var len = (id_list.length > _this.page_size ? _this.page_size : id_list.length)
+          var target_list = id_list.slice(0, len)
+          for (var j = 0; j < id_list.length; j++) {
+            _this.threads.push(id_list[j])
+          }
+          post_data = { id_list: target_list, get_content: true, get_grade: true, get_follow_count: true }
           post_url = (_this.dev ? get_url('/post/information/list/') : '/post/information/list/')
           $.ajax({
             ContentType: 'application/json; charset=utf-8',
@@ -122,16 +128,12 @@ export default {
             data: post_data,
             success: function (data) {
               var info_list = data['info_list']
-              _this.total_threads = info_list.length
               for (var i = 0; i < info_list.length; i++) {
                 var type = (info_list[i].type === 1 ? '问题讨论' : (info_list[i].type === 2 ? '学习心得' : '其他'))
               // need to cut description
                 var cut_description = (info_list[i].content.length < 100 ? info_list[i].content : info_list[i].content.substr(0, 100))
                 var thread = { id: id_list[i], agree_num: info_list[i].grade_sum, follow_num: info_list[i].follow_count, read_num: info_list[i].read_count, type: type, title: info_list[i].title, description: cut_description, user_name: info_list[i].username, time: info_list[i].update_time }
-                if (i < _this.page_size) {
-                  _this.current_threads.push(thread)
-                }
-                _this.threads.push(thread)
+                _this.current_threads.push(thread)
               }
             },
             error: function () {
@@ -210,9 +212,37 @@ export default {
       this.current_page = value
       this.current_threads = []
       var len = this.threads.length < value*this.page_size ? this.threads.length % this.page_size : this.page_size
-      for (var i = 0; i < len; i++) {
-        this.current_threads.push(this.threads[(value-1)*this.page_size+i])
+      var target_list = []
+      for (var j = 0; j < len; j++) {
+        target_list.push(this.threads[(value-1)*this.page_size+j])
       }
+      var post_data = { id_list: target_list, get_content: true, get_grade: true, get_follow_count: true }
+      var post_url = (this.dev ? get_url('/post/information/list/') : '/post/information/list/')
+      var _this = this
+      $.ajax({
+        ContentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: post_url,
+        type: 'POST',
+        data: post_data,
+        success: function (data) {
+          var info_list = data['info_list']
+          for (var i = 0; i < info_list.length; i++) {
+            var type = (info_list[i].type === 1 ? '问题讨论' : (info_list[i].type === 2 ? '学习心得' : '其他'))
+              // need to cut description
+            var cut_description = (info_list[i].content.length < 100 ? info_list[i].content : info_list[i].content.substr(0, 100))
+            var thread = { id: target_list[i], agree_num: info_list[i].grade_sum, follow_num: info_list[i].follow_count, read_num: info_list[i].read_count, type: type, title: info_list[i].title, description: cut_description, user_name: info_list[i].username, time: info_list[i].update_time }
+            _this.current_threads.push(thread)
+          }
+        },
+        error: function () {
+          _this.$message({
+            showClose: true,
+            type: 'error',
+            message: '加载帖子信息失败'
+          })
+        }
+      })
     },
     handle_filter_change: function (value) {
       // handle the filter changing of thread

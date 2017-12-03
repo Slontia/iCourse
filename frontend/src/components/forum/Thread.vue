@@ -166,7 +166,7 @@
     </template>
     
     <center>
-    <el-button class="bar" type="text">
+    <el-button class="bar" type="text" v-bind:style="more_comment_button_style" @click="load_more_responses_button_clicked">
       <p class="all_text">查看全部{{response_num}}条回复</p>
     </el-button>
     </center>
@@ -209,7 +209,7 @@ import $ from 'jquery'
 export default {
   name: 'Thread',
   components: { Header },
-  beforeCreate () {
+  mounted () {
     // todo:load thread and course name,
     this.dev = true
     this.response_page_size = 10
@@ -226,6 +226,7 @@ export default {
         var main_id = data['main_id']
         var id_list = data['id_list']
         _this.response_num = id_list.length
+        _this.more_comment_button_style.display = (id_list.length > _this.response_page_size ? 'inline' : 'none')
         for (var i = 0; i < id_list.length; i++) {
           _this.responses_list.push(id_list[i])
         }
@@ -304,10 +305,11 @@ export default {
     return {
       course_name: '',
       response_num: 0,
-      response_page_size: 0,
+      response_page_size: 10,
       main: {},
       responses_list: [],
       responses: [],
+      more_comment_button_style: { display: 'none' },
       editor: {
         content: '',
         option: { placeholder: '保护健康，文明评论' },
@@ -319,6 +321,8 @@ export default {
       },
       dev: true
     }
+  },
+  computed: {
   },
   methods: {
     return_forum_button_clicked: function () {
@@ -466,6 +470,47 @@ export default {
       }
     },
     edit_comment_button_clicked: function () {},
+    load_more_responses_button_clicked: function () {
+      var len = (this.response_num - this.response_page_size > 0 ? this.response_num - this.response_page_size : 0)
+      if (len > 0) {
+        var target_list = this.responses_list.slice(this.response_page_size, this.response_page_size + len)
+        var post_url = (this.dev ? get_url('/follow/info/list/') : '/follow/info/list/')
+        var post_data = { id_list: target_list }
+        var _this = this
+        $.ajax({
+          ContentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          url: post_url,
+          type: 'POST',
+          data: post_data,
+          success: function (data) {
+            var info_list = data['info_list']
+            for (var j = 0; j < info_list.length; j++) {
+              var temp = {}
+              temp.id = target_list[j]
+              temp.agree_num = 0 // need
+              temp.user_name = info_list[j].username
+              temp.self_intro = '' // need
+              temp.avatar = default_img // need
+              temp.content = info_list[j].content
+              temp.time = String(info_list[j].edit_time)
+              temp.comment_active = {}
+              temp.comment_active.display = 'none'
+              temp.input_comment = ''
+              _this.responses.push(temp)
+            }
+            _this.more_comment_button_style.display = 'none'
+          },
+          error: function () {
+            _this.$message({
+              showClose: true,
+              type: 'error',
+              message: '加载全部帖子信息失败'
+            })
+          }
+        })
+      }
+    },
     on_editor_change: function ({editor, html, text}) {
       this.editor.current_text_length = text.length
       this.editor.overflow = (text.length > this.editor.text_limit || text.length < this.editor.least)
@@ -526,11 +571,6 @@ export default {
           })
         })
       }
-    }
-  },
-  computed: {
-    editor () {
-      return this.$refs.quill.quill
     }
   }
 }
