@@ -112,26 +112,10 @@ class UserProfile(models.Model):
     def __str__(self):
         return str(self.user.id)
 
-# Evaluation Model
-class Evaluation(models.Model):
-    comment = models.TextField()
+class Resource_Evaluation(models.Model):
+    user_id = models.IntegerField()
+    resource_id = models.IntegerField()
     grade = models.SmallIntegerField()
-
-    def __str__(self):
-        return str(self.id)
-
-# R_Resource_Evaluation Model
-class R_Resource_Evaluation(models.Model):
-    resource_id = models.PositiveIntegerField()
-    eva_id = models.PositiveIntegerField()
-    
-    def __str__(self):
-        return str(self.id)
-
-# R_Resource_User_Download Model
-class R_Resource_User_Download(models.Model):
-    user_id = models.PositiveIntegerField()
-    resource_id = models.PositiveIntegerField()
 
     def __str__(self):
         return str(self.id)

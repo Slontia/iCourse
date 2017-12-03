@@ -130,24 +130,14 @@ def user_information_by_id(user_id):
 
 def resource_courseid_list(course_id):
     ans = []
-    #print("****",course_id)
     c_c = Course.objects.filter(id=course_id)
-    #print("LLLENNNNN", len(c_c))
     if (len(c_c) == 0):
         return ans
-    #print("####", c_c)
     c_c = c_c.values()[0]
-    #print(c_c)
-    #print("@@@@",c_c)
     c_c=c_c['course_code']
-    #print("~~~~",c_c)
     result = Resource.objects.filter(course_code=c_c)
-    #print("!!!!",result)
     for i in result:
-        #print("^^^",str(i))
-        #        print(str(i))
         ans_id_i = str(i)
-        #        print(int(ans_id_i),'!!!',int(ans_id_i)+1)
         ans.append(int(ans_id_i))
     return ans
 

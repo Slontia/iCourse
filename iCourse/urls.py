@@ -42,6 +42,9 @@ urlpatterns = [
     url(r'^resource/download_count/$',backend_views.refresh_download_resource_count),
     url(r'^user/information/$', backend_views.user_information, name='user_information'),
 
+    url(r'^resource/evaluate/$', backend_views.resource_evaluate, name='resource_evaluate'),
+    url(r'^resource/evaluation/grade/count/$', backend_views.resource_evaluation_grade_count, name='resource_evaluation_grade_count'),
+               
     # page
     url(r'^$', TemplateView.as_view(template_name='index.html')), # NEW
     url(r'^index/$', backend_views.home, name='index'),
