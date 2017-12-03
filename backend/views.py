@@ -861,3 +861,64 @@ def follow_info_list(request):
                     follow['evaluated_grade'] = result[0]
             info_list.append(follow)
         return HttpResponse(json.dumps(info_list))
+
+#---------------------------------------------------------------
+# 根据用户对资源的打分进行数据更新
+# REQUIRES:      变量名|类型|说明
+#          resource_id|int|资源id
+#              user_id|int|用户id
+#                grade|int|评分，0~5
+# MODIFIES: None
+# EFFECTS: 更新到数据库backend_evualtion
+@csrf_exempt
+def resource_evaluate(request): #resource_id, user_id, grade:
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        
+        resource_id = str(data.get('resource_id'))
+        user_id = str(data.get('user_id'))
+        grade = int(data.get('grade'))
+        
+        print ('resource_id: ' + resource_id + 'user_id: '+ user_id + 'grade: ' +str(grade))
+        if (grade >= 1 and grade <= 5): #评分必须在1-5之间
+            eva = Resource_Evaluation()
+            eva.resource_id = resource_id
+            eva.user_id = user_id
+            eva.grade = grade
+            eva.save()
+            return HttpResponse(json.dumps({'error':0}))
+        return HttpResponse(json.dumps({'error':1}))
+
+#---------------------------------------------------------------
+# 查看用户对资源的评分情况，返回两个值，一个是查看这个资源的平均评分，一个是用户给这个资源的评分
+# REQUIRES:      变量名|类型|说明
+#          resource_id|int|资源id
+#              user_id|int|用户id
+# MODIFIES: None
+# EFFECTS: 返回两个值：1、avg_grade即评价平均分，浮点型(float), 没有一个人评价就是-1
+#                    2、user_grade，用户给予的评价，int型号，未评价返回-1
+
+def resource_evaluation_grade_count(request):
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        
+        resource_id = str(data.get('resource_id'))
+        user_id = str(data.get('user_id'))
+        result = Resource_Evaluation.objects.filter(resource_id = resource_id, user_id = user_id)
+        
+        user_grade = -1 #没有人评价，个人评价值默认为-1
+        if (len(result) != 0):
+            user_grade = result[0].grade #每个人只允许评价一次，即防止刷评价现象，所以只要去除result[0]
+    
+        result2 = Resource_Evaluation.objects.filter(resource_id = resource_id)
+        
+        tot_grade = 0
+        avg_grade = -1 #没有人评价，平均值默认值为-1
+        if (len(result2) != 0):
+            for i in range(0, len(result2)):
+                tot_grade += result2[i].grade
+                avg_grade = float(tot_grade) / float(len(result2))
+        print("tot_grade = ",tot_grade,"avg_grade = ", avg_grade)
+        return HttpResponse(json.dumps({'avg_grade': avg_grade, 'user_grade': user_grade}))
