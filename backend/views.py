@@ -134,6 +134,7 @@ def course_information(request):
     if(request.method == "POST"):
         data = json.dumps(request.POST)
         data = json.loads(data)
+        a = request.user.id
         course_id = int(data.get('course_id'))
         course_info = interface.course_information(course_id)
         return HttpResponse(json.dumps({'course_info': course_info}, cls=ComplexEncoder))
@@ -841,7 +842,7 @@ def follow_info_list(request):
         data = json.dumps(request.POST)
         data = json.loads(data)
         id_list = list(data.get('id_list'))
-        cur_user_id = int(data.get('cur_user_id'))
+        cur_user_id = request.user.id
         info_list = []
         for item in id_list:
             item = int(item)
@@ -855,7 +856,7 @@ def follow_info_list(request):
                 follow['is_poster'] = True
             else:
                 follow['is_poster'] = False
-            if(cur_user_id == -1):
+            if(cur_user_id == None):
                 follow['evaluated_grade'] = 0
             else:
                 result = Follow_Evaluation.objects.filter(user_id=cur_user_id, follow_id=item).values_list('grade', flat=True)
@@ -866,7 +867,7 @@ def follow_info_list(request):
             info_list.append(follow)
         return HttpResponse(json.dumps(info_list))
 
-#
+# get follow content by user_id and post_id
 # URL: /follow/get/userpost/
 def userid_postid_get_follow(request):
     if(request.method == 'POST'):
