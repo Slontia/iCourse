@@ -212,16 +212,94 @@ export default {
   beforeCreate () {
     // todo:load thread and course name,
     this.dev = true
+    this.response_page_size = 10
+    var post_url = (this.dev ? get_url('/follow/id/list/') : '/follow/id/list/')
+    var post_data = { post_id: this.$route.params.thread_id }
+    var _this = this
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: post_url,
+      type: 'POST',
+      data: post_data,
+      success: function (data) {
+        var main_id = data['main_id']
+        var id_list = data['id_list']
+        _this.response_num = id_list.length
+        for (var i = 0; i < id_list.length; i++) {
+          _this.responses_list.push(id_list[i])
+        }
+        var len = (id_list.length > _this.response_page_size ? _this.response_page_size : id_list.length)
+        var target_list = id_list.slice(0, len)
+        target_list.unshift(main_id)
+        post_url = (_this.dev ? get_url('/follow/info/list/') : '/follow/info/list/')
+        post_data = { id_list: target_list }
+        console.log(target_list)
+        $.ajax({
+          ContentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          url: post_url,
+          type: 'POST',
+          data: post_data,
+          success: function (data) {
+            var info_list = data['info_list']
+            // load main
+            _this.main.id = target_list[0]
+            _this.main.title = '' // need to add
+            _this.main.agree_num = 0 // need to add
+            _this.main.user_name = info_list[0].username
+            _this.main.self_intro = '' // need
+            _this.main.avatar = default_img // need
+            _this.main.content = info_list[0].content
+            _this.main.time = String(info_list[0].edit_time)
+            _this.main.comment_active = {}
+            _this.main.comment_active.display = 'none'
+            _this.main.input_comment = ''
+            for (var j = 1; j < info_list.length; j++) {
+              var temp = {}
+              temp.id = target_list[j]
+              temp.agree_num = 0 // need
+              temp.user_name = info_list[j].username
+              temp.self_intro = '' // need
+              temp.avatar = default_img // need
+              temp.content = info_list[j].content
+              temp.time = String(info_list[j].edit_time)
+              temp.comment_active = {}
+              temp.comment_active.display = 'none'
+              temp.input_comment = ''
+              _this.responses.push(temp)
+            }
+          },
+          error: function () {
+            _this.$message({
+              showClose: true,
+              type: 'error',
+              message: '加载帖子信息失败'
+            })
+          }
+        })
+      },
+      error: function () {
+        _this.$message({
+          showClose: true,
+          type: 'error',
+          message: '加载帖子列表失败'
+        })
+      }
+    })
+    // todo: load comments
+    /*
+                { id: -1, agree_num: 10, title: '如何评论最近上线的BUAA-iCourse?', user_name: 'Aletheia', self_intro: 'buaa-icourse', avatar: default_img, content: '如题，感觉很厉害的样子', comments: [{ user_name: 'buaa_icourse', content: '你说对了！' }, { user_name: 'BUAA_ICOURSE', content: '说的很好。' }], time: '2017-11-29', comment_num: 2, comment_active: { display: 'none' }, input_comment: '' }
+    */
   },
   data () {
     return {
       course_name: '',
       response_num: 0,
-      main: { id: -1, agree_num: 10, title: '如何评论最近上线的BUAA-iCourse?', user_name: 'Aletheia', self_intro: 'buaa-icourse', avatar: default_img, content: '如题，感觉很厉害的样子', comments: [{ user_name: 'buaa_icourse', content: '你说对了！' }, { user_name: 'BUAA_ICOURSE', content: '说的很好。' }], time: '2017-11-29', comment_num: 2, comment_active: { display: 'none' }, input_comment: '' },
-      responses: [
-        { id: -1, agree_num: 3, user_name: 'slontia', self_intro: 'buaa-icourse', avatar: default_img, content: '我也觉得很厉害', comments: [{ user_name: 'buaa_icourse', content: '你说对了！' }, { user_name: 'BUAA_ICOURSE', content: '说的很好。' }], time: '2017-11-29', comment_num: 2, comment_active: { display: 'none' }, input_comment: '' },
-        { id: -1, agree_num: 5, user_name: 'icourse', self_intro: 'buaa-icourse', avatar: default_img, content: '顶楼上', comments: [{ user_name: 'buaa_icourse', content: '你说对了！' }, { user_name: 'BUAA_ICOURSE', content: '说的很好。' }], time: '2017-11-29', comment_num: 2, comment_active: { display: 'none' }, input_comment: '' }
-      ],
+      response_page_size: 0,
+      main: {},
+      responses_list: [],
+      responses: [],
       editor: {
         content: '',
         option: { placeholder: '保护健康，文明评论' },
