@@ -16,6 +16,7 @@ import requests
 import urllib.request
 import json
 import datetime
+from datetime import date
 
 import os
 
@@ -133,6 +134,7 @@ def course_information(request):
     if(request.method == "POST"):
         data = json.dumps(request.POST)
         data = json.loads(data)
+        a = request.user.id
         course_id = int(data.get('course_id'))
         course_info = interface.course_information(course_id)
         return HttpResponse(json.dumps({'course_info': course_info}, cls=ComplexEncoder))
@@ -692,6 +694,9 @@ def follow_publish(request):
         # published?
         follow_form = FollowForm({'post_id':post_id, 'user_id':user_id, 'content':content, 'editor':editor})
         if(follow_form.is_valid()):
+            result = Follow.objects.filter(post_id=post_id,user_id=user_id)
+            if(len(result) > 0):
+                return HttpResponse(json.dumps({'error': 1}))
             follow = Follow()
             follow.post_id = post_id
             follow.user_id = user_id
@@ -837,7 +842,7 @@ def follow_info_list(request):
         data = json.dumps(request.POST)
         data = json.loads(data)
         id_list = list(data.get('id_list'))
-        cur_user_id = int(data.get('cur_user_id'))
+        cur_user_id = request.user.id
         info_list = []
         for item in id_list:
             item = int(item)
@@ -851,7 +856,7 @@ def follow_info_list(request):
                 follow['is_poster'] = True
             else:
                 follow['is_poster'] = False
-            if(cur_user_id == -1):
+            if(cur_user_id == None):
                 follow['evaluated_grade'] = 0
             else:
                 result = Follow_Evaluation.objects.filter(user_id=cur_user_id, follow_id=item).values_list('grade', flat=True)
@@ -861,6 +866,52 @@ def follow_info_list(request):
                     follow['evaluated_grade'] = result[0]
             info_list.append(follow)
         return HttpResponse(json.dumps(info_list))
+
+# get follow content by user_id and post_id
+# URL: /follow/get/userpost/
+def userid_postid_get_follow(request):
+    if(request.method == 'POST'):
+        data = request.POST
+        post_id = int(data.get('post_id'))
+        user_id = int(data.get('user_id'))
+        result = Follow.objects.filter(post_id=post_id,user_id=user_id).values('content', 'editor')
+        if(len(result) != 1):
+            # error
+            return HttpResponse(json.dumps({'content':'', 'editor':-1}))
+        return HttpResponse(json.dumps({'content':result[0]['content'], 'editor':result[0]['editor']}))
+
+# Get Comment Id List Interface
+# URL: /comment/id/list/
+def comment_id_list(request):
+    if(request.method == 'POST'):
+        follow_id = int(request.POST.get('follow_id'))
+        id_list = list(Follow_Comment.objects.filter(follow_id=follow_id).order_by('-post_time').values_list('id', flat=True))
+        return HttpResponse(json.dumps({'id_list': id_list}))
+
+# Comment Information List Interface
+# URL: /comment/info/list/
+def comment_info_list(request):
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        id_list = list(data.get('id_list'))
+        info_list = []
+        for item in id_list:
+            item = int(item)
+            result = Follow_Comment.objects.filter(id=item)
+            if(len(result) != 1):
+                # error
+                continue;
+            follow_comment = result.values('user_id', 'to_comment_id', 'post_time', 'content')
+            follow_comment['username'] = User.objects.get(id=follow_comment['user_id']).username
+            if(follow_comment['to_comment_id'] == -1):
+                follow_comment['to_user_id'] = -1
+                follow_comment['to_username'] = ''
+            else:
+                follow_comment['to_user_id'] = Follow_Comment.objects.get(id=follow_comment['to_comment_id']).user_id
+                follow_comment['to_username'] = User.objects.get(id=follow_comment['to_user_id']).username
+            info_list.append(follow_comment)
+        return HttpResponse(json.dumps({'indo_list': info_list}))
 
 #---------------------------------------------------------------
 # 根据用户对资源的打分进行数据更新

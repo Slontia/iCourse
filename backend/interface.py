@@ -41,7 +41,8 @@ def course_information(cou_id):
     result = Course.objects.filter(id=cou_id)
     if(len(result) == 0):
         return {}
-    result = result.values()[0] 
+    result = result.values()[0]
+    result['credit'] = float(result['credit'])
     return result
 
 def course_visit_count(cou_id):
