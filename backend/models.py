@@ -38,7 +38,6 @@ class User( models.Model ):
 
 from django.db import models
 from django.contrib.auth.models import User
-from bokeh.themes import default
 
 # Course Model
 class Course(models.Model):
@@ -113,26 +112,10 @@ class UserProfile(models.Model):
     def __str__(self):
         return str(self.user.id)
 
-# Evaluation Model
-class Evaluation(models.Model):
-    comment = models.TextField()
+class Resource_Evaluation(models.Model):
+    user_id = models.IntegerField()
+    resource_id = models.IntegerField()
     grade = models.SmallIntegerField()
-
-    def __str__(self):
-        return str(self.id)
-
-# R_Resource_Evaluation Model
-class R_Resource_Evaluation(models.Model):
-    resource_id = models.PositiveIntegerField()
-    eva_id = models.PositiveIntegerField()
-    
-    def __str__(self):
-        return str(self.id)
-
-# R_Resource_User_Download Model
-class R_Resource_User_Download(models.Model):
-    user_id = models.PositiveIntegerField()
-    resource_id = models.PositiveIntegerField()
 
     def __str__(self):
         return str(self.id)
@@ -150,7 +133,6 @@ class Report(models.Model):
     report_time = models.DateTimeField(auto_now_add=True)
     report_user_id = models.PositiveIntegerField(blank=True)
     be_reported_resource_id = models.PositiveIntegerField(blank=False)
-    report_content = models.TextField();
     already_handle = models.BooleanField(blank=False, default=False)    # this field represents that if the administrator has handled the report, default=False, after handling, alter this field to True
 
     def __str__(self):
