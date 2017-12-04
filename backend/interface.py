@@ -18,6 +18,8 @@ def college_course_list(col_id):
     if(len(result) == 0):
         return []
     result = result.values()
+    for course in result:
+        course['credit'] = float(course['credit'])
     return list(result)
 
 # 通过某课程类别获取课程列表(modefied by xdt 2017.11.8)
