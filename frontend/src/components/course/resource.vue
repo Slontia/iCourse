@@ -8,7 +8,7 @@
     <el-row style="margin:80px 0px 0px 0px;">
       <el-row>
         <el-col :span="8" :offset="1">
-          <el-button type="button" @click.native="return_course_info_page_clicked()"><i class="el-icon-d-arrow-left"></i>返回课程页面</el-button>
+          <el-button type="primary" @click.native="return_course_info_page_clicked()"><i class="el-icon-d-arrow-left"></i>返回课程页面</el-button>
         </el-col>
         <el-col id="resourceTitle" :span="15">
           {{ course }}-课程资源
@@ -62,11 +62,11 @@
               <img :src=item.img style="height:100px;"></img>
             </el-col>
             <el-col :span="14" :offset="1">
-              <el-row class="resourseTitle">
-                <textarea readonly style="font-weight: bold;font-size: 20px;">{{ item.name }}</textarea>
+              <el-row class="resourceTitle">
+                <p>{{ item.name }}</p>
               </el-row>
-              <el-row class="resourseIntro">
-                {{ item.intro }}
+              <el-row class="resourceIntro">
+                <span>{{ item.intro }}</span>
               </el-row>
             </el-col>
           </el-row>
@@ -103,11 +103,11 @@
               <img :src=item.img style="height:100px;"></img>
             </el-col>
             <el-col :span="14" :offset="1">
-              <el-row class="resourseTitle">
-                <textarea readonly style="font-weight: bold;font-size: 20px;">{{ item.name }}</textarea>
+              <el-row class="resourceTitle">
+                <p>{{ item.name }}</p>
               </el-row>
-              <el-row class="resourseIntro">
-                {{ item.intro }}
+              <el-row class="resourceIntro">
+                <span>{{ item.intro }}</span>
               </el-row>
             </el-col>
           </el-row>
@@ -143,11 +143,11 @@
               <img :src=item.img style="height:100px;"></img>
             </el-col>
             <el-col :span="14" :offset="1">
-              <el-row class="resourseTitle">
-                <textarea readonly style="font-weight: bold;font-size: 20px;">{{ item.name }}</textarea>
+              <el-row class="resourceTitle">
+                <p>{{ item.name }}</p>
               </el-row>
-              <el-row class="resourseIntro">
-                {{ item.intro }}
+              <el-row class="resourceIntro">
+                <span>{{ item.intro }}</span>
               </el-row>
             </el-col>
           </el-row>
@@ -224,16 +224,18 @@
 
 
 <script>
+/* eslint-disable camelcase */
 import Header from '../general/Header'
 import ResourceDialog from '../general/ResourceDialog'
 import DefaultImg from './../../assets/fileico/generic.png'
 import DocImg from './../../assets/fileico/docx_win.png'
 import PdfImg from './../../assets/fileico/pdf.png'
-import PptImg from './../../assets/fileico/pptx_win.png'
+import PptImg from './../../assets/fileico/pptx.png'
 import JpgImg from './../../assets/fileico/jpeg.png'
 import ZipImg from './../../assets/fileico/zip.png'
 import RarImg from './../../assets/fileico/rar.png'
 import $ from 'jquery'
+import get_url from '../general/getUrl.js'
 export default {
   name: 'resource',
   components: { Header, ResourceDialog },
@@ -283,17 +285,20 @@ export default {
     openDialog: function (id) {
       this.$store.state.id = id
       var resourceDialogSelf = this
+      var post_url = get_url(this.$store.state.dev, '/resource/information/')
+      var _this = this
       $.ajax({
         ContentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        url: '/resource/information/',
+        url: post_url,
         type: 'POST',
         async: false,
         data: {'resource_id': id},
         success: function (rdata) {
           resourceDialogSelf.$store.state.name = rdata['resource_info']['name']
+          post_url = get_url(_this.$store.state.dev, '/user/information/')
           $.ajax({
-            url: '/user/information/',
+            url: post_url,
             type: 'POST',
             data: {id: rdata['resource_info']['upload_user_id']},
             async: false,
@@ -327,8 +332,9 @@ export default {
       formData.append('url', null)
       formData.append('intro', this.resourceIntro)
       formData.append('course_code', this.$store.state.course_code)
+      var post_url = get_url(this.$store.state.dev, '/resourceUpload/')
       $.ajax({
-        url: '/resourceUpload/',
+        url: post_url,
         type: 'POST',
         data: formData,
         async: true,
@@ -352,6 +358,8 @@ export default {
       var ss = this
       var ti = 0
       let resourceSelf = []
+      var post_url = get_url(this.$store.state.dev, '/resource/information/')
+      var _this = this
       if (this.pageLength === 0) {
         ss.jumpHintVisible = false
         return
@@ -360,7 +368,7 @@ export default {
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
-          url: '/resource/information/',
+          url: post_url,
           type: 'POST',
           data: {'resource_id': ss.resourcesIdList[i]},
           success: function (rdata) {
@@ -391,8 +399,9 @@ export default {
             tt.name = rdata['resource_info']['name']
             tt.intro = rdata['resource_info']['intro']
             tt.downloads = rdata['resource_info']['download_count']
+            post_url = get_url(_this.$store.state.dev, '/user/information/')
             $.ajax({
-              url: '/user/information/',
+              url: post_url,
               type: 'POST',
               data: {id: rdata['resource_info']['upload_user_id']},
               async: false,
@@ -465,10 +474,11 @@ export default {
   },
   created: function () {
     var ss = this
+    var post_url = get_url(this.$store.state.dev, '/course/course_info/')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: '/course/course_info/',
+      url: post_url,
       type: 'POST',
       async: false,
       data: {'course_id': this.$route.params.course_id},
@@ -480,10 +490,11 @@ export default {
         alert('fail')
       }
     })
+    post_url = get_url(this.$store.state.dev, '/resource/id/list/')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: '/resource/id/list/',
+      url: post_url,
       type: 'POST',
       async: false,
       data: {'course_id': this.$route.params.course_id},
@@ -511,8 +522,11 @@ export default {
     height: 100px;
     line-height: 60px;
   }
-  .resourseIntro {
+  .resourceIntro {
     margin: 10px 0px 0px 0px;
+    word-break: break-all;
+    word-wrap: break-word;
+    white-space: pre-wrap;
   }
   .hoverChange:hover {
     background-color:#7fffd4;
@@ -523,5 +537,12 @@ export default {
     font-size: 25px;
     font-weight: bold;
     text-align: center;
+  }
+  .resourceTitle > p{
+    font-weight: bold;
+    font-size: 20px;
+    word-break: break-all;
+    word-wrap: break-word;
+    white-space: pre-wrap;
   }
 </style>

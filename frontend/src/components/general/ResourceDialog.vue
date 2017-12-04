@@ -12,7 +12,7 @@
               资源名称:
             </el-col>
             <el-col :span="16">
-              <textarea readonly>{{ this.$store.state.name }}</textarea>
+              <span class="text">{{ this.$store.state.name }}</span>
             </el-col>
           </el-row>
           <el-row>
@@ -47,7 +47,7 @@
           </el-row>
           <el-row style="margin:10px 0px 0px 0px;">
             <el-col :span="24">
-              {{ this.$store.state.intro }}
+              <span class="text">{{ this.$store.state.intro }}</span>
             </el-col>
           </el-row>
         </el-col>
@@ -92,7 +92,7 @@
 import DefaultImg from './../../assets/fileico/generic.png'
 import DocImg from './../../assets/fileico/docx_win.png'
 import PdfImg from './../../assets/fileico/pdf.png'
-import PptImg from './../../assets/fileico/pptx_win.png'
+import PptImg from './../../assets/fileico/pptx.png'
 import JpgImg from './../../assets/fileico/jpeg.png'
 import ZipImg from './../../assets/fileico/zip.png'
 import RarImg from './../../assets/fileico/rar.png'
@@ -156,5 +156,10 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+  .text{
+    word-break: break-all;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+  }
 </style>

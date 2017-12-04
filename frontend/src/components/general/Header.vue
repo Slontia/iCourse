@@ -34,11 +34,11 @@
   <!-- 登录界面  -->
   <el-dialog title="登录" :visible="login_form_visible" size="tiny" :before-close="handle_close_login" id="login_dialog">
     <el-form :model="login_form" label-position="left" :rules="login_rules" ref="login_form">
-      <el-form-item type="text" label="用户名" :label-width="form_label_width" prop="username" id="login_form1">
-        <el-input v-model="login_form.username" auto_complete="off"></el-input>
+      <el-form-item type="text" label="用户名" :label-width="form_label_width" prop="username" id="login_form1" >
+        <el-input v-model="login_form.username" auto_complete="off" @keydown.enter.native.prevent="login_confirm_clicked('login_form')"></el-input>
       </el-form-item>
       <el-form-item label="密码" :label-width="form_label_width" prop="password" id="login_form2">
-        <el-input type="password" v-model="login_form.password" auto_complete="off" size="small"></el-input>
+        <el-input type="password" v-model="login_form.password" auto_complete="off" size="small" @keydown.enter.native.prevent="login_confirm_clicked('login_form')"></el-input>
       </el-form-item>
     </el-form>
       <span slot="footer" class="dialog-footer">
@@ -88,9 +88,8 @@ import get_url from './getUrl.js'
 export default {
   name: 'Header',
   beforeCreate: function () {
-    this.dev = true
     var self = this
-    var post_url = get_url(this.dev, '/sign/logged_in/')
+    var post_url = get_url(this.$store.state.dev, '/sign/logged_in/')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
@@ -112,7 +111,7 @@ export default {
         alert('加载导航栏连接服务器失败')
       }
     })
-    post_url = get_url(this.dev, '/sign/iprecord/')
+    post_url = get_url(this.$store.state.dev, '/sign/iprecord/')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
@@ -326,7 +325,7 @@ export default {
     },
     login_confirm_clicked: function (form_name) { this.$refs[form_name].validate((valid) => {
       if (valid) {
-        var post_url = get_url(this.dev, '/sign/login/')
+        var post_url = get_url(this.$store.state.dev, '/sign/login/')
         var post_data = {
           'username': this.login_form['username'],
           'password': this.login_form['password']
