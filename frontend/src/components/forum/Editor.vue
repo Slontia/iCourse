@@ -159,8 +159,9 @@ export default {
               success: function (data) {
                 var code = Number(data['error'])
                 if (code === 1) {
+                  console.log('success')
                   _this.loading = true
-                  _this.$router.push({ path: '/course/page/' + this.$route.params.course_id + '/forum' })
+                  _this.$router.push({ path: '/course/page/' + _this.$route.params.course_id + '/forum' })
                 } else if (code === 0) {
                   _this.$messgae({
                     showClose: true,

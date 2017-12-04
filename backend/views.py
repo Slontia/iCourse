@@ -662,6 +662,7 @@ def posting_publish(request):
             post.title = title
             post.course_id = course_id
             post.category = category
+            post.main_follow_id = -1;
             post.save()
         else:
             return HttpResponse(json.dumps({'error': 1}))
