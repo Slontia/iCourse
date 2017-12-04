@@ -118,7 +118,7 @@ export default {
           for (var j = 0; j < id_list.length; j++) {
             _this.threads.push(id_list[j])
           }
-          post_data = { id_list: target_list, get_content: true, get_grade: true, get_follow_count: true }
+          post_data = { id_list: JSON.stringify(target_list), get_content: true, get_grade: true, get_follow_count: true }
           post_url = get_url(_this.$store.state.dev, '/post/information/list/')
           $.ajax({
             ContentType: 'application/json; charset=utf-8',
@@ -183,10 +183,7 @@ export default {
       current_page: 1,
       selected_filter: '全部',
       search_text: '',
-      current_threads: [
-        { id: '0001', agree_num: 12, follow_num: 5, read_num: 100, type: '学习心得', title: '关于最大团问题的典型解法', description: '很惭愧，一点微小的工作', user_name: '果冻', time: '2017-11-29' },
-        { id: '0002', agree_num: 11, follow_num: 3, read_num: 110, type: '问题讨论', title: '如何评论最近上线的BUAA-iCourse?', description: '如题', user_name: 'Aletheia', time: '2017-11-29' }
-      ],
+      current_threads: [],
       threads: [],
       search_terms: [
         { text: '全部' },
@@ -248,7 +245,7 @@ export default {
       // handle the filter changing of thread
     },
     enter_thread_button_clicked: function (value) {
-      console.log(value)
+      this.$router.push({ path: '/course/page/' + this.$route.params.course_id + '/forum/'+value+'/' })
     },
     post_button_clicked: function () {
       if (this.$store.state.is_login === true) {
