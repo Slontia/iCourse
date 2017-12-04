@@ -90,7 +90,7 @@ export default {
   beforeCreate: function () {
     this.dev = true
     var self = this
-    var post_url = (this.dev ? get_url('/sign/logged_in/') : '/sign/logged_in/')
+    var post_url = get_url(this.dev, '/sign/logged_in/')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
@@ -112,7 +112,7 @@ export default {
         alert('加载导航栏连接服务器失败')
       }
     })
-    post_url = (this.dev ? get_url('/sign/iprecord/') : '/sign/iprecord/')
+    post_url = get_url(this.dev, '/sign/iprecord/')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
@@ -326,7 +326,7 @@ export default {
     },
     login_confirm_clicked: function (form_name) { this.$refs[form_name].validate((valid) => {
       if (valid) {
-        var post_url = (this.dev ? get_url('/sign/login/') : '/sign/login/')
+        var post_url = get_url(this.dev, '/sign/login/')
         var post_data = {
           'username': this.login_form['username'],
           'password': this.login_form['password']

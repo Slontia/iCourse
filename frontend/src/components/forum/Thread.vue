@@ -213,7 +213,7 @@ export default {
     // todo:load thread and course name,
     this.dev = true
     this.response_page_size = 10
-    var post_url = (this.dev ? get_url('/follow/id/list/') : '/follow/id/list/')
+    var post_url = get_url(this.dev, '/follow/id/list/')
     var post_data = { post_id: this.$route.params.thread_id }
     var _this = this
     $.ajax({
@@ -233,7 +233,7 @@ export default {
         var len = (id_list.length > _this.response_page_size ? _this.response_page_size : id_list.length)
         var target_list = id_list.slice(0, len)
         target_list.unshift(main_id)
-        post_url = (_this.dev ? get_url('/follow/info/list/') : '/follow/info/list/')
+        post_url = get_url(_this.dev, '/follow/info/list/')
         post_data = { id_list: target_list }
         if (main_id !== -1) {
           $.ajax({
@@ -337,7 +337,7 @@ export default {
           message: '请先登录'
         })
       } else {
-        var post_url = (this.dev ? get_url('/post/follow/evaluate/') : '/post/follow/evaluate')
+        var post_url = get_url(this.dev, '/post/follow/evaluate')
         var post_data = { follow_id: id, grade: value }
         var _this = this
         $.ajax({
@@ -388,7 +388,7 @@ export default {
         })
       }
       else {
-        var post_url = (this.dev ? get_url('/post/comment/publish/') : '/post/comment/publish/')
+        var post_url = get_url(this.dev, '/post/comment/publish/')
         var post_data = { follow_id: this.main.id, to_comment_id: -1, content: target_content }
         var _this = this
         $.ajax({
@@ -438,7 +438,7 @@ export default {
         })
       }
       else {
-        var post_url = (this.dev ? get_url('/post/comment/publish/') : '/post/comment/publish/')
+        var post_url = get_url(this.dev, '/post/comment/publish/')
         var post_data = { follow_id: this.responses[index].id, to_comment_id: -1, content: target_content }
         var _this = this
         $.ajax({
@@ -474,7 +474,7 @@ export default {
       var len = (this.response_num - this.response_page_size > 0 ? this.response_num - this.response_page_size : 0)
       if (len > 0) {
         var target_list = this.responses_list.slice(this.response_page_size, this.response_page_size + len)
-        var post_url = (this.dev ? get_url('/follow/info/list/') : '/follow/info/list/')
+        var post_url = get_url(this.dev, '/follow/info/list/')
         var post_data = { id_list: target_list }
         var _this = this
         $.ajax({
@@ -535,7 +535,7 @@ export default {
           cancelButtonText: '取消',
           type: 'info'
         }).then(() => {
-          var post_url = (this.dev ? get_url('/post/follow/publish/') : '/post/follow/publish/')
+          var post_url = get_url(this.dev, '/post/follow/publish/')
           var post_data = { post_id: this.$route.params.thread_id, content: this.editor.content, editor: 0 }
           var _this = this
           $.ajax({

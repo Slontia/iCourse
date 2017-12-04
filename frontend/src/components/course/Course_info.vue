@@ -215,7 +215,7 @@ export default {
     this.dev = true
     var self = this
     var course_id = this.$route.params.course_id
-    var post_url = (this.dev ? get_url('/course/course_info/') : '/course/course_info/')
+    var post_url = get_url(this.dev, '/course/course_info/')
     var postData = { 'course_id': course_id }
     $.ajax({
       ContentType: 'application/json; charset=utf-8',

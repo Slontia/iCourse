@@ -100,7 +100,7 @@ export default {
   beforeCreate () {
     this.dev = true
     this.page_size = 10
-    var post_url = (this.dev ? get_url('/post/id/list/') : '/post/id/list/')
+    var post_url = get_url(this.dev, '/post/id/list/')
     var post_data = { course_id: this.$route.params.course_id }
     var _this = this
     $.ajax({
@@ -119,7 +119,7 @@ export default {
             _this.threads.push(id_list[j])
           }
           post_data = { id_list: target_list, get_content: true, get_grade: true, get_follow_count: true }
-          post_url = (_this.dev ? get_url('/post/information/list/') : '/post/information/list/')
+          post_url = get_url(_this.dev, '/post/information/list/')
           $.ajax({
             ContentType: 'application/json; charset=utf-8',
             dataType: 'json',
@@ -155,7 +155,7 @@ export default {
       }
     })
     post_data = { 'course_id': this.$route.params.course_id }
-    post_url = (this.dev ? get_url('/course/course_info/') : '/course/course_info/')
+    post_url = get_url(this.dev, '/course/course_info/')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
@@ -217,7 +217,7 @@ export default {
         target_list.push(this.threads[(value-1)*this.page_size+j])
       }
       var post_data = { id_list: target_list, get_content: true, get_grade: true, get_follow_count: true }
-      var post_url = (this.dev ? get_url('/post/information/list/') : '/post/information/list/')
+      var post_url = get_url(this.dev, '/post/information/list/')
       var _this = this
       $.ajax({
         ContentType: 'application/json; charset=utf-8',
