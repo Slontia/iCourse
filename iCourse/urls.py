@@ -65,4 +65,6 @@ urlpatterns = [
     url(r'^post/information/list/$', backend_views.post_infor_list, name='post_infor_list'),
     url(r'^follow/id/list/$', backend_views.follow_id_list, name='follow_id_list'),
     url(r'^follow/info/list/$', backend_views.follow_info_list, name='follow_info_list'),
+    url(r'^comment/id/list/$', backend_views.comment_id_list,name='comment_id_list'),
+    url(r'^comment/info/list/$', backend_views.comment_info_list,name='comment_info_list')
 ]

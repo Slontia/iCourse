@@ -869,6 +869,7 @@ def follow_info_list(request):
 
 # get follow content by user_id and post_id
 # URL: /follow/get/userpost/
+@csrf_exempt
 def userid_postid_get_follow(request):
     if(request.method == 'POST'):
         data = request.POST
@@ -882,6 +883,7 @@ def userid_postid_get_follow(request):
 
 # Get Comment Id List Interface
 # URL: /comment/id/list/
+@csrf_exempt
 def comment_id_list(request):
     if(request.method == 'POST'):
         follow_id = int(request.POST.get('follow_id'))
@@ -890,6 +892,7 @@ def comment_id_list(request):
 
 # Comment Information List Interface
 # URL: /comment/info/list/
+@csrf_exempt
 def comment_info_list(request):
     if(request.method == 'POST'):
         data = json.dumps(request.POST)

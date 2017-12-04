@@ -172,7 +172,7 @@
     </center>
     
     <!-- editor -->
-    <el-row type="flex" justify="center" class="response_info_row">
+    <el-row type="flex" justify="center" class="response_info_row" id="follow_row">
       <el-col :span="20">
         <p style="text-align: left; margin-bottom: 20px;">发表你的看法</p>
       </el-col>
@@ -296,10 +296,10 @@ export default {
         })
       }
     })
-    // todo: load comments
-    /*
-                { id: -1, agree_num: 10, title: '如何评论最近上线的BUAA-iCourse?', user_name: 'Aletheia', self_intro: 'buaa-icourse', avatar: default_img, content: '如题，感觉很厉害的样子', comments: [{ user_name: 'buaa_icourse', content: '你说对了！' }, { user_name: 'BUAA_ICOURSE', content: '说的很好。' }], time: '2017-11-29', comment_num: 2, comment_active: { display: 'none' }, input_comment: '' }
-    */
+    this.get_comments_of_follow(this.main)
+    for (var i = 0; i < this.responses.length; i++) {
+      this.get_comments_of_follow(this.responses[i])
+    }
   },
   data () {
     return {
@@ -325,6 +325,58 @@ export default {
   computed: {
   },
   methods: {
+    get_comments_of_follow: function (follow) {
+      var post_url = get_url(this.dev, '/comment/id/list/')
+      var post_data = { follow_id: follow.id }
+      var _this = this
+      $.ajax({
+        ContentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: post_url,
+        type: 'POST',
+        data: post_data,
+        success: function (data) {
+          var comment_list = data['id_list']
+          if (comment_list.length > 0) {
+            comment_list.reverse() // from old to new
+            post_url = get_url(_this.dev, '/comment/info/list/')
+            post_data = { id_list: comment_list }
+            $.ajax({
+              ContentType: 'application/json; charset=utf-8',
+              dataType: 'json',
+              url: post_url,
+              type: 'POST',
+              data: post_data,
+              success: function (data) {
+                var info_list = data['info_list']
+                follow.comment_num = info_list.length
+                follow.comments = []
+                for (var i = 0; i < info_list.length; i++) {
+                  var temp = {}
+                  temp.user_name = info_list[i].username
+                  temp.content = info_list[i].content
+                  follow.comments.push(temp)
+                }
+              },
+              error: function () {
+                _this.$message({
+                  showClose: true,
+                  type: 'error',
+                  message: '获取评论信息失败'
+                })
+              }
+            })
+          }
+        },
+        error: function () {
+          _this.$message({
+            showClose: true,
+            type: 'error',
+            message: '获取评论列表失败'
+          })
+        }
+      })
+    },
     return_forum_button_clicked: function () {
       this.$router.push({ path: '/course/page/'+this.$route.params.course_id+'/forum' })
     },
@@ -469,7 +521,9 @@ export default {
         })
       }
     },
-    edit_comment_button_clicked: function () {},
+    edit_comment_button_clicked: function () {
+      document.getElementById('follow_row').scrollIntoView()
+    },
     load_more_responses_button_clicked: function () {
       var len = (this.response_num - this.response_page_size > 0 ? this.response_num - this.response_page_size : 0)
       if (len > 0) {
@@ -509,6 +563,9 @@ export default {
             })
           }
         })
+        for (var i = 0; i < len; i++) {
+          _this.get_comments_of_follow(_this.responses[_this.response_page_size+i])
+        }
       }
     },
     on_editor_change: function ({editor, html, text}) {
