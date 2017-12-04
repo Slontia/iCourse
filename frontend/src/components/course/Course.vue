@@ -71,7 +71,7 @@
 /* eslint-disable space-infix-ops */
 import Header from '../general/Header'
 // 请不要删除和get_url相关的行，如果你真的需要请告诉我下原因。by xindetai
-// import get_url from '../general/getUrl'
+import get_url from '../general/getUrl'
 import $ from 'jquery'
 export default {
   name: 'Course',
@@ -134,7 +134,8 @@ export default {
       load_courses: false, // v-loading
       courses: [],
       storage: [],
-      course_bread_message: '查找课程'
+      course_bread_message: '查找课程',
+      dev: true
     }
   },
   methods: {
@@ -158,11 +159,12 @@ export default {
         var self = this
         if (node.parent.label === '开设院系') {
           var temp1 = { 'college_id': node.label.substr(0, node.label.length-1) }
+          var post_url = get_url(this.$store.state.dev, '/course/college_course/')
           $.ajax({
             ContentType: 'application/json; charset=utf-8',
             dataType: 'json',
             type: 'POST',
-            url: '/course/college_course/',
+            url: post_url,
             data: temp1,
             async: false,
             success: function (data) {
@@ -255,10 +257,11 @@ export default {
           'keyword': this.filters.name
         }
         var self = this
+        var post_url = get_url(this.$store.state.dev, '/course/searching/')
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
-          url: '/course/searching/',
+          url: post_url,
           type: 'POST',
           data: post_data,
           async: false,

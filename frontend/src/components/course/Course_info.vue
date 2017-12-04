@@ -93,6 +93,7 @@
               <el-row>
                 <el-col :span="7" v-bind:style="{visibility:card_data[index][0].show}">
                   <el-col :span="24">
+                    <el-tooltip effect="dark" :content="card_data[index][0].title" placement="right">
                   <el-button type="text" class="card_button" @click.native="card_clicked(index,0)">
                   <el-card :body-style="{ padding: '10px'} " class="card">
                     <el-row>
@@ -100,10 +101,10 @@
                         <img :src="card_data[index][0].img" style="width: 50px; height:50px;"></img>
                       </el-col>
                       <el-col :span="16" :offset="2">
-                        <el-row>
-                          资源名：{{ card_data[index][0].title }}
+                        <el-row class="text">
+                          <span>资源名：{{ card_data[index][0].title }}</span>
                         </el-row>
-                        <el-row>
+                        <el-row class="text">
                           上传者：{{card_data[index][0].uploader}}
                         </el-row>
                         <el-row>
@@ -113,11 +114,13 @@
                     </el-row>
                   </el-card>
                 </el-button>
+              </el-tooltip>
                 </el-col>
                 </el-col>
 
                 <el-col :span="7" :offset="1" v-bind:style="{visibility:card_data[index][1].show}">
                   <el-col :span="24">
+                  <el-tooltip effect="dark" :content="card_data[index][1].title" placement="right">
                   <el-button type="text" class="card_button" @click.native="card_clicked(index,1)">
                   <el-card :body-style="{ padding: '10px'} " class="card">
                     <el-row>
@@ -125,10 +128,10 @@
                         <img :src="card_data[index][1].img" style="width: 50px; height:50px;"></img>
                       </el-col>
                       <el-col :span="16" :offset="2">
-                        <el-row>
-                          资源名：{{card_data[index][1].title}}
+                        <el-row class="text">
+                          <span>资源名：{{card_data[index][1].title}}</span>
                         </el-row>
-                        <el-row>
+                        <el-row class="text">
                           上传者：{{card_data[index][1].uploader}}
                         </el-row>
                         <el-row>
@@ -138,10 +141,12 @@
                     </el-row>
                   </el-card>
                 </el-button>
+              </el-tooltip>
                 </el-col>
                 </el-col>
 
                 <el-col :span="7" :offset="1" v-bind:style="{visibility:card_data[index][2].show}">
+                  <el-tooltip effect="dark" :content="card_data[index][2].title" placement="right">
                   <el-button type="text" class="card_button" @click.native="card_clicked(index,2)">
                   <el-card :body-style="{ padding: '10px'}" class="card">
                     <el-row>
@@ -149,10 +154,10 @@
                         <img :src="card_data[index][2].img" style="width: 50px; height:50px;"></img>
                       </el-col>
                       <el-col :span="16" :offset="2">
-                        <el-row>
-                          资源名：{{card_data[index][2].title}}
+                        <el-row class="text">
+                          <span>资源名：{{card_data[index][2].title}}</span>
                         </el-row>
-                        <el-row>
+                        <el-row class="text">
                           上传者：{{card_data[index][2].uploader}}
                         </el-row>
                         <el-row>
@@ -162,6 +167,7 @@
                     </el-row>
                   </el-card>
                 </el-button>
+              </el-tooltip>
                 </el-col>
       </el-row>
     </template>
@@ -199,7 +205,7 @@
 import Header from '../general/Header.vue'
 import DocImg from './../../assets/fileico/docx_win.png'
 import PdfImg from './../../assets/fileico/pdf.png'
-import PptImg from './../../assets/fileico/pptx_win.png'
+import PptImg from './../../assets/fileico/pptx.png'
 import JpgImg from './../../assets/fileico/jpeg.png'
 import ZipImg from './../../assets/fileico/zip.png'
 import RarImg from './../../assets/fileico/rar.png'
@@ -212,10 +218,9 @@ export default {
   name: 'course_info',
   components: { Header, ResourceDialog },
   beforeCreate () {
-    this.dev = true
     var self = this
     var course_id = this.$route.params.course_id
-    var post_url = get_url(this.dev, '/course/course_info/')
+    var post_url = get_url(this.$store.state.dev, '/course/course_info/')
     var postData = { 'course_id': course_id }
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
@@ -236,10 +241,11 @@ export default {
         alert('fail')
       }
     })
+    post_url = get_url(this.$store.state.dev, '/course/visit_count/')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: '/course/visit_count/',
+      url: post_url,
       type: 'POST',
       data: postData,
       success: function (data) {
@@ -271,7 +277,6 @@ export default {
       latest_contribution_data: [],
       uploadDialogVisible: false,
       fileList: [],
-      dev: true,
       total_resource_line: 3,
       dialogVisible: false,
       card_data: [
@@ -288,6 +293,7 @@ export default {
       img: { zip: ZipImg,
         pdf: PdfImg,
         ppt: PptImg,
+        pptx: PptImg,
         doc: DocImg,
         jpg: JpgImg,
         rar: RarImg
@@ -307,8 +313,9 @@ export default {
       formData.append('url', null)
       formData.append('intro', this.resourceIntro)
       formData.append('course_code', this.$store.state.course_code)
+      var post_url = get_url(this.$store.state.dev, '/resourceUpload/')
       $.ajax({
-        url: '/resourceUpload/',
+        url: post_url,
         type: 'POST',
         data: formData,
         async: true,
@@ -353,17 +360,20 @@ export default {
       console.log(this.card_data[i][j].id)
       this.$store.state.id = this.card_data[i][j].id
       var resourceDialogSelf = this
+      var post_url = get_url(this.$store.state.dev, '/resource/information/')
+      var _this = this
       $.ajax({
         ContentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        url: '/resource/information/',
+        url: post_url,
         type: 'POST',
         async: false,
         data: {'resource_id': resourceDialogSelf.card_data[i][j].id},
         success: function (rdata) {
           resourceDialogSelf.$store.state.name = rdata['resource_info']['name']
+          post_url = get_url(_this.$store.state.dev, '/user/information/')
           $.ajax({
-            url: '/user/information/',
+            url: post_url,
             type: 'POST',
             data: {id: rdata['resource_info']['upload_user_id']},
             async: false,
@@ -392,10 +402,11 @@ export default {
     var course_id = this.$route.params.course_id
     var postData = { 'course_id': course_id, 'number': this.total_resource_line }
     var self = this
+    var post_url = get_url(this.$store.state.dev, '/resource/latest/')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: '/resource/latest/',
+      url: post_url,
       type: 'POST',
       data: postData,
       success: function (data) {
@@ -472,5 +483,6 @@ export default {
   }
   .text{
     padding-bottom: 5px;
+    word-break: break-all;
   }
 </style>

@@ -10,6 +10,9 @@
     <el-row>
       <el-col :span="24">
         <p class="title">
+          {{ course_name }}-讨论板
+        </p>
+        <p class="title">
           发表新贴
         </p>
       </el-col>
@@ -100,7 +103,8 @@ export default {
       dev: true,
       loading: false,
       overflow: false,
-      loading_text: '发布成功，正在跳转'
+      loading_text: '发布成功，正在跳转',
+      course_name: ''
     }
   },
   methods: {
@@ -144,7 +148,7 @@ export default {
           }).then(() => {
             var content = this.editor.content.length
             var post_data = { title: this.title, course_id: this.$route.params.course_id, category: this.category, content: content, editor: 0 }
-            var post_url = (this.dev ? get_url('/post/posting/publish/') : '/post/posting/publish/')
+            var post_url = get_url(this.$store.state.dev, '/post/posting/publish/')
             var _this = this
             $.ajax({
               ContentType: 'application/json; charset=utf-8',
@@ -155,8 +159,9 @@ export default {
               success: function (data) {
                 var code = Number(data['error'])
                 if (code === 1) {
+                  console.log('success')
                   _this.loading = true
-                  _this.$router.push({ path: '/course/page/' + this.$route.params.course_id + '/forum' })
+                  _this.$router.push({ path: '/course/page/' + _this.$route.params.course_id + '/forum' })
                 } else if (code === 0) {
                   _this.$messgae({
                     showClose: true,
@@ -186,19 +191,28 @@ export default {
       this.$router.push({ path: '/course/page/' + this.$route.params.course_id + '/forum' })
     }
   },
-  computed: {
-    /*
-    editor () {
-      return this.$refs.quill.quill
-    }
-    current_text_length: function () {
-      return this.editor.content.length
-    },
-    current_available_text: function () {
-      var avail = this.text_limit - this.editor.content.length
-      return (avail > 0 ? avail : 0)
-    }
-    */
+  mounted () {
+    var post_url = get_url(this.$store.state.dev, '/course/course_info/')
+    var post_data = { course_id: this.$route.params.course_id }
+    var _this = this
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: post_url,
+      type: 'POST',
+      data: post_data,
+      success: function (data) {
+        var info = data['course_info']
+        _this.course_name = info.name
+      },
+      error: function () {
+        _this.$notify({
+          type: 'error',
+          title: '错误',
+          message: '获取课程信息失败'
+        })
+      }
+    })
   }
 }
 </script>

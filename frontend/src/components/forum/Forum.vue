@@ -100,7 +100,7 @@ export default {
   beforeCreate () {
     this.dev = true
     this.page_size = 10
-    var post_url = get_url(this.dev, '/post/id/list/')
+    var post_url = get_url(this.$store.state.dev, '/post/id/list/')
     var post_data = { course_id: this.$route.params.course_id }
     var _this = this
     $.ajax({
@@ -119,7 +119,7 @@ export default {
             _this.threads.push(id_list[j])
           }
           post_data = { id_list: target_list, get_content: true, get_grade: true, get_follow_count: true }
-          post_url = get_url(_this.dev, '/post/information/list/')
+          post_url = get_url(_this.$store.state.dev, '/post/information/list/')
           $.ajax({
             ContentType: 'application/json; charset=utf-8',
             dataType: 'json',
@@ -131,7 +131,7 @@ export default {
               for (var i = 0; i < info_list.length; i++) {
                 var type = (info_list[i].type === 1 ? '问题讨论' : (info_list[i].type === 2 ? '学习心得' : '其他'))
               // need to cut description
-                var cut_description = (info_list[i].content.length < 100 ? info_list[i].content : info_list[i].content.substr(0, 100))
+                var cut_description = (info_list[i].content.length < 100 ? info_list[i].content : info_list[i].content.substr(0, 100)) + '....'
                 var thread = { id: id_list[i], agree_num: info_list[i].grade_sum, follow_num: info_list[i].follow_count, read_num: info_list[i].read_count, type: type, title: info_list[i].title, description: cut_description, user_name: info_list[i].username, time: info_list[i].update_time }
                 _this.current_threads.push(thread)
               }
@@ -155,7 +155,7 @@ export default {
       }
     })
     post_data = { 'course_id': this.$route.params.course_id }
-    post_url = get_url(this.dev, '/course/course_info/')
+    post_url = get_url(this.$store.state.dev, '/course/course_info/')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
@@ -217,7 +217,7 @@ export default {
         target_list.push(this.threads[(value-1)*this.page_size+j])
       }
       var post_data = { id_list: target_list, get_content: true, get_grade: true, get_follow_count: true }
-      var post_url = get_url(this.dev, '/post/information/list/')
+      var post_url = get_url(this.$store.state.dev, '/post/information/list/')
       var _this = this
       $.ajax({
         ContentType: 'application/json; charset=utf-8',
@@ -230,7 +230,7 @@ export default {
           for (var i = 0; i < info_list.length; i++) {
             var type = (info_list[i].type === 1 ? '问题讨论' : (info_list[i].type === 2 ? '学习心得' : '其他'))
               // need to cut description
-            var cut_description = (info_list[i].content.length < 100 ? info_list[i].content : info_list[i].content.substr(0, 100))
+            var cut_description = (info_list[i].content.length < 100 ? info_list[i].content : info_list[i].content.substr(0, 100)) + '....'
             var thread = { id: target_list[i], agree_num: info_list[i].grade_sum, follow_num: info_list[i].follow_count, read_num: info_list[i].read_count, type: type, title: info_list[i].title, description: cut_description, user_name: info_list[i].username, time: info_list[i].update_time }
             _this.current_threads.push(thread)
           }
