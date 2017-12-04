@@ -194,3 +194,10 @@ def refresh_ip_visit_info(ip):
         ip_obj.visit_count += 1
         ip_obj.save()
 
+# 根据用户id查看用户的用户名
+def get_username_by_id(id):
+    result = User.objects.filter(id = id)
+    if (len(result) == 0):
+        return ""
+    print(result[0].username)
+    return result[0].username
