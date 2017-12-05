@@ -32,6 +32,8 @@ def classification_course_list(cla_id):
     if(len(result) == 0):
         return []
     result = result.values()
+    for course in result:
+        course['credit'] = float(course['credit'])
     return list(result)
 
 # 查询课程详细信息
