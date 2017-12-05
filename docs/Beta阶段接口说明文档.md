@@ -1,5 +1,8 @@
 ﻿# Beta阶段接口说明文档
 
+12.5更新：
+“获取跟帖信息列表”增添获取赞同数
+
 12.3更新：
 修正了"获取资源评价情况"中avg_grade的数据类型：int->float
 新增“获取用户贡献分列表”
@@ -625,6 +628,7 @@ info_list|list[dict{}]|信息列表
 :-:|:-:|:-:
 user_id|int|用户id
 username|str|用户名（冗余）
+pos\_eva\_count|str|赞同数
 is_poster|bool|浏览者是否为发布者，未登录为false
 evaluated_grade|int|评价情况，1赞同，-1反对，未登录与未评价为0
 post_time|datetime|发布时间
