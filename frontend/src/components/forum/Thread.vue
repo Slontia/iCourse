@@ -56,7 +56,7 @@
           </el-col>
         </el-row>
         <el-row>
-          <p class="content">{{ main.content }}</p>
+          <span class="content" v-html="main.content"></span>
         </el-row>
         <el-row class="footer_row">
           <el-button type="text" class="comment_button" @click="main_comment_button_clicked"> 评论({{ main.comment_num }})</el-button>
@@ -130,7 +130,7 @@
           </el-col>
         </el-row>
         <el-row>
-          <p class="content">{{ response.content }}</p>
+          <span class="content" v-html="response.content"></span>
         </el-row>
         <el-row class="footer_row">
           <el-button type="text" class="comment_button" @click="response_comment_button_clicked(index)"> 评论({{ response.comment_num }})</el-button>
@@ -187,7 +187,10 @@
     </el-row>
     <el-row type="flex" justify="center" >
       <el-col :span="20" class="limit">
-        已经输入<span> {{ editor.current_text_length }} </span>个字符，还可以输入<span> {{ editor.current_available_text }} </span>个字符
+        <el-alert :title="note" type="info" :closable="false" show-icon v-if="!editor.overflow">
+        </el-alert>
+        <el-alert :title="alert" type="error" :closable="false" show-icon v-if="editor.overflow"> 
+        </el-alert>
       </el-col>
     </el-row>
     <el-row type="flex">
@@ -237,8 +240,6 @@ export default {
             data: post_data,
             success: function (data) {
               var main_info = data['info_list']
-              console.log('main_info:')
-              console.log(main_info)
               _this.main.title = main_info[0].title
               var temp = main_info[0].category
               _this.main.type = (temp === 1 ? '问题讨论' : (temp === 2 ? '学习心得' : '其他'))
@@ -272,24 +273,24 @@ export default {
             data: post_data,
             success: function (data) {
               var info_list = data['info_list']
-              console.log(data)
-              console.log(info_list[0].content)
               // load main
+              var pos = info_list[0].pos_eva_count
+              var neg = info_list[0].neg_eva_count
               _this.main.id = target_list[0]
-              _this.main.agree_num = 0 // need to add
+              _this.main.agree_num = pos - neg // need to add
               _this.main.user_name = info_list[0].username
               _this.main.self_intro = '' // need
               _this.main.avatar = default_img // need
               _this.main.content = info_list[0].content
               _this.main.time = String(info_list[0].edit_time)
-              _this.main.comment_active = {}
               _this.main.comment_active.display = 'none'
               _this.main.input_comment = ''
-              console.log(_this.main)
               for (var j = 1; j < info_list.length; j++) {
                 var temp = {}
+                pos = info_list[j].pos_eva_count
+                neg = info_list[j].neg_eva_count
                 temp.id = target_list[j]
-                temp.agree_num = 0 // need
+                temp.agree_num = pos - neg // need
                 temp.user_name = info_list[j].username
                 temp.self_intro = '' // need
                 temp.avatar = default_img // need
@@ -330,13 +331,33 @@ export default {
         })
       }
     })
+    post_data = { 'course_id': this.$route.params.course_id }
+    post_url = get_url(this.$store.state.dev, '/course/course_info/')
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: post_url,
+      type: 'POST',
+      data: post_data,
+      success: function (data) {
+        var info = data['course_info']
+        _this.course_name = info.name
+      },
+      error: function () {
+        _this.$message({
+          showClose: true,
+          type: 'error',
+          message: '获取课程信息失败'
+        })
+      }
+    })
   },
   data () {
     return {
       course_name: '',
       response_num: 0,
       response_page_size: 10,
-      main: { id: -1, title: '', argee_num: -1, user_name: '', self_intro: '', avatar: default_img, content: '', time: '', comment_active: {}, input_comment: '' },
+      main: { id: -1, title: '', argee_num: -1, user_name: '', self_intro: '', avatar: default_img, content: '', time: '', comment_active: { display: 'none' }, input_comment: '', comments: [], comment_num: 0 },
       responses_list: [],
       responses: [],
       more_comment_button_style: { display: 'none' },
@@ -345,19 +366,24 @@ export default {
         option: { placeholder: '保护健康，文明评论' },
         current_text_length: 0,
         overflow: false,
-        current_available_text: 2000,
-        text_limit: 2000,
+        current_available_text: 10000,
+        text_limit: 10000,
         least: 10
       },
       dev: true
     }
   },
   computed: {
+    note: function () {
+      return '已经输入'+this.editor.current_text_length+'个字符，还可以输入'+this.editor.current_available_text+'个字符'
+    },
+    alert: function () {
+      return '文章长度超出限制了呢，目前已经输入了:'+this.editor.current_text_length+'个字符,超出了:'+(this.editor.current_text_length-this.editor.text_limit)+'个字符'
+    }
   },
   methods: {
     get_comments_of_follow: function (follow) {
       var post_url = get_url(this.$store.state.dev, '/comment/id/list/')
-      console.log(follow.id)
       var post_data = { follow_id: follow.id }
       var _this = this
       $.ajax({
@@ -371,7 +397,7 @@ export default {
           if (comment_list.length > 0) {
             comment_list.reverse() // from old to new
             post_url = get_url(_this.$store.state.dev, '/comment/info/list/')
-            post_data = { id_list: comment_list }
+            post_data = { id_list: JSON.stringify(comment_list) }
             $.ajax({
               ContentType: 'application/json; charset=utf-8',
               dataType: 'json',
@@ -380,7 +406,8 @@ export default {
               data: post_data,
               success: function (data) {
                 var info_list = data['info_list']
-                follow.comment_num = info_list.length
+                // follow.comment_num = info_list.length
+                _this.$set(follow, 'comment_num', info_list.length)
                 follow.comments = []
                 for (var i = 0; i < info_list.length; i++) {
                   var temp = {}
@@ -397,6 +424,8 @@ export default {
                 })
               }
             })
+          } else {
+            _this.$set(follow, 'comment_num', 0)
           }
         },
         error: function () {
@@ -409,10 +438,9 @@ export default {
       })
     },
     return_forum_button_clicked: function () {
-      this.$router.push({ path: '/course/page/'+this.$route.params.course_id+'/forum' })
+      this.$router.push({ path: '/course/page/'+this.$route.params.course_id+'/forum/' })
     },
     agree_button_clicked: function (is_main, value, id, index) {
-      console.log(is_main, value, id, index)
       if (!this.$store.state.is_login) {
         this.$message({
           showClose: true,
@@ -420,7 +448,7 @@ export default {
           message: '请先登录'
         })
       } else {
-        var post_url = get_url(this.$store.state.dev, '/post/follow/evaluate')
+        var post_url = get_url(this.$store.state.dev, '/post/follow/evaluate/')
         var post_data = { follow_id: id, grade: value }
         var _this = this
         $.ajax({
@@ -453,7 +481,8 @@ export default {
       }
     },
     main_comment_button_clicked: function () {
-      this.main.comment_active.display = this.main.comment_active.display==='none' ? 'inline' : 'none'
+      var temp = (this.main.comment_active.display === 'none' ? 'inline' : 'none')
+      this.$set(this.main.comment_active, 'display', temp)
     },
     main_input_comment_button_clicked: function () {
       var target_content = this.main.input_comment
@@ -483,7 +512,7 @@ export default {
           success: function (data) {
             var code = Number(data['error'])
             if (code === 0) {
-              _this.$router.push({ path: '/course/page/' + _this.$route.params.course_id + '/forum/' + _this.$route.params.thread_id })
+              _this.$router.go(0)
             } else if (code === 1) {
               _this.$message({
                 showClose: true,
@@ -503,7 +532,8 @@ export default {
       }
     },
     response_comment_button_clicked: function (index) {
-      this.responses[index].comment_active.display = this.responses[index].comment_active.display==='none' ? 'inline' : 'none'
+      var temp = (this.responses[index].comment_active.display==='none' ? 'inline' : 'none')
+      this.$set(this.responses[index].comment_active, 'display', temp)
     },
     response_input_comment_button_clicked: function (index) {
       var target_content = this.responses[index].input_comment
@@ -533,7 +563,7 @@ export default {
           success: function (data) {
             var code = Number(data['error'])
             if (code === 0) {
-              _this.$router.push({ path: '/course/page/' + _this.$route.params.course_id + '/forum/' + _this.$route.params.thread_id })
+              _this.$router.go(0)
             } else if (code === 1) {
               _this.$message({
                 showClose: true,
@@ -560,7 +590,7 @@ export default {
       if (len > 0) {
         var target_list = this.responses_list.slice(this.response_page_size, this.response_page_size + len)
         var post_url = get_url(this.$store.state.dev, '/follow/info/list/')
-        var post_data = { id_list: target_list }
+        var post_data = { id_list: JSON.stringify(target_list) }
         var _this = this
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
@@ -583,8 +613,9 @@ export default {
               temp.comment_active.display = 'none'
               temp.input_comment = ''
               _this.responses.push(temp)
+              _this.get_comments_of_follow(_this.responses[_this.response_page_size+j])
             }
-            _this.more_comment_button_style.display = 'none'
+            _this.$set(_this.more_comment_button_style, 'display', 'none')
           },
           error: function () {
             _this.$message({
@@ -594,9 +625,6 @@ export default {
             })
           }
         })
-        for (var i = 0; i < len; i++) {
-          _this.get_comments_of_follow(_this.responses[_this.response_page_size+i])
-        }
       }
     },
     on_editor_change: function ({editor, html, text}) {
@@ -608,7 +636,7 @@ export default {
       if (this.editor.overflow) {
         this.$message({
           showClose: true,
-          message: '请控制评论的字符在10-2000之内',
+          message: '请控制评论的字符在10-800之内',
           type: 'error'
         })
       } else if (!this.$store.state.is_login) {
@@ -640,7 +668,7 @@ export default {
                   type: 'success',
                   message: '发布成功'
                 })
-                _this.$router.push({ path: '/course/page/' + _this.$route.params.course_id + '/forum/' + _this.$route.params.thread_id })
+                _this.$router.go(0)
               } else if (code === 1) {
                 _this.$message({
                   showClose: true,
@@ -738,11 +766,7 @@ export default {
     height: 435px;
   }
   .limit{
-    height: 30px;
-    border: 1px solid #ccc;
-    border-top: none;
-    line-height: 30px;
-    text-align: right;
+    margin-top: 5px;
     margin-bottom: 20px;
   }
   .all_text{

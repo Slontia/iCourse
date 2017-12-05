@@ -1,15 +1,15 @@
 import Vue from 'vue'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
+import Editor from '@/components/forum/Editor'
+import Thread from '@/components/forum/Thread'
 import Index from '@/components/Index'
 import Course from '@/components/course/Course'
 import Resource from '@/components/course/resource'
 import Personal from '@/components/Personal'
 import PersonalData from '@/components/PersonalData'
 import Courseinfo from '@/components/course/Course_info'
-import Thread from '@/components/forum/Thread'
 import Forum from '@/components/forum/Forum'
-import Editor from '@/components/forum/Editor'
 import Router from 'vue-router'
 
 Vue.use(ElementUI)

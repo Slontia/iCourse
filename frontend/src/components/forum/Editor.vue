@@ -59,7 +59,10 @@
     </el-row>
     <el-row type="flex" justify="center" >
           <el-col :span="20" class="limit">
-        已经输入<span> {{ current_text_length }} </span>个字符，还可以输入<span> {{ current_available_text }} </span>个字符
+            <el-alert :title="note" type="info" :closable="false" show-icon v-if="!overflow">
+            </el-alert>
+            <el-alert :title="alert" type="error" :closable="false" show-icon v-if="overflow">
+            </el-alert>
           </el-col>
         </el-row>
         <!--
@@ -97,8 +100,8 @@ export default {
       },
       title: '',
       category: -1,
-      text_limit: 5000,
-      current_available_text: 5000,
+      text_limit: 10,
+      current_available_text: 10,
       current_text_length: 0,
       dev: true,
       loading: false,
@@ -191,6 +194,14 @@ export default {
       this.$router.push({ path: '/course/page/' + this.$route.params.course_id + '/forum' })
     }
   },
+  computed: {
+    note: function () {
+      return '已经输入'+this.current_text_length+'个字符，还可以输入'+this.current_available_text+'个字符'
+    },
+    alert: function () {
+      return '文章长度超出限制了呢，目前已经输入了:'+this.current_text_length+'个字符,超出了:'+(this.current_text_length-this.text_limit)+'个字符'
+    }
+  },
   mounted () {
     var post_url = get_url(this.$store.state.dev, '/course/course_info/')
     var post_data = { course_id: this.$route.params.course_id }
@@ -224,11 +235,7 @@ export default {
     padding-bottom: 30px;
   }
   .limit{
-    height: 30px;
-    border: 1px solid #ccc;
-    border-top: none;
-    line-height: 30px;
-    text-align: right;
+    margin-top: 10px;
     margin-bottom: 20px;
   }
   .input{

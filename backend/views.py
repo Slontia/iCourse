@@ -933,7 +933,7 @@ def comment_info_list(request):
             if(len(result) != 1):
                 # error
                 continue;
-            follow_comment = result.values('user_id', 'to_comment_id', 'post_time', 'content')
+            follow_comment = result.values('user_id', 'to_comment_id', 'post_time', 'content')[0]
             follow_comment['username'] = User.objects.get(id=follow_comment['user_id']).username
             if(follow_comment['to_comment_id'] == -1):
                 follow_comment['to_user_id'] = -1
@@ -942,7 +942,7 @@ def comment_info_list(request):
                 follow_comment['to_user_id'] = Follow_Comment.objects.get(id=follow_comment['to_comment_id']).user_id
                 follow_comment['to_username'] = User.objects.get(id=follow_comment['to_user_id']).username
             info_list.append(follow_comment)
-        return HttpResponse(json.dumps({'indo_list': info_list}, cls=ComplexEncoder))
+        return HttpResponse(json.dumps({'info_list': info_list}, cls=ComplexEncoder))
 
 #---------------------------------------------------------------
 # 根据用户对资源的打分进行数据更新
