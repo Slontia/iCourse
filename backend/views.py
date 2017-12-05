@@ -873,7 +873,7 @@ def follow_info_list(request):
             if(len(result) != 1):
                 # error
                 continue
-            follow = result.values('user_id', 'post_time', 'edit_time', 'content')[0]
+            follow = result.values('user_id', 'post_time', 'edit_time', 'content', 'pos_eva_count', 'neg_eva_count')[0]
             follow['username'] = User.objects.get(id=follow['user_id']).username
             if(follow['user_id'] == cur_user_id):
                 follow['is_poster'] = True
