@@ -1107,3 +1107,40 @@ def course_contri_list(request):
         print(dict_list)
 
         return HttpResponse(json.dumps({'contri_list': dict_list}, cls=ComplexEncoder))
+
+
+#---------------------------------------------------------------
+# 获取某一类别资源
+# REQUIRES:      变量名|类型|说明
+#            course_id|int|课程id
+#          资源id必须是存在资源的id，否则返回error:1
+#           type|int|资源类别: ppt、doc(txt)、pdf、pict、other、all
+# MODIFIES: None
+# EFFECTS: 返回resource\_id\_list|list[int]|该课程下的资源id列表
+def resource_id_list(request):
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+    
+        course_id = str(data.get('course_id'))
+        type = str(data.get('type'))
+
+        c = interface.course_information(course_id)
+        if (not c): #如果c为空，代表不存在这样id的课程
+            return HttpResponse(json.dumps({'error':1}))
+
+        course_code = c["course_code"]
+            
+        resources = Resource.objects.filter(course_code = course_code)
+        ans = []
+        for i in range(0, len(resources)):
+            name = resources[i].name
+            pos = name.rfind('.')
+            if (pos == -1):
+                continue
+            if (name[pos+1:len(name)] == type):
+                ans.append(resources[i].id)
+
+        print(ans)
+        return HttpResponse(json.dumps({'contri_list': ans}, cls=ComplexEncoder))
+
