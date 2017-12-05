@@ -19,7 +19,7 @@ from django.views.generic.base import TemplateView
 #from iCourse import testdb
 from django.conf.urls import include, url
 from backend import views as backend_views
-
+import notifications.urls
 
 urlpatterns = [
     # interface
@@ -66,5 +66,8 @@ urlpatterns = [
     url(r'^follow/id/list/$', backend_views.follow_id_list, name='follow_id_list'),
     url(r'^follow/info/list/$', backend_views.follow_info_list, name='follow_info_list'),
     url(r'^comment/id/list/$', backend_views.comment_id_list,name='comment_id_list'),
-    url(r'^comment/info/list/$', backend_views.comment_info_list,name='comment_info_list')
+    url(r'^comment/info/list/$', backend_views.comment_info_list,name='comment_info_list'),
+
+    # notifications
+    url(r'^notifications/', include(notifications.urls, namespace='notifications')),
 ]
