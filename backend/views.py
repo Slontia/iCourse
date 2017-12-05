@@ -377,26 +377,6 @@ def http_get(url):
 #          query_list is a list whose element is dicts like (user_id, total scores),
 #          such as {'college_id': 10, 'class_id': 55, 'name': '安卓', 'credit': 5, 'id': 9, 'hours': 10}
 #          the list is ordered by id temporaily (can be modified to revelance)
-#@csrf_exempt
-#def course_query(request):
-#    if(request.method == "POST"):
-#        data = json.dumps(request.POST) # new
-#        data = json.loads(data)
-#        #data = json.loads(request.body.decode())
-#        query = str(data.get('keyword'))
-#        print ('query: ' + query)
-#        cs_url = 'http://10.2.28.124:8080/solr/mynode/select?'#q=Bill&wt=json&indent=true'
-#        param  = {'q':query, 'fl':'id,name,college_id,class_id,credit,hours', 'rows':'10000', 'wt':'json', 'indent':'true'}
-#        
-#        r = requests.get(cs_url, params = param)
-#        
-#        query_res = http_get(r.url)
-#        #json_r = bytes.decode(query_res)
-#        json_r = json.loads(bytes.decode(query_res))
-#        query_list = json_r['response']['docs']
-#        print (query_list)
-#        print(len(query_list))
-#        return HttpResponse(json.dumps({'query_list': query_list}, cls=ComplexEncoder))
 @csrf_exempt
 def course_query(request):
     if(request.method == "POST"):
@@ -1142,5 +1122,42 @@ def resource_id_list(request):
                 ans.append(resources[i].id)
 
         print(ans)
-        return HttpResponse(json.dumps({'contri_list': ans}, cls=ComplexEncoder))
+        return HttpResponse(json.dumps({'resource_id_litst': ans}, cls=ComplexEncoder))
 
+#---------------------------------------------------------------
+# 根据课程列别获取课程
+# REQUIRES:      变量名|类型|说明
+#              type|string|课程类别:'工程基础类','数学与自然科学类','语言类','博雅类','核心通识类','体育类','一般通识类','核心专业类','一般专业类'}
+#               必须是这9个之一，否则返回error:1
+# MODIFIES: None
+# EFFECTS: 返回course\_type\_list|list[int]|该类别下的课程的list,其中每个都是一个字典，存着课程的信息
+#          query_list is a list whose element is dicts like (user_id, total scores),
+#          such as {'credit': Decimal('3.0'), 'class_id': 1, 'teacher': '杨振宇', 'name': '弹性力学*(全汉语)', 'college_id': 5, 'hours': None, 'visit_count': 0, 'id': 1733, 'course_code': 'B3B05314B'}
+def course_type_list(request):
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        type = str(data.get('type'))
+        
+        dict = {'工程基础类': 1, '数学与自然科学类': 2, '语言类':3, '博雅类':4, '核心通识类': 5, '体育类': 6, '一般通识类': 7, '核心专业类': 8, '一般专业类':9}
+        if (not type in dict):
+            return HttpResponse(json.dumps({'error':1}))
+        type_id = dict[type]
+        
+        courses = Course.objects.filter(class_id = type_id)
+        ans = []
+        for i in range(0, len(courses)):
+            course_info = {}
+            course_info["id"] = courses[i].id
+            course_info["name"] = courses[i].name
+            course_info["college_id"] = courses[i].college_id
+            course_info["class_id"] = courses[i].class_id
+            course_info["hours"] = courses[i].hours
+            course_info["course_code"] = courses[i].course_code
+            course_info["visit_count"] = courses[i].visit_count
+            course_info["teacher"] = courses[i].teacher
+            course_info["credit"] = float(courses[i].credit)
+            ans.append(course_info)
+
+        print(ans)
+        return HttpResponse(json.dumps({'course_type_list': ans}, cls=ComplexEncoder))
