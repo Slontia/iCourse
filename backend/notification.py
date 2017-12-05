@@ -6,15 +6,18 @@ from notifications.signals import notify
 
 def post_is_followed(sender, **kwargs):
     #print(kwargs)
-    follow = kwargs['instance']
-    #print(type(follow))
-    message = {}
-    message['actor'] = User.objects.get(id=follow.user_id)
-    post = Post.objects.get(id=follow.post_id)
-    message['recipient'] = User.objects.get(id=Follow.objects.get(id=post.main_follow_id).user_id)
-    message['verb'] = u'%s 在你的贴子 %s 下发表了跟贴' % (message['actor'].username, post.title)
-    message['action_object'] = follow
-    notify.send(message['actor'], **message)
+    created = kwargs['created']
+    if(created == True):
+        follow = kwargs['instance']
+        #print(type(follow))
+        message = {}
+        message['actor'] = User.objects.get(id=follow.user_id)
+        post = Post.objects.get(id=follow.post_id)
+        if(post.main_follow_id != -1):
+            message['recipient'] = User.objects.get(id=Follow.objects.get(id=post.main_follow_id).user_id)
+            message['verb'] = u'%s 在你的贴子 %s 下发表了跟贴' % (message['actor'].username, post.title)
+            message['action_object'] = follow
+            notify.send(message['actor'], **message)
 
 def follow_is_commented(sender, **kwargs):
     comment = kwargs['instance']

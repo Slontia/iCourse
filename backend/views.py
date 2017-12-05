@@ -22,6 +22,8 @@ import os
 
 from django.utils.http import urlquote
 
+from backend import notification
+
 def page404(request):
     return
 # return HttpResponse(u"page not found: 404")
