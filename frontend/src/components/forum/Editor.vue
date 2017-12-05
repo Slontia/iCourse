@@ -146,7 +146,7 @@ export default {
             cancelButtonText: '取消',
             type: 'info'
           }).then(() => {
-            var content = this.editor.content.length
+            var content = this.editor.content
             var post_data = { title: this.title, course_id: this.$route.params.course_id, category: this.category, content: content, editor: 0 }
             var post_url = get_url(this.$store.state.dev, '/post/posting/publish/')
             var _this = this
@@ -158,12 +158,12 @@ export default {
               data: post_data,
               success: function (data) {
                 var code = Number(data['error'])
-                if (code === 1) {
+                if (code === 0) {
                   console.log('success')
                   _this.loading = true
                   _this.$router.push({ path: '/course/page/' + _this.$route.params.course_id + '/forum' })
-                } else if (code === 0) {
-                  _this.$messgae({
+                } else if (code === 1) {
+                  _this.$message({
                     showClose: true,
                     type: 'error',
                     message: '发布失败'

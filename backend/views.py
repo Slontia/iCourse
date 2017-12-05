@@ -475,6 +475,7 @@ def resourceUpload(request):
         if(not request.user.is_authenticated()):    # if the user is not authenticated
             return HttpResponse(json.dumps({'error':1}))
         upload_user_id = request.user.id
+        print(request.user.id)
         data = request.POST
         intro = str(data.get('intro'))
         #course_id = int(data.get('course_id'))
@@ -648,6 +649,7 @@ def ip_record(request):
 # URL: /post/posting/publish/
 @csrf_exempt
 def posting_publish(request):
+    errors = []
     if(request.method == 'POST'):
         data = request.POST
         course_id = int(data.get('course_id'))
@@ -665,8 +667,11 @@ def posting_publish(request):
             post.main_follow_id = -1;
             post.save()
         else:
+            errors.extend(post_form.errors.values())
+            print(errors)
             return HttpResponse(json.dumps({'error': 1}))
         follow_form = FollowForm({'post_id':post.id, 'user_id':user_id, 'content':content, 'editor':editor})
+        print(post.id,user_id,content,editor)
         if(follow_form.is_valid()):
             follow = Follow()
             follow.post_id = post.id
@@ -678,6 +683,8 @@ def posting_publish(request):
             post.main_follow_id = follow.id # renew post.main_follow_id
             post.save()
         else:
+            errors.extend(follow_form.errors.values())
+            print(errors)
             post.delete()
             return HttpResponse(json.dumps({'error': 1}))
         return HttpResponse(json.dumps({'error': 0}))
@@ -783,7 +790,13 @@ def post_infor_list(request):
     if(request.method == 'POST'):
         data = json.dumps(request.POST)
         data = json.loads(data)
-        id_list = list(data.get('id_list'))
+        id_list = data.get('id_list')
+        print(id_list)
+        if(',' in id_list):
+            id_list = id_list[1:-1].split(',')
+        else:
+            id_list = [id_list[1:-1]]
+        print(id_list)
         get_content = str(data.get('get_content'))
         get_grade = str(data.get('get_grade'))
         get_follow_count = str(data.get('get_follow_count'))
@@ -818,8 +831,9 @@ def post_infor_list(request):
             post['user_id'] = main_follow.user_id
             post['content'] = main_follow.content
             post['user_name'] = User.objects.get(id=post['user_id']).username
+            #post['update_time'] = '2017-11-18'
             info_list.append(post)
-        return HttpResponse(json.dumps(info_list))
+        return HttpResponse(json.dumps({'info_list':info_list},cls=ComplexEncoder))
 
 # Get Follow Id List Interface
 # URL: /follow/id/list/
@@ -827,11 +841,13 @@ def post_infor_list(request):
 def follow_id_list(request):
     if(request.method == 'POST'):
         post_id = int(request.POST.get('post_id'))
+        print(post_id)
         result = Post.objects.filter(id=post_id)
         if(len(result) != 1):
             return HttpResponse(json.dumps({'main_id':-1, 'id_list':[]}))
         main_id = result[0].main_follow_id
-        id_list = list(Follow.objects.filter(post_id=post_id).order_by('-pos_eva_count','neg_pos_count').values_list('id', flat=True))
+        print(main_id)
+        id_list = list(Follow.objects.filter(post_id=post_id).order_by('-pos_eva_count','neg_eva_count').values_list('id', flat=True))
         id_list.remove(main_id)
         return HttpResponse(json.dumps({'main_id':main_id, 'id_list':id_list}))
 
@@ -842,7 +858,13 @@ def follow_info_list(request):
     if(request.method == 'POST'):
         data = json.dumps(request.POST)
         data = json.loads(data)
-        id_list = list(data.get('id_list'))
+        id_list = data.get('id_list')
+        print(id_list)
+        if(',' in id_list):
+            id_list = id_list[1:-1].split(',')
+        else:
+            id_list = [id_list[1:-1]]
+        print(id_list)
         cur_user_id = request.user.id
         info_list = []
         for item in id_list:
@@ -851,7 +873,7 @@ def follow_info_list(request):
             if(len(result) != 1):
                 # error
                 continue
-            follow = result.values('user_id', 'psot_time', 'edit_time', 'content')[0]
+            follow = result.values('user_id', 'post_time', 'edit_time', 'content')[0]
             follow['username'] = User.objects.get(id=follow['user_id']).username
             if(follow['user_id'] == cur_user_id):
                 follow['is_poster'] = True
@@ -866,7 +888,8 @@ def follow_info_list(request):
                 else:
                     follow['evaluated_grade'] = result[0]
             info_list.append(follow)
-        return HttpResponse(json.dumps(info_list))
+            print(info_list)
+        return HttpResponse(json.dumps({'info_list':info_list},cls=ComplexEncoder))
 
 # get follow content by user_id and post_id
 # URL: /follow/get/userpost/

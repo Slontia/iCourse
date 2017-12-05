@@ -36,7 +36,9 @@
       </el-col>
       <el-col :span="16">
         <el-row class="main_title_container">
-          <p><span class="main_title">{{ main.title }}</span>
+          <p>
+            <span class="main_title">{{ main.type }} ·</span>
+            <span class="main_title">{{ main.title }}</span>
           <el-button type="primary" size="large" @click="edit_comment_button_clicked" style="float:right">编辑/添加回复
           </el-button>
           </p>
@@ -214,7 +216,7 @@ export default {
     this.dev = true
     this.response_page_size = 10
     var post_url = get_url(this.$store.state.dev, '/follow/id/list/')
-    var post_data = { post_id: this.$route.params.thread_id }
+    var post_data = { post_id: Number(this.$route.params.thread_id) }
     var _this = this
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
@@ -223,7 +225,33 @@ export default {
       type: 'POST',
       data: post_data,
       success: function (data) {
-        var main_id = data['main_id']
+        var main_id = Number(_this.$route.params.thread_id)
+        if (main_id !== -1) {
+          post_url = get_url(_this.$store.state.dev, '/post/information/list/')
+          post_data = { id_list: JSON.stringify([main_id]), get_content: false, get_grade: false, get_follow_count: false }
+          $.ajax({
+            ContentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            url: post_url,
+            type: 'POST',
+            data: post_data,
+            success: function (data) {
+              var main_info = data['info_list']
+              console.log('main_info:')
+              console.log(main_info)
+              _this.main.title = main_info[0].title
+              var temp = main_info[0].category
+              _this.main.type = (temp === 1 ? '问题讨论' : (temp === 2 ? '学习心得' : '其他'))
+            },
+            error: function () {
+              _this.$message({
+                showClose: true,
+                type: 'error',
+                message: '获取主帖信息失败'
+              })
+            }
+          })
+        }
         var id_list = data['id_list']
         _this.response_num = id_list.length
         _this.more_comment_button_style.display = (id_list.length > _this.response_page_size ? 'inline' : 'none')
@@ -232,9 +260,9 @@ export default {
         }
         var len = (id_list.length > _this.response_page_size ? _this.response_page_size : id_list.length)
         var target_list = id_list.slice(0, len)
-        target_list.unshift(main_id)
+        target_list.unshift(data['main_id'])
         post_url = get_url(_this.$store.state.dev, '/follow/info/list/')
-        post_data = { id_list: target_list }
+        post_data = { id_list: JSON.stringify(target_list) }
         if (main_id !== -1) {
           $.ajax({
             ContentType: 'application/json; charset=utf-8',
@@ -244,9 +272,10 @@ export default {
             data: post_data,
             success: function (data) {
               var info_list = data['info_list']
+              console.log(data)
+              console.log(info_list[0].content)
               // load main
               _this.main.id = target_list[0]
-              _this.main.title = '' // need to add
               _this.main.agree_num = 0 // need to add
               _this.main.user_name = info_list[0].username
               _this.main.self_intro = '' // need
@@ -256,6 +285,7 @@ export default {
               _this.main.comment_active = {}
               _this.main.comment_active.display = 'none'
               _this.main.input_comment = ''
+              console.log(_this.main)
               for (var j = 1; j < info_list.length; j++) {
                 var temp = {}
                 temp.id = target_list[j]
@@ -269,6 +299,10 @@ export default {
                 temp.comment_active.display = 'none'
                 temp.input_comment = ''
                 _this.responses.push(temp)
+              }
+              _this.get_comments_of_follow(_this.main)
+              for (var i = 0; i < _this.responses.length; i++) {
+                _this.get_comments_of_follow(_this.responses[i])
               }
             },
             error: function () {
@@ -296,17 +330,13 @@ export default {
         })
       }
     })
-    this.get_comments_of_follow(this.main)
-    for (var i = 0; i < this.responses.length; i++) {
-      this.get_comments_of_follow(this.responses[i])
-    }
   },
   data () {
     return {
       course_name: '',
       response_num: 0,
       response_page_size: 10,
-      main: {},
+      main: { id: -1, title: '', argee_num: -1, user_name: '', self_intro: '', avatar: default_img, content: '', time: '', comment_active: {}, input_comment: '' },
       responses_list: [],
       responses: [],
       more_comment_button_style: { display: 'none' },
@@ -327,6 +357,7 @@ export default {
   methods: {
     get_comments_of_follow: function (follow) {
       var post_url = get_url(this.$store.state.dev, '/comment/id/list/')
+      console.log(follow.id)
       var post_data = { follow_id: follow.id }
       var _this = this
       $.ajax({
