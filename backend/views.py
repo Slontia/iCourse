@@ -977,3 +977,104 @@ def resource_evaluation_grade_count(request):
                 avg_grade = float(tot_grade) / float(len(result2))
         print("tot_grade = ",tot_grade,"avg_grade = ", avg_grade)
         return HttpResponse(json.dumps({'avg_grade': avg_grade, 'user_grade': user_grade}))
+
+
+#求某个资源的评分的平均分
+def avg_score(resource_id):
+    result2 = Resource_Evaluation.objects.filter(resource_id = resource_id)
+    tot_grade = 0
+    avg_grade = -1 #没有人评价，平均值默认值为-1
+    if (len(result2) != 0):
+        for i in range(0, len(result2)):
+            tot_grade += result2[i].grade
+            avg_grade = float(tot_grade) / float(len(result2))
+    print("tot_grade = ",tot_grade,"avg_grade = ", avg_grade)
+    return avg_grade
+
+#---------------------------------------------------------------
+# 获取课程贡献分列表
+# REQUIRES:      变量名|类型|说明
+#            course_id|int|课程id
+#          资源id必须是存在资源的id，否则返回error:1
+# MODIFIES: None
+# EFFECTS:
+#        返回contri_list	list[dict{}]	课程贡献度字典，按照contri从高到低排序
+#        字典包括：
+#        变量名|类型|说明
+#        :-:|:-:|:-:
+#        user_id|int|用户id
+#        username|str|用户名
+#        contri|float|贡献度（保留一位小数）
+    #某用户在某一课程下贡献度计算公式：（即同一用户在不同课程下贡献度可能不同）
+    #资源贡献度 = 上传资源数∑(下载量*评分平均值/10)
+    #论坛贡献度 = 发布帖子数∑(点击量/10) + 发布跟帖数∑((赞同数2) / (赞同数+反对数))
+    #总贡献度 = 资源贡献度 + 论坛贡献度
+def course_contri_list(request):
+    
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        
+        course_id = str(data.get('course_id'))
+        
+        c = interface.course_information(course_id)
+        if (not c): #如果c为空，代表不存在这样id的课程
+            return HttpResponse(json.dumps({'error':1}))
+        course_code = c["course_code"]
+
+        users = User.objects.filter()
+        resources = Resource.objects.filter(course_code = course_code)
+        print(len(resources))
+        dict = {}
+        for i in range(0, len(resources)): #遍历所有资源
+            download_count = resources[i].download_count
+            grade = avg_score(resources[i].id)
+            if (grade == -1):
+                grade = 5 #没有人评价，评分就设置为5
+            contrib_r = float(download_count) * float(grade) / 10.0
+
+            if (not resources[i].upload_user_id in dict):
+                dict[resources[i].upload_user_id] = contrib_r
+            else:
+                dict[resources[i].upload_user_id] = dict[resources[i].upload_user_id] + contrib_r
+
+
+        posts = Post.objects.filter(course_id = course_id)
+        for i in range(0, len(posts)): #遍历所有帖子
+            click_count = posts[i].click_count
+            tmp = Follow.objects.filter(id = posts[i].main_follow_id)
+            
+            post_user_id = tmp[0].user_id
+            if (not post_user_id in dict):
+                dict[post_user_id] = float(click_count/10.0)
+            else:
+                dict[post_user_id] = dict[post_user_id] + float(click_count/10.0)
+
+            posts_follow = Follow.objects.filter(post_id = posts[i].id)
+            for j in range(0, len(posts_follow)): #遍历该帖子下的所有跟帖
+                pos_eva_count = posts_follow[j].pos_eva_count
+                neg_eav_count = posts_follow[j].neg_eva_count
+                if (not posts_follow[j].user_id in dict):
+                    dict[posts_follow[j].user_id] = float(pos_eva_count*pos_eva_count/(pos_eva_count+neg_eav_count))
+                else:
+                    dict[posts_follow[j].user_id] = dict[posts_follow[j].user_id] + float(2.0*(pos_eva_count)/(pos_eva_count+neg_eav_count))
+
+        ans = sorted(dict.items(), key=lambda item:item[0],reverse=True)
+        dict_list = []
+        print(ans)
+
+        for id, score in ans:
+            dict_tmp = {}
+            u_name = interface.get_username_by_id(id)
+            if (not u_name): #返回的是”“ 即不存在该用户，跳过
+                continue;
+#            if (u_name == "iCourse"): #跳过iCourse用户
+#               continue
+            dict_tmp["username"] = u_name
+            dict_tmp["user_id"] = id
+            dict_tmp["contri"] = round(score, 1)
+            
+            dict_list.append(dict_tmp)
+        print(dict_list)
+
+        return HttpResponse(json.dumps({'contri_list': dict_list}, cls=ComplexEncoder))
