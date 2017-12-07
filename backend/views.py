@@ -1196,3 +1196,49 @@ def course_type_list(request):
 
         print(ans)
         return HttpResponse(json.dumps({'course_type_list': ans}, cls=ComplexEncoder))
+
+
+#---------------------------------------------------------------
+# 资源收藏
+# REQUIRES:      变量名|类型|说明
+#          resource_id|int|资源id
+#              user_id|int|用户id
+# MODIFIES: None
+# EFFECTS: error|int|0 1:失败
+@csrf_exempt
+def resource_like(request):
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        
+        resource_id = str(data.get('resource_id'))
+        user_id = str(data.get('user_id'))
+        
+        like = R_Resource_User_Like()
+        like.user_id = user_id
+        like.resource_id = resource_id
+        like.save()
+        return HttpResponse(json.dumps({'error':0}))
+
+#---------------------------------------------------------------
+# 获取资源收藏情况
+# REQUIRES:         变量名|类型|说明
+#             resource_id|int|资源id
+#                 user_id|int|用户id
+# MODIFIES: None
+# EFFECTS:  like_resource|int|收藏数
+#                    like|int|0:未收藏 1:已收藏
+@csrf_exempt
+def resource_like_count(request):
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        
+        resource_id = str(data.get('resource_id'))
+        user_id = str(data.get('user_id'))
+                    
+        likes = R_Resource_User_Like.objects.filter(resource_id = resource_id)
+        ans_likes = len(likes)
+        likes = R_Resource_User_Like.objects.filter(resource_id = resource_id, user_id = user_id)
+        user_like = int(len(likes) > 0)
+        return HttpResponse(json.dumps({'like_resource': ans_likes, 'like': user_like}))

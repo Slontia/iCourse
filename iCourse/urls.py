@@ -46,7 +46,8 @@ urlpatterns = [
     url(r'^resource/evaluation/grade/count/$', backend_views.resource_evaluation_grade_count, name='resource_evaluation_grade_count'),
     url(r'^resource/id/list/$', backend_views.resource_id_list, name='resource_id_list'),
     url(r'^course/type/list/$', backend_views.course_type_list, name='course_type_list'),
-     
+    url(r'^resource/like/add/$', backend_views.resource_like, name='resource_like'),
+    url(r'^resource/like/count/$', backend_views.resource_like_count, name='resource_like_count'),
                
     # page
     url(r'^$', TemplateView.as_view(template_name='index.html')), # NEW
