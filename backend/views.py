@@ -1214,6 +1214,10 @@ def resource_like(request):
         resource_id = str(data.get('resource_id'))
         user_id = str(data.get('user_id'))
         
+        likes = R_Resource_User_Like.objects.filter(resource_id = resource_id, user_id = user_id) #filter相当于SQL中的WHERE，可设置条件过滤结果
+        if (len(likes) > 0): #之前喜欢过，报错
+            return HttpResponse(json.dumps({'error':1}))
+        
         like = R_Resource_User_Like()
         like.user_id = user_id
         like.resource_id = resource_id
@@ -1242,3 +1246,77 @@ def resource_like_count(request):
         likes = R_Resource_User_Like.objects.filter(resource_id = resource_id, user_id = user_id)
         user_like = int(len(likes) > 0)
         return HttpResponse(json.dumps({'like_resource': ans_likes, 'like': user_like}))
+
+#---------------------------------------------------------------
+# 资源收藏
+# REQUIRES:      变量名|类型|说明
+#                course_id|int|课程id
+#                user_id|int|用户id
+# MODIFIES: None
+# EFFECTS: error|int|0 1:失败
+@csrf_exempt
+def course_like(request):
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        
+        course_id = str(data.get('course_id'))
+        user_id = str(data.get('user_id'))
+    
+        likes = R_Course_User_Like.objects.filter(course_id = course_id, user_id = user_id) #filter相当于SQL中的WHERE，可设置条件过滤结果
+        if (len(likes) > 0): #之前喜欢过，报错
+            return HttpResponse(json.dumps({'error':1}))
+        
+        like = R_Course_User_Like()
+        like.user_id = user_id
+        like.course_id = course_id
+        like.save()
+        return HttpResponse(json.dumps({'error':0}))
+
+#---------------------------------------------------------------
+# 课程取消收藏
+# REQUIRES:         变量名|类型|说明
+#               course_id|int|课程id
+#                 user_id|int|用户id
+# MODIFIES: None
+# EFFECTS:          error|int|0 1:失败
+@csrf_exempt
+def course_cancel_like(request):
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        
+        course_id = str(data.get('course_id'))
+        user_id = str(data.get('user_id'))
+        
+        likes = R_Course_User_Like.objects.filter(course_id = course_id, user_id = user_id) #filter相当于SQL中的WHERE，可设置条件过滤结果
+        if (len(likes) == 0):
+            return HttpResponse(json.dumps({'error':1}))
+        
+        like = R_Course_User_Like.objects.get(course_id = course_id, user_id = user_id) #GET获取单个对象
+        like.delete()
+
+        return HttpResponse(json.dumps({'error':0}))
+
+#---------------------------------------------------------------
+# 获取课程收藏情况
+# REQUIRES:         变量名|类型|说明
+#               course_id|int|课程id
+#                 user_id|int|用户id
+# MODIFIES: None
+# EFFECTS:     like_count|int|收藏数
+#                   liked|int|0:未收藏 1:已收藏
+@csrf_exempt
+def course_like_count(request):
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+    
+        course_id = str(data.get('course_id'))
+        user_id = str(data.get('user_id'))
+
+        likes = R_Course_User_Like.objects.filter(course_id = course_id)
+        ans_likes = len(likes)
+        likes = R_Course_User_Like.objects.filter(course_id = course_id, user_id = user_id)
+        user_like = int(len(likes) > 0)
+        return HttpResponse(json.dumps({'like_course': ans_likes, 'like': user_like}))
