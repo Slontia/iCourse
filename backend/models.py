@@ -101,6 +101,14 @@ class R_Course_User_Contribution(models.Model):
     def __str__(self):
         return str(self.id)
 
+# R_Course_User_Like Model
+class R_Course_User_Like(models.Model):
+    user_id = models.PositiveIntegerField()
+    course_id = models.PositiveIntegerField()
+
+    def __str__(self):
+        return str(self.id)
+
 # UserProfile Model: extend info of User
 class UserProfile(models.Model):
     user = models.OneToOneField(User, unique=True, verbose_name=('User'))

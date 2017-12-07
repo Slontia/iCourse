@@ -1,4 +1,6 @@
-# Beta阶段接口说明文档
+﻿# Beta阶段接口说明文档
+12.7更新：
+新增“课程收藏”
 
 12.5更新：
 “获取跟帖信息列表”增添获取赞同数
@@ -322,25 +324,20 @@ user_id|int|用户id
 username|str|用户名
 contri|float|贡献度（保留一位小数）
 
-### 2.12 获取课程类别列表
-**函数名：** course\_type\_list
-**URL：** /course/type/list
+### 2.12 课程收藏
+**函数名：** course\_like
+**URL：** /course/like/add/
 **前端**
 变量名|类型|说明
 :-:|:-:|:-:
-type|string|课程类别：'工程基础类','数学与自然科学类','语言类','博雅类','核心通识类','体育类','一般通识类','核心专业类','一般专业类'
+course_id|int|课程id
+user_id|int|用户id
 
 **后端**
-根据课程类别返回相应课程的信息的列表
-
-
 变量名|类型|说明
 :-:|:-:|:-:
-course\_type\_list|list[int]|该类别下的课程的list，其中每个元素都是一个字典，存着课程的详细信息
+error|int|0:成功<br>1:失败
 
-课程信息的格式例如`{'credit': Decimal('3.0'), 'class_id': 1, 'teacher': '杨振宇', 'name': '弹性力学*(全汉语)', 'college_id': 5, 'hours': None, 'visit_count': 0, 'id': 1733, 'course_code': 'B3B05314B'}`
-
-### 课程简介修改
 
 ## 3. 资源相关
 ### 3.1 获取某一类别资源（修改）
