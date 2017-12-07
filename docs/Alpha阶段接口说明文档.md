@@ -1,5 +1,8 @@
 ﻿# Alpha阶段接口说明文档
 
+12.8更新：
+“获取用户信息”添加college_id
+
 ## 1. 用户相关
 ### 1.1 记录访问ip
 **函数名：** ip_record
@@ -61,6 +64,7 @@ email|str|邮箱
 nickname|str|昵称或姓名
 gender|str|性别
 intro|str|个人简介
+college_id|int|所属院系代号
 
 若提供id，用户信息包括：
 
