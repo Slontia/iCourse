@@ -100,8 +100,8 @@ export default {
       },
       title: '',
       category: -1,
-      text_limit: 10,
-      current_available_text: 10,
+      text_limit: 10000,
+      current_available_text: 10000,
       current_text_length: 0,
       dev: true,
       loading: false,
@@ -235,7 +235,7 @@ export default {
     padding-bottom: 30px;
   }
   .limit{
-    margin-top: 10px;
+    margin-top: 80px;
     margin-bottom: 20px;
   }
   .input{

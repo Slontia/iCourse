@@ -76,7 +76,9 @@ urlpatterns = [
     url(r'^follow/info/list/$', backend_views.follow_info_list, name='follow_info_list'),
     url(r'^comment/id/list/$', backend_views.comment_id_list,name='comment_id_list'),
     url(r'^comment/info/list/$', backend_views.comment_info_list,name='comment_info_list'),
-
+    url(r'^user/modify/info/$',backend_views.user_modify_info,name='user_modify_info'),
     # notifications
     url(r'^notifications/', include(notifications.urls, namespace='notifications')),
+
+
 ]

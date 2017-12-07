@@ -188,7 +188,7 @@
     </el-dialog>
 
   <!-- 资源具体信息dialog -->
-  <el-dialog title="资源信息" :visible.sync="dialogVisible" v-if="dialogVisible" size="tiny">
+  <el-dialog title="资源信息" :visible.sync="dialogVisible" v-if="dialogVisible" size="small">
       <ResourceDialog></ResourceDialog>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible=false">取 消</el-button>
@@ -278,7 +278,9 @@ export default {
       uploadDialogVisible: false,
       fileList: [],
       total_resource_line: 3,
+      form_label_width: '80px',
       dialogVisible: false,
+      resourceIntro: '',
       card_data: [
         [{ title: '', uploader: '', frequency: '', show: 'hidden', id: '', img: '' },
          { title: '', uploader: '', frequency: '', show: 'hidden', id: '', img: '' },

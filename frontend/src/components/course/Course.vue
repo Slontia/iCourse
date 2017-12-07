@@ -135,7 +135,8 @@ export default {
       courses: [],
       storage: [],
       course_bread_message: '查找课程',
-      dev: true
+      dev: true,
+      course_class_dict: ['工程基础类', '数学与自然科学类', '语言类', '博雅类', '核心通识类', '体育类', '一般通识类', '核心专业类', '一般专业类']
     }
   },
   methods: {
@@ -179,7 +180,7 @@ export default {
                   'course_academy': info_list[i]['college_id'],
                   'course_hours': info_list[i]['hours'],
                   'course_credit': info_list[i]['credit'],
-                  'course_class': info_list[i]['class_id']
+                  'course_class': self.course_class_dict[info_list[i]['class_id'] - 1]
                 }
                 self.storage.push(item)
               }

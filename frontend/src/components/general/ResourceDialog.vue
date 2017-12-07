@@ -15,7 +15,7 @@
               <span class="text">{{ this.$store.state.name }}</span>
             </el-col>
           </el-row>
-          <el-row>
+          <el-row style="margin:15px 0px 0px 0px;">
             <el-col :span="8">
               上传者:
             </el-col>
@@ -61,19 +61,27 @@
         </el-col>
       </el-row>
       <el-row style="margin:10px 0px 0px 0px;">
-        <el-col :span="2" :offset="1">标签:</el-col>
-        <el-col :span="3">课件:</el-col>
-        <el-col :span="2" :offset="11">好评</el-col>
-        <el-col :span="1">0</el-col>
-        <el-col :span="2" :offset="1">差评</el-col>
-        <el-col :span="1">0</el-col>
+        
       </el-row>
+      <!--
       <el-row style="margin:10px 0px 0px 0px;">
         <el-col :span="1" :offset="1"><i class="el-icon-star-off"></i></el-col>
         <el-col :span="1">0</el-col>
         <el-col :span="1" :offset="1"><i class="el-icon-arrow-down"></i></el-col>
         <el-col :span="1">{{ this.$store.state.download_count }}</el-col>
       </el-row>
+    -->
+      <el-row>
+        <el-col :span="2" :offset="1">
+          <span>评分</span>
+        </el-col>
+        <el-col :span="8">
+          <el-rate v-model="rate" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" show-text @change="handle_rate_change">
+          </el-rate>
+        </el-col>
+      </el-col>
+    </el-row>
+      <!--
       <el-row style="margin:20px 0px 0px 0px;">
         <el-col :span="6" :offset="1" style="height:20px;font-weight:bold;font-size:20px;">全部评论</el-col>
         <el-col :span="1" :offset="1" style="height:20px;line-height:20px;"><i class="el-icon-message"></i></el-col>
@@ -85,10 +93,12 @@
           <el-row style="background-color:black;height:3px;"></el-row>
         </el-col>
       </el-row>
+    -->
   </div>
 </template>
 
 <script>
+/* eslint-disable camelcase */
 import DefaultImg from './../../assets/fileico/generic.png'
 import DocImg from './../../assets/fileico/docx_win.png'
 import PdfImg from './../../assets/fileico/pdf.png'
@@ -97,6 +107,7 @@ import JpgImg from './../../assets/fileico/jpeg.png'
 import ZipImg from './../../assets/fileico/zip.png'
 import RarImg from './../../assets/fileico/rar.png'
 import $ from 'jquery'
+import get_url from './getUrl.js'
 
 export default {
   name: 'ResourceDialog',
@@ -109,7 +120,8 @@ export default {
       jpgImg: JpgImg,
       rarImg: RarImg,
       defaultImg: DefaultImg,
-      img: ''
+      img: '',
+      rate: 0
     }
   },
   methods: {
@@ -127,6 +139,41 @@ export default {
         },
         error: function () {
           alert('拉取资源列表失败')
+        }
+      })
+    },
+    handle_rate_change: function () {
+      var post_url = get_url(this.$store.state.dev, '/resource/evaluate/')
+      var post_data = { resource_id: this.$store.state.id, grade: this.rate }
+      var _this = this
+      $.ajax({
+        ContentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: post_url,
+        type: 'POST',
+        data: post_data,
+        success: function (data) {
+          var code = data['error']
+          if (code === 0) {
+            _this.$message({
+              showClose: true,
+              type: 'success',
+              message: '评分成功'
+            })
+          } else {
+            _this.$message({
+              showClose: true,
+              type: 'error',
+              message: '评分失败了呢'
+            })
+          }
+        },
+        error: function () {
+          _this.$message({
+            showClose: true,
+            type: 'error',
+            message: '无法连接到服务器'
+          })
         }
       })
     }

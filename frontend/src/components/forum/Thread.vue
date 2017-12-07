@@ -275,9 +275,9 @@ export default {
               var info_list = data['info_list']
               // load main
               var pos = info_list[0].pos_eva_count
-              var neg = info_list[0].neg_eva_count
+              // var neg = info_list[0].neg_eva_count
               _this.main.id = target_list[0]
-              _this.main.agree_num = pos - neg // need to add
+              _this.main.agree_num = pos // need to add
               _this.main.user_name = info_list[0].username
               _this.main.self_intro = '' // need
               _this.main.avatar = default_img // need
@@ -288,9 +288,9 @@ export default {
               for (var j = 1; j < info_list.length; j++) {
                 var temp = {}
                 pos = info_list[j].pos_eva_count
-                neg = info_list[j].neg_eva_count
+                // neg = info_list[j].neg_eva_count
                 temp.id = target_list[j]
-                temp.agree_num = pos - neg // need
+                temp.agree_num = pos // need
                 temp.user_name = info_list[j].username
                 temp.self_intro = '' // need
                 temp.avatar = default_img // need
@@ -466,7 +466,7 @@ export default {
               _this.$message({
                 showClose: true,
                 type: 'error',
-                message: '评价失败了呢'
+                message: '已经评价过了呢'
               })
             }
           },
@@ -603,7 +603,7 @@ export default {
             for (var j = 0; j < info_list.length; j++) {
               var temp = {}
               temp.id = target_list[j]
-              temp.agree_num = 0 // need
+              temp.agree_num = info_list[j].pos_eva_count // need
               temp.user_name = info_list[j].username
               temp.self_intro = '' // need
               temp.avatar = default_img // need
@@ -734,6 +734,7 @@ export default {
   }
   .content{
     font-size: 24px;
+    line-height: 40px;
   }
   .footer_row{
     margin-top: 5px;

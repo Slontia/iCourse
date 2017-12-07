@@ -422,7 +422,7 @@ def resource_id_list(request):
         data = json.loads(data)
         #data = json.loads(request.body.decode())
         course_id = str(data.get('course_id'))
-        print ('course_id: ' + course_id)
+        # print ('course_id: ' + course_id)
         res = interface.resource_courseid_list(course_id)
         return HttpResponse(json.dumps({'resource_id_list': res}, cls=ComplexEncoder))
 
@@ -592,12 +592,14 @@ def user_report(request):
 # REQUIRES: need {'nickname':nickname, 'gender':gender, 'intro':intro, 'college_id':college_id}
 # MODIFIES: modify user information in backend_userprofile
 # EFFECTS: if success, return {'error': 0}, else return {'error': 1}
-# URL:暂时未定
+# URL:/user/modify/info/
 @csrf_exempt
-def user_info_modify(request):
+def user_modify_info(request):
+    errors = []
     if(request.method == 'POST'):
         if(not request.user.is_authenticated()):
             return HttpResponse(json.dumps({'error':1}))
+        print(request.POST)
         nickname = str(request.POST.get('nickname'))
         gender = str(request.POST.get('gender'))
         intro = str(request.POST.get('intro'))
@@ -613,7 +615,9 @@ def user_info_modify(request):
             userprofile.save()
             print('Modify Success')
             return HttpResponse(json.dumps({'error':0}))
-        else:         
+        else:
+            errors.extend(UIMForm.errors.values())
+            print(errors)     
             return HttpResponse(json.dumps({'error':1}))
 
 @csrf_exempt
@@ -966,6 +970,7 @@ def post_id_list_by_click_count(request):
 #                grade|int|评分，0~5
 # MODIFIES: None
 # EFFECTS: 更新到数据库backend_evualtion
+# modified by xindetai 12.8
 @csrf_exempt
 def resource_evaluate(request): #resource_id, user_id, grade:
     if(request.method == 'POST'):
@@ -973,7 +978,7 @@ def resource_evaluate(request): #resource_id, user_id, grade:
         data = json.loads(data)
         
         resource_id = str(data.get('resource_id'))
-        user_id = str(data.get('user_id'))
+        user_id = str(request.user.id)
         grade = int(data.get('grade'))
         
         print ('resource_id: ' + resource_id + 'user_id: '+ user_id + 'grade: ' +str(grade))
