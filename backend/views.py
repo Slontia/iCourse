@@ -962,7 +962,7 @@ def resource_evaluate(request): #resource_id, user_id, grade:
 # MODIFIES: None
 # EFFECTS: 返回两个值：1、avg_grade即评价平均分，浮点型(float), 没有一个人评价就是-1
 #                    2、user_grade，用户给予的评价，int型号，未评价返回-1
-
+@csrf_exempt
 def resource_evaluation_grade_count(request):
     if(request.method == 'POST'):
         data = json.dumps(request.POST)
@@ -1018,6 +1018,7 @@ def avg_score(resource_id):
     #资源贡献度 = 上传资源数∑(下载量*评分平均值/10)
     #论坛贡献度 = 发布帖子数∑(点击量/10) + 发布跟帖数∑((赞同数2) / (赞同数+反对数))
     #总贡献度 = 资源贡献度 + 论坛贡献度
+@csrf_exempt
 def course_contri_list(request):
     
     if(request.method == 'POST'):
@@ -1097,6 +1098,7 @@ def course_contri_list(request):
 #           type|int|资源类别: ppt、doc(txt)、pdf、pict、other、all
 # MODIFIES: None
 # EFFECTS: 返回resource\_id\_list|list[int]|该课程下的资源id列表
+@csrf_exempt
 def resource_id_list(request):
     if(request.method == 'POST'):
         data = json.dumps(request.POST)
@@ -1133,6 +1135,7 @@ def resource_id_list(request):
 # EFFECTS: 返回course\_type\_list|list[int]|该类别下的课程的list,其中每个都是一个字典，存着课程的信息
 #          query_list is a list whose element is dicts like (user_id, total scores),
 #          such as {'credit': Decimal('3.0'), 'class_id': 1, 'teacher': '杨振宇', 'name': '弹性力学*(全汉语)', 'college_id': 5, 'hours': None, 'visit_count': 0, 'id': 1733, 'course_code': 'B3B05314B'}
+@csrf_exempt
 def course_type_list(request):
     if(request.method == 'POST'):
         data = json.dumps(request.POST)
