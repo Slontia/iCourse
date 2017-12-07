@@ -118,6 +118,7 @@ def user_information_by_username(username):
     result['nickname'] = profile.nickname
     result['gender'] = profile.gender
     result['intro'] = profile.intro
+    result['college_id'] = profile.college_id
     return result
 
 def user_information_by_id(user_id):
@@ -196,10 +197,16 @@ def refresh_ip_visit_info(ip):
         ip_obj.visit_count += 1
         ip_obj.save()
 
-# 根据用户id查看用户的用户名
-def get_username_by_id(id):
-    result = User.objects.filter(id = id)
-    if (len(result) == 0):
-        return ""
-    print(result[0].username)
+# 根据用户id查看用户的用户名
+
+def get_username_by_id(id):
+
+    result = User.objects.filter(id = id)
+
+    if (len(result) == 0):
+
+        return ""
+
+    print(result[0].username)
+
     return result[0].username
