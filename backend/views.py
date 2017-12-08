@@ -11,6 +11,8 @@ from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q, Sum
 from django.views.generic.base import View
 from django.shortcuts import render
+from models import EmailVerifyRecord, UserProfile
+from util.email_send import *
 
 import requests
 import urllib.request
@@ -82,7 +84,10 @@ def userRegister(request):
             profile.gender = gender
             profile.nickname = nickname
             profile.intro = intro
+            profile.is_active = False
             profile.save()
+            #发送验证邮件
+            send_register_email(email, "register")
             '''
                 #注册成功以后自动进行登录，登录前需要先验证，去掉注释后需要修改your url，HttpResponseRedirect进行页面重定向
                 newUser=auth.authenticate(username=username,password=password1)
@@ -326,10 +331,16 @@ def userLogin(request):
             cb = CustomBackend()
             user = cb.authenticate(username=username, password=password)
             if(user is not None and user.is_active):
-                auth.login(request, user)
-                request.session['username'] = username # store in session
-                print ('success')
-                return HttpResponse(json.dumps({'error': 0, 'username':user.username}))
+                user_profile = UserProfile.objects.get(user_id = user.id)
+                if user_profile.is_active:
+                    auth.login(request, user)
+                    request.session['username'] = username # store in session
+                    print ('success')
+                    return HttpResponse(json.dumps({'error': 0, 'username':user.username}))
+                else:
+                    #此处应实现为提示“用户未激活”
+                    return HttpResponse(json.dumps({'error': 101})) # username not exists
+                
             else:
                 return HttpResponse(json.dumps({'error': 101})) # username not exists
         else:
@@ -1325,3 +1336,20 @@ def course_like_count(request):
         likes = R_Course_User_Like.objects.filter(course_id = course_id, user_id = user_id)
         user_like = int(len(likes) > 0)
         return HttpResponse(json.dumps({'like_course': ans_likes, 'like': user_like}))
+
+class ActiveUserView(View):
+    def get(self, request, active_code):
+    # 用code在数据库中过滤处信息
+        all_records = EmailVerifyRecord.objects.filter(code=active_code)
+        if all_records:
+            for record in all_records:
+                email = record.email
+                # 通过邮箱查找到对应的用户
+                user = User.objects.get(email=email)
+                user_profile = UserProfile.objects.get(user_id = user.id)
+                # 激活用户
+                user_profile.is_active = True
+                user_profile.save()
+        else:
+            return render(request, "active_fail.html")
+        return render(request, "login.html")

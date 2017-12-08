@@ -1,43 +1,9 @@
-#from bokeh.themes import default 方科栋的代码我暂时先注释了 张安澜 2017.11.1
-'''
-NAME_LENGTH = 30
-UPLOAD_USERIF_LENGTH = 10
-COURSEID_LENGTH=10
-LINK_LENGTH = 100
-
-from django.db import models
-
-class Resource( models.Model ):
-    name = models.CharField(max_length=NAME_LENGTH)
-    introduce = models.TextField(null=True)
-    size = models.IntegerField()
-    uploadTime = models.DateTimeField()
-    link = models.CharField(max_length=LINK_LENGTH, null=True)
-    upload_user_id=models.IntegerField(default=-1)
-    course_id=models.IntegerField(default=-1)
-    
-    def __str__(self):
-        return self.name
-
-USERNAME_LENGTH=20
-PASSWORD_LENGTH=20
-EMAIL_USERNAME_LENGTH=20
-NICKNAME_LENGTH=20
-
-class User( models.Model ):
-    username = models.CharField(max_length=USERNAME_LENGTH)
-    password=models.CharField(max_length=PASSWORD_LENGTH, null=True)
-    gender=models.IntegerField(null=True)
-    email_username=models.CharField(max_length=EMAIL_USERNAME_LENGTH, null=True)
-    nickname=models.CharField(max_length=NICKNAME_LENGTH, null=True)
-    intro = models.TextField(null=True)
-    
-    def __str__(self):
-        return self.username
-'''
+# 方科栋的代码我暂时先注释了 张安澜 2017.11.1
+# 方科栋的代码我先删除了 方科栋2017.12.08
 
 from django.db import models
 from django.contrib.auth.models import User
+import datetime
 
 # Course Model
 class Course(models.Model):
@@ -199,3 +165,17 @@ class Follow_Comment(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+class EmailVerifyRecord(models.Model):
+    # 验证码
+    code = models.CharField(max_length=20, verbose_name=u"验证码")
+    email = models.EmailField(max_length=50, verbose_name=u"邮箱")
+    # 包含注册验证和找回验证
+    send_type = models.CharField(verbose_name=u"验证码类型", max_length=10, choices=(("register",u"注册"), ("forget",u"找回密码")))
+    send_time = models.DateTimeField(verbose_name=u"发送时间", auto_now_add=True)
+    class Meta:
+        verbose_name = u"邮箱验证码"
+        verbose_name_plural = verbose_name
+    def __unicode__(self):
+        return '{0}({1})'.format(self.code, self.email)
+

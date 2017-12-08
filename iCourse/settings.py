@@ -158,3 +158,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_FILE_STORAGE = "iCourse.CustomFileField.storage.FileStorage" # to solve the filename problem
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760
+
+EMAIL_HOST = "smtp.163.com"   # 服务器
+EMAIL_PORT = 25               # 一般情况下都为25
+EMAIL_HOST_USER = "abc@163.com"   # 账号
+EMAIL_HOST_PASSWORD = "password"  # 密码
+EMAIL_USE_TLS = False             # 一般都为False
+EMAIL_FROM = "abc@163.com"        # 邮箱来自
+
