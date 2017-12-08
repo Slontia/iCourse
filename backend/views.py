@@ -1057,6 +1057,8 @@ def avg_score(resource_id):
     #资源贡献度 = 上传资源数∑(下载量*评分平均值/10)
     #论坛贡献度 = 发布帖子数∑(点击量/10) + 发布跟帖数∑((赞同数2) / (赞同数+反对数))
     #总贡献度 = 资源贡献度 + 论坛贡献度
+# url: /course/contri/
+# modified by xindetai 12.9
 @csrf_exempt
 def course_contri_list(request):
     
@@ -1108,7 +1110,7 @@ def course_contri_list(request):
                 else:
                     dict[posts_follow[j].user_id] = dict[posts_follow[j].user_id] + float(2.0*(pos_eva_count)/(pos_eva_count+neg_eav_count))
 
-        ans = sorted(dict.items(), key=lambda item:item[0],reverse=True)
+        ans = sorted(dict.items(), key=lambda item:item[1],reverse=True)
         dict_list = []
         print(ans)
 

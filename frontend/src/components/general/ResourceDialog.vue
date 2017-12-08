@@ -12,7 +12,7 @@
               上传者:
             </el-col>
             <el-col :span="16">
-              <img :src="defaultImg" style="height:18px;"></img>
+              <!--<img :src="defaultImg" style="height:18px;"></img>-->
               {{ this.$store.state.author }}
             </el-col>
           </el-row>

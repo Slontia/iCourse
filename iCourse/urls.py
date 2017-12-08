@@ -41,7 +41,7 @@ urlpatterns = [
     url(r'^resourceUpload/$',backend_views.resourceUpload,name='resourceUpload'),
     url(r'^resource/download_count/$',backend_views.refresh_download_resource_count),
     url(r'^user/information/$', backend_views.user_information, name='user_information'),
-    #url(r'^resource/hot/$')
+    url(r'^course/contri/$', backend_views.course_contri_list, name='course_contri_list'),
     # test by ohazyi(GET)
     url(r'^resource/evaluate/$', backend_views.resource_evaluate, name='resource_evaluate'),
     url(r'^resource/evaluation/grade/count/$', backend_views.resource_evaluation_grade_count, name='resource_evaluation_grade_count'),

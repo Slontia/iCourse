@@ -10,7 +10,7 @@
           <div class="info_card">
             <el-card class="box-card">
             <div slot="header" class = "clearfix">
-              <span style="line-height:36px;text-align: left;">
+              <span style="line-height:45px;text-align: left;">
                 <el-row>
                   <el-col :span="12">
                     <p style="padding-top:10px;font-size: xx-large;">{{ course_name }}</p>
@@ -33,23 +33,20 @@
             <div class="text item">
               点击: {{ visit_count }}
             </div>
-            <div class="text item">
-              <el-button type="text" icon="edit" @click="edit_course" style="float: right">我来补充</el-button>
-            </div>
             </el-card>
           </div>     
         </el-col>
 
       <!-- contribution rank -->
       <el-col :span="6" class = "contribution_container">
-        <div class="history_contribution_table">
-        <p style="text-align: center; padding-bottom: 10px"> 历史贡献度排行 </p>
-        <el-table :data="history_contribution_data" highlight-current-row style="width: auto;" height="300">
-          <el-table-column prop="contribution_username" label="用户名"></el-table-column>
-          <el-table-column prop="contribution_score" label="贡献度"></el-table-column>
-          <el-table-column prop="contribution_level" label="等级"></el-table-column>
+        <div class="contribution_table">
+        <p style="text-align: center; padding-bottom: 10px"> 贡献度排行 </p>
+        <el-table :data="contribution_data" highlight-current-row style="width: auto;" height="300">
+          <el-table-column prop="contribution_username" label="用户名" align="center"></el-table-column>
+          <el-table-column prop="contribution_score" label="贡献度" align="center"></el-table-column>
         </el-table>
         </div>
+        <!--
         <div class="month_contribution_table">
         <p style="text-align: center; padding-bottom: 10px"> 近一个月贡献度排行 </p>
         <el-table :data="latest_contribution_data" highlight-current-row style="width: auto;" height="300">
@@ -58,12 +55,13 @@
           <el-table-column prop="contribution_level" label="等级"></el-table-column>
         </el-table>
       </div>
+    -->
       </el-col>
     </el-row>
      <!-- course resource -->
 
      <div class = "course_resource_container">
-      <hr style="margin-top: 20px;width:100%" />
+      <center><hr style="width:100%" /></center>
         <el-row class="course_resource_head" style="margin-bottom: 20px">
           <el-col :span="24" style="margin-top: 20px">
             <el-col :span="10">
@@ -272,8 +270,7 @@ export default {
       hours: '',
       intro_info: '',
       visit_count: -1,
-      history_contribution_data: [],
-      latest_contribution_data: [],
+      contribution_data: [],
       uploadDialogVisible: false,
       fileList: [],
       total_resource_line: 3,
@@ -433,6 +430,33 @@ export default {
         alert('拉取资源列表失败')
       }
     })
+    var post_url1 = get_url(this.$store.state.dev, '/course/contri/')
+    var post_data1 = { course_id: this.$route.params.course_id }
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: post_url1,
+      type: 'POST',
+      data: post_data1,
+      success: function (data) {
+        var contri_list = data['contri_list']
+        if (contri_list) {
+          for (var i = 0; i < contri_list.length; i++) {
+            var temp = {}
+            temp.contribution_score = contri_list[i].contri
+            temp.contribution_username = contri_list[i].username
+            self.contribution_data.push(temp)
+          }
+        }
+      },
+      error: function () {
+        self.$message({
+          showClose: true,
+          type: 'error',
+          message: '无法连接到服务器'
+        })
+      }
+    })
     /*
     var post_url2 = get_url(this.$store.state.dev, '/resource/hot/')
     var post_data2 = { course_id: this.$route.params.course_id, number: 6 }
@@ -499,7 +523,7 @@ export default {
   .course_introduction{
     margin-top: 10px;
     padding-left: 20px;
-    height: 70%;
+    height: 100%;
     width: 100%;
   }
   .contribution_container{
@@ -507,18 +531,21 @@ export default {
     left:75%;
     margin-left: 10px;
   }
-  .history_contribution_table{
+  .contribution_table{
     margin-bottom: 50px;
+  }
+  .item{
+    padding-bottom: 5px;
   }
   .course_resource_container{
     position:absolute;
     top:400px;
-    margin-top: 20px;
+    margin-top: 40px;
     padding-left: 20px;
     width: 71%;
   }
   .resource_container{
-    widht:auto;
+    width:auto;
   }
   .hot_resource_container{
     width:auto;
