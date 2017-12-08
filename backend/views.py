@@ -1134,10 +1134,9 @@ def course_contri_list(request):
 #          资源id必须是存在资源的id，否则返回error:1
 #           type|int|资源类别: ppt、doc(txt)、pdf、pict、other、all
 # MODIFIES: None
-# EFFECTS: 返回resource\_id\_list|list[int]|该课程下的资源id列表
-'''
+# EFFECTS: 返回resource\_class\_id\_list|list[int]|该课程下的资源id列表
 @csrf_exempt
-def resource_id_list(request):
+def resource_class_id_list(request):
     if(request.method == 'POST'):
         data = json.dumps(request.POST)
         data = json.loads(data)
@@ -1162,8 +1161,8 @@ def resource_id_list(request):
                 ans.append(resources[i].id)
 
         print(ans)
-        return HttpResponse(json.dumps({'resource_id_list': ans}, cls=ComplexEncoder))
-'''
+        return HttpResponse(json.dumps({'resource_class_id_list': ans}, cls=ComplexEncoder))
+
 
 #---------------------------------------------------------------
 # 根据课程列别获取课程
