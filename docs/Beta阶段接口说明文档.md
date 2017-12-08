@@ -480,6 +480,27 @@ user_id|int|评价者id
 username|str|评价者用户名
 time|datetime|发布时间
 
+### 3.10 获取最多下载量的资源id列表
+**函数名：** most\_download\_resource\_list
+**URL：** /resource/download/most/
+**前端**
+变量名|类型|说明
+:-:|:-:|:-:
+number|int|资源数量
+
+**后端**
+变量名|类型|说明
+:-:|:-:|:-:
+result|list[dict{}]|返回资源信息列表
+
+资源信息字典：
+变量名|类型|说明
+:-:|:-:|:-:
+resource_id|int|资源id
+username|str|上传者
+download_count|int|下载量
+name|str|资源名称
+
 
 ### 资源简介修改
 **函数名：** 
