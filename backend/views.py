@@ -1116,7 +1116,7 @@ def course_contri_list(request):
             dict_tmp = {}
             u_name = interface.get_username_by_id(id)
             if (not u_name): #返回的是”“ 即不存在该用户，跳过
-                continue;
+                continue
 #            if (u_name == "iCourse"): #跳过iCourse用户
 #               continue
             dict_tmp["username"] = u_name
@@ -1351,3 +1351,48 @@ def upload_user_photo(request):
             return HttpResponse(json.dumps({'error': 0}))
         else:
             return HttpResponse(json.dumps({'error': 1}))
+
+#---------------------------------------------------------------
+# 获取最多下载量的资源id列表
+# REQUIRES:         变量名|类型|说明
+#                   number|int|资源数量
+# MODIFIES: None
+# EFFECTS:     result|list[dict{}]|返回资源信息列表
+#                   资源信息字典：
+#                   变量名|类型|说明
+#                   :-:|:-:|:-:
+#           resource_id|int|资源id
+#              username|str|上传者
+#        download_count|int|下载量
+#                  name|str|资源名称
+@csrf_exempt
+def most_download_resource_list(request):
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        
+        number = str(data.get('number'))
+        
+        resources = Resource.objects.filter(~Q(download_count = 0)).order_by('-download_count') #取下载量不等于0的filter,然后按下载量降序排序
+        ans = []
+        cnt = 0
+        i = 0
+        while (i < len(resources)):
+            dict = {}
+            if (cnt == number):
+                break
+            u_id = resources[i].upload_user_id
+            u_i = User.objects.filter(id = u_id)
+            if (len(u_i) == 0):
+                i = i+1
+                continue
+            u_info = User.objects.get(id = u_id)
+            cnt = cnt+1
+            i = i+1
+            dict["username"] = User.objects.get(id = u_id).username
+            dict["download_count"] = resources[i].download_count
+            dict["resource_id"] = resources[i].id
+            dict["name"] = resources[i].name
+            ans.append(dict)
+        print(ans)
+        return HttpResponse(json.dumps({'result': ans}))
