@@ -1326,26 +1326,6 @@ def course_like_count(request):
         user_like = int(len(likes) > 0)
         return HttpResponse(json.dumps({'like_course': ans_likes, 'like': user_like}))
 
-# Handle the uploaded resource
-def handle_upload_resource(f, path):
-    t = path.split("/")
-    file_name = t[-1]
-    t.remove(t[-1]) 
-    t.remove(t[0])
-    path = "/".join(t)
-    try:
-        if(not os.path.exists(path)):
-            os.makedirs(path)
-        file_name = path + "/" + file_name
-        print(file_name)
-        destination = open(file_name, 'wb+')
-        for chunk in f.chunks():
-            destination.write(chunk)
-            destination.close()
-    except Exception as e: 
-        print(e)
-    return file_name
-
 # Upload User Photo Interface
 # URL: 
 @csrf_exempt
