@@ -1368,7 +1368,7 @@ def most_download_resource_list(request):
     if(request.method == 'POST'):
         data = json.dumps(request.POST)
         data = json.loads(data)
-        type = str(data.get('type'))
+        
         number = str(data.get('number'))
         
         resources = Resource.objects.filter(~Q(download_count = 0)).order_by('-download_count') #取下载量不等于0的filter,然后按下载量降序排序
