@@ -999,6 +999,8 @@ def resource_evaluate(request): #resource_id, user_id, grade:
 # MODIFIES: None
 # EFFECTS: 返回两个值：1、avg_grade即评价平均分，浮点型(float), 没有一个人评价就是-1
 #                    2、user_grade，用户给予的评价，int型号，未评价返回-1
+# URL:/resource/evaluation/grade/count/
+# modified by xdt 12.9
 @csrf_exempt
 def resource_evaluation_grade_count(request):
     if(request.method == 'POST'):
@@ -1006,7 +1008,7 @@ def resource_evaluation_grade_count(request):
         data = json.loads(data)
         
         resource_id = str(data.get('resource_id'))
-        user_id = str(data.get('user_id'))
+        user_id = request.user.id
         result = Resource_Evaluation.objects.filter(resource_id = resource_id, user_id = user_id)
         
         user_grade = -1 #没有人评价，个人评价值默认为-1
@@ -1022,7 +1024,7 @@ def resource_evaluation_grade_count(request):
                 tot_grade += result2[i].grade
                 avg_grade = float(tot_grade) / float(len(result2))
         print("tot_grade = ",tot_grade,"avg_grade = ", avg_grade)
-        return HttpResponse(json.dumps({'avg_grade': avg_grade, 'user_grade': user_grade}))
+        return HttpResponse(json.dumps({'avg_grade': avg_grade, 'user_grade': user_grade, 'grade_count': len(result2)}))
 
 
 #求某个资源的评分的平均分
