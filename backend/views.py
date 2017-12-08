@@ -1325,3 +1325,46 @@ def course_like_count(request):
         likes = R_Course_User_Like.objects.filter(course_id = course_id, user_id = user_id)
         user_like = int(len(likes) > 0)
         return HttpResponse(json.dumps({'like_course': ans_likes, 'like': user_like}))
+
+# Handle the uploaded resource
+def handle_upload_resource(f, path):
+    t = path.split("/")
+    file_name = t[-1]
+    t.remove(t[-1]) 
+    t.remove(t[0])
+    path = "/".join(t)
+    try:
+        if(not os.path.exists(path)):
+            os.makedirs(path)
+        file_name = path + "/" + file_name
+        print(file_name)
+        destination = open(file_name, 'wb+')
+        for chunk in f.chunks():
+            destination.write(chunk)
+            destination.close()
+    except Exception as e: 
+        print(e)
+    return file_name
+
+# Upload User Photo Interface
+# URL: 
+@csrf_exempt
+def upload_user_photo(request):
+    if(request.method == 'POST'):
+        size = request.FILES['user_photo'].size
+        user_photo_form = UserPhotoForm({'size': size})
+        if(user_photo_form.is_valid()):
+            userprofile = UserProfile.objects.get(user_id=request.user.id)
+            if(userprofile.user_photo != None):
+                link = userprofile.user_photo.url
+                t = link.split("/")
+                t.remove(t[0])
+                file_path = "/".join(t)
+                if(os.path.exists(file_path)):
+                    os.remove(file_path)
+            userprofile.user_photo = request.FILES['user_photo']
+            userprofile.save()
+            handle_upload_resource(request.FILES['user_photo'], userprofile.user_photo.url)
+            return HttpResponse(json.dumps({'error': 0}))
+        else:
+            return HttpResponse(json.dumps({'error': 1}))
