@@ -11,8 +11,7 @@ from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q, Sum
 from django.views.generic.base import View
 from django.shortcuts import render
-from models import EmailVerifyRecord, UserProfile
-from util.email_send import *
+from .email_send import *
 
 import requests
 import urllib.request
@@ -77,6 +76,7 @@ def userRegister(request):
             user.username = username
             user.set_password(password1)
             user.email = email
+            user.is_active = False
             user.save()
             #用户扩展信息 profile
             profile=UserProfile()
@@ -84,10 +84,9 @@ def userRegister(request):
             profile.gender = gender
             profile.nickname = nickname
             profile.intro = intro
-            profile.is_active = False
             profile.save()
-            #发送验证邮件
-            send_register_email(email, "register")
+            
+            
             '''
                 #注册成功以后自动进行登录，登录前需要先验证，去掉注释后需要修改your url，HttpResponseRedirect进行页面重定向
                 newUser=auth.authenticate(username=username,password=password1)
@@ -98,7 +97,9 @@ def userRegister(request):
 
     except Exception as e:
         return HttpResponse(json.dumps({'error': 202}))
-    
+    #发送验证邮件
+    send_register_email(email, "register")
+    print('finish send email')
     return HttpResponse(json.dumps({'error': 0}))
 
 # modified by xdt 2017.11.8
@@ -331,16 +332,10 @@ def userLogin(request):
             cb = CustomBackend()
             user = cb.authenticate(username=username, password=password)
             if(user is not None and user.is_active):
-                user_profile = UserProfile.objects.get(user_id = user.id)
-                if user_profile.is_active:
-                    auth.login(request, user)
-                    request.session['username'] = username # store in session
-                    print ('success')
-                    return HttpResponse(json.dumps({'error': 0, 'username':user.username}))
-                else:
-                    #此处应实现为提示“用户未激活”
-                    return HttpResponse(json.dumps({'error': 101})) # username not exists
-                
+                auth.login(request, user)
+                request.session['username'] = username # store in session
+                print ('success')
+                return HttpResponse(json.dumps({'error': 0, 'username':user.username}))
             else:
                 return HttpResponse(json.dumps({'error': 101})) # username not exists
         else:
@@ -1346,10 +1341,9 @@ class ActiveUserView(View):
                 email = record.email
                 # 通过邮箱查找到对应的用户
                 user = User.objects.get(email=email)
-                user_profile = UserProfile.objects.get(user_id = user.id)
                 # 激活用户
-                user_profile.is_active = True
-                user_profile.save()
+                user.is_active = True
+                user.save()
         else:
-            return render(request, "active_fail.html")
-        return render(request, "login.html")
+            return HttpResponse(json.dumps({'error': 104, 'msg':'用户激活失败'})) # activated fail
+        return HttpResponse(json.dumps({'error': 0, 'msg':'用户激活成功'}))

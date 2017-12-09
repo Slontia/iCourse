@@ -81,5 +81,5 @@ urlpatterns = [
     url(r'^notifications/', include(notifications.urls, namespace='notifications')),
 
     #email verify
-    url(r'^active/(?P<active_code>.*)/$', ActiveUserView.as_view(), name="user_active"),  # 提取出active后的所有字符赋给active_code
+    url(r'^active/(?P<active_code>.*)/$', backend_views.ActiveUserView.as_view(), name="user_active"),  # 提取出active后的所有字符赋给active_code
 ]
