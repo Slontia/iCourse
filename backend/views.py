@@ -1347,3 +1347,6 @@ class ActiveUserView(View):
         else:
             return HttpResponse(json.dumps({'error': 104, 'msg':'用户激活失败'})) # activated fail
         return HttpResponse(json.dumps({'error': 0, 'msg':'用户激活成功'}))
+    
+    
+    
