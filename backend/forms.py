@@ -171,3 +171,21 @@ class FollowEvaluationForm(forms.ModelForm):
         if(grade != 1 and grade != -1):
             raise forms.ValidationError("评价数据错误")
         return grade
+
+class UserPhotoForm(forms.Form):
+    size = forms.IntegerField(required=True)
+
+    def clean_size(self):
+        # 2.5MB - 2621440
+        # 5MB - 5242880
+        # 10MB - 10485760
+        # 20MB - 20971520
+        # 50MB - 52428800
+        # 100MB - 104857600
+        # 250MB - 214958080
+        # 500MB - 429916160
+        MAX_UPLOAD_SIZE = "2621440"
+        size = int(self.cleaned_data['size'])
+        if(size > int(MAX_UPLOAD_SIZE)):
+            raise forms.ValidationError("头像不能超过2.5MB")
+        return size

@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.auth.models import User
 import datetime
 
+
 # Course Model
 class Course(models.Model):
     name = models.CharField(max_length=30)
@@ -82,6 +83,7 @@ class UserProfile(models.Model):
     nickname = models.CharField(max_length=20)
     intro = models.TextField()
     college_id = models.PositiveIntegerField(blank=True, default=None)
+    user_photo = models.ImageField(upload_to='user_photo', null=True, blank=True)
 
     def __str__(self):
         return str(self.user.id)

@@ -1005,6 +1005,8 @@ def resource_evaluate(request): #resource_id, user_id, grade:
 # MODIFIES: None
 # EFFECTS: 返回两个值：1、avg_grade即评价平均分，浮点型(float), 没有一个人评价就是-1
 #                    2、user_grade，用户给予的评价，int型号，未评价返回-1
+# URL:/resource/evaluation/grade/count/
+# modified by xdt 12.9
 @csrf_exempt
 def resource_evaluation_grade_count(request):
     if(request.method == 'POST'):
@@ -1012,7 +1014,7 @@ def resource_evaluation_grade_count(request):
         data = json.loads(data)
         
         resource_id = str(data.get('resource_id'))
-        user_id = str(data.get('user_id'))
+        user_id = request.user.id
         result = Resource_Evaluation.objects.filter(resource_id = resource_id, user_id = user_id)
         
         user_grade = -1 #没有人评价，个人评价值默认为-1
@@ -1028,7 +1030,7 @@ def resource_evaluation_grade_count(request):
                 tot_grade += result2[i].grade
                 avg_grade = float(tot_grade) / float(len(result2))
         print("tot_grade = ",tot_grade,"avg_grade = ", avg_grade)
-        return HttpResponse(json.dumps({'avg_grade': avg_grade, 'user_grade': user_grade}))
+        return HttpResponse(json.dumps({'avg_grade': avg_grade, 'user_grade': user_grade, 'grade_count': len(result2)}))
 
 
 #求某个资源的评分的平均分
@@ -1061,6 +1063,8 @@ def avg_score(resource_id):
     #资源贡献度 = 上传资源数∑(下载量*评分平均值/10)
     #论坛贡献度 = 发布帖子数∑(点击量/10) + 发布跟帖数∑((赞同数2) / (赞同数+反对数))
     #总贡献度 = 资源贡献度 + 论坛贡献度
+# url: /course/contri/
+# modified by xindetai 12.9
 @csrf_exempt
 def course_contri_list(request):
     
@@ -1112,7 +1116,7 @@ def course_contri_list(request):
                 else:
                     dict[posts_follow[j].user_id] = dict[posts_follow[j].user_id] + float(2.0*(pos_eva_count)/(pos_eva_count+neg_eav_count))
 
-        ans = sorted(dict.items(), key=lambda item:item[0],reverse=True)
+        ans = sorted(dict.items(), key=lambda item:item[1],reverse=True)
         dict_list = []
         print(ans)
 
@@ -1120,7 +1124,7 @@ def course_contri_list(request):
             dict_tmp = {}
             u_name = interface.get_username_by_id(id)
             if (not u_name): #返回的是”“ 即不存在该用户，跳过
-                continue;
+                continue
 #            if (u_name == "iCourse"): #跳过iCourse用户
 #               continue
             dict_tmp["username"] = u_name
@@ -1140,9 +1144,9 @@ def course_contri_list(request):
 #          资源id必须是存在资源的id，否则返回error:1
 #           type|int|资源类别: ppt、doc(txt)、pdf、pict、other、all
 # MODIFIES: None
-# EFFECTS: 返回resource\_id\_list|list[int]|该课程下的资源id列表
+# EFFECTS: 返回resource\_class\_id\_list|list[int]|该课程下的资源id列表
 @csrf_exempt
-def resource_id_list(request):
+def resource_class_id_list(request):
     if(request.method == 'POST'):
         data = json.dumps(request.POST)
         data = json.loads(data)
@@ -1167,7 +1171,8 @@ def resource_id_list(request):
                 ans.append(resources[i].id)
 
         print(ans)
-        return HttpResponse(json.dumps({'resource_id_litst': ans}, cls=ComplexEncoder))
+        return HttpResponse(json.dumps({'resource_class_id_list': ans}, cls=ComplexEncoder))
+
 
 #---------------------------------------------------------------
 # 根据课程列别获取课程
@@ -1349,4 +1354,70 @@ class ActiveUserView(View):
         return HttpResponse(json.dumps({'error': 0, 'msg':'用户激活成功'}))
     
     
-    
+# Upload User Photo Interface
+# URL: 
+@csrf_exempt
+def upload_user_photo(request):
+    if(request.method == 'POST'):
+        size = request.FILES['user_photo'].size
+        user_photo_form = UserPhotoForm({'size': size})
+        if(user_photo_form.is_valid()):
+            userprofile = UserProfile.objects.get(user_id=request.user.id)
+            if(userprofile.user_photo != None):
+                link = userprofile.user_photo.url
+                t = link.split("/")
+                t.remove(t[0])
+                file_path = "/".join(t)
+                if(os.path.exists(file_path)):
+                    os.remove(file_path)
+            userprofile.user_photo = request.FILES['user_photo']
+            userprofile.save()
+            handle_upload_resource(request.FILES['user_photo'], userprofile.user_photo.url)
+            return HttpResponse(json.dumps({'error': 0}))
+        else:
+            return HttpResponse(json.dumps({'error': 1}))
+
+#---------------------------------------------------------------
+# 获取最多下载量的资源id列表
+# REQUIRES:         变量名|类型|说明
+#                   number|int|资源数量
+# MODIFIES: None
+# EFFECTS:     result|list[dict{}]|返回资源信息列表
+#                   资源信息字典：
+#                   变量名|类型|说明
+#                   :-:|:-:|:-:
+#           resource_id|int|资源id
+#              username|str|上传者
+#        download_count|int|下载量
+#                  name|str|资源名称
+@csrf_exempt
+def most_download_resource_list(request):
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        
+        number = str(data.get('number'))
+        
+        resources = Resource.objects.filter(~Q(download_count = 0)).order_by('-download_count') #取下载量不等于0的filter,然后按下载量降序排序
+        ans = []
+        cnt = 0
+        i = 0
+        while (i < len(resources)):
+            dict = {}
+            if (cnt == number):
+                break
+            u_id = resources[i].upload_user_id
+            u_i = User.objects.filter(id = u_id)
+            if (len(u_i) == 0):
+                i = i+1
+                continue
+            u_info = User.objects.get(id = u_id)
+            cnt = cnt+1
+            i = i+1
+            dict["username"] = User.objects.get(id = u_id).username
+            dict["download_count"] = resources[i].download_count
+            dict["resource_id"] = resources[i].id
+            dict["name"] = resources[i].name
+            ans.append(dict)
+        print(ans)
+        return HttpResponse(json.dumps({'result': ans}))

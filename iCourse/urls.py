@@ -41,18 +41,18 @@ urlpatterns = [
     url(r'^resourceUpload/$',backend_views.resourceUpload,name='resourceUpload'),
     url(r'^resource/download_count/$',backend_views.refresh_download_resource_count),
     url(r'^user/information/$', backend_views.user_information, name='user_information'),
-
+    url(r'^course/contri/$', backend_views.course_contri_list, name='course_contri_list'),
     # test by ohazyi(GET)
     url(r'^resource/evaluate/$', backend_views.resource_evaluate, name='resource_evaluate'),
     url(r'^resource/evaluation/grade/count/$', backend_views.resource_evaluation_grade_count, name='resource_evaluation_grade_count'),
-    url(r'^resource/id/list/$', backend_views.resource_id_list, name='resource_id_list'),
+    url(r'^resource/class/id/list/$', backend_views.resource_class_id_list, name='resource_class_id_list'),
     url(r'^course/type/list/$', backend_views.course_type_list, name='course_type_list'),
     url(r'^resource/like/add/$', backend_views.resource_like, name='resource_like'),
     url(r'^resource/like/count/$', backend_views.resource_like_count, name='resource_like_count'),
     url(r'^course/like/add/$', backend_views.course_like, name='course_like'),
     url(r'^course/like/cancel/$', backend_views.course_cancel_like, name='course_cancel_like'),
     url(r'^course/like/count/$', backend_views.course_like_count, name='course_like_count'),
-             
+    url(r'^resource/download/most/$', backend_views.most_download_resource_list, name='most_download_resource_list'),
                
     # page
     url(r'^$', TemplateView.as_view(template_name='index.html')), # NEW
@@ -79,6 +79,7 @@ urlpatterns = [
     url(r'^user/modify/info/$',backend_views.user_modify_info,name='user_modify_info'),
     # notifications
     url(r'^notifications/', include(notifications.urls, namespace='notifications')),
+
 
     #email verify
     url(r'^active/(?P<active_code>.*)/$', backend_views.ActiveUserView.as_view(), name="user_active"),  # 提取出active后的所有字符赋给active_code

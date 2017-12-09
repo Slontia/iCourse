@@ -368,7 +368,8 @@ export default {
         overflow: false,
         current_available_text: 10000,
         text_limit: 10000,
-        least: 10
+        least: 10,
+        text: ''
       },
       dev: true
     }
@@ -629,11 +630,12 @@ export default {
     },
     on_editor_change: function ({editor, html, text}) {
       this.editor.current_text_length = text.length
-      this.editor.overflow = (text.length > this.editor.text_limit || text.length < this.editor.least)
+      this.editor.overflow = (text.length > this.editor.text_limit)
       this.editor.current_available_text = ((this.editor.text_limit - text.length) < 0 ? 0 : (this.editor.text_limit - text.length))
+      this.editor.text = text.substr(0, 100)
     },
     post_submit_button_clicked: function () {
-      if (this.editor.overflow) {
+      if (this.editor.overflow || this.editor.text.length < 10) {
         this.$message({
           showClose: true,
           message: '请控制评论的字符在10-800之内',
