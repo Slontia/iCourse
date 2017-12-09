@@ -1,18 +1,10 @@
 <template>
   <div id="resourceDialog">
-    <el-row>
-        <el-col :span="24">
-          <div id="dialogTitle">全部资源</div>
-        </el-col>
-      </el-row>
-      <el-row style="margin:15px 0px 0px 0px;">
+      <el-row style="margin:0px 0px 0px 0px;">
         <el-col :span="16" :offset="1">
           <el-row>
-            <el-col :span="8">
-              资源名称:
-            </el-col>
-            <el-col :span="16">
-              <span class="text">{{ this.$store.state.name }}</span>
+            <el-col :span="24">
+              <span class="text" style="font-size: 20px;">{{ this.$store.state.name }}</span>
             </el-col>
           </el-row>
           <el-row style="margin:15px 0px 0px 0px;">
@@ -20,11 +12,11 @@
               上传者:
             </el-col>
             <el-col :span="16">
-              <img :src="defaultImg" style="height:18px;"></img>
+              <!--<img :src="defaultImg" style="height:18px;"></img>-->
               {{ this.$store.state.author }}
             </el-col>
           </el-row>
-          <el-row style="margin:10px 0px 0px 0px;">
+          <el-row style="margin:15px 0px 0px 0px;">
             <el-col :span="8">
               上传时间:
             </el-col>
@@ -32,7 +24,7 @@
               {{ this.$store.state.time }}
             </el-col>
           </el-row>
-          <el-row style="margin:10px 0px 0px 0px;">
+          <el-row style="margin:15px 0px 0px 0px;">
             <el-col :span="8">
               资源大小:
             </el-col>
@@ -40,14 +32,32 @@
               {{ this.$store.state.size }}
             </el-col>
           </el-row>
-          <el-row style="margin:10px 0px 0px 0px;">
+          <el-row style="margin:15px 0px 0px 0px;">
             <el-col :span="24">
               简介:
             </el-col>
           </el-row>
-          <el-row style="margin:10px 0px 0px 0px;">
+          <el-row style="margin:15px 0px 0px 0px;">
             <el-col :span="24">
               <span class="text">{{ this.$store.state.intro }}</span>
+            </el-col>
+          </el-row>
+          <el-row style="margin:15px 0px 0px 0px;">
+            <el-col :span="8">
+              大家的评分<span style="color:#ccc">({{ rate_count }})</span>:
+            </el-col>
+            <el-col :span="16">
+              <el-rate v-model="public_rate" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" show-text disabled text-tamplate="{value}">
+          </el-rate>
+            </el-col>
+          </el-row>
+          <el-row style="margin:15px 0px 0px 0px;">
+            <el-col :span="8">
+              你的评分:
+            </el-col>
+            <el-col :span="16">
+              <el-rate v-model="rate" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" show-text :disabled="rate_disable" @change="handle_rate_change">
+          </el-rate>
             </el-col>
           </el-row>
         </el-col>
@@ -71,16 +81,7 @@
         <el-col :span="1">{{ this.$store.state.download_count }}</el-col>
       </el-row>
     -->
-      <el-row>
-        <el-col :span="2" :offset="1">
-          <span>评分</span>
-        </el-col>
-        <el-col :span="8">
-          <el-rate v-model="rate" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" show-text @change="handle_rate_change">
-          </el-rate>
-        </el-col>
-      </el-col>
-    </el-row>
+
       <!--
       <el-row style="margin:20px 0px 0px 0px;">
         <el-col :span="6" :offset="1" style="height:20px;font-weight:bold;font-size:20px;">全部评论</el-col>
@@ -121,17 +122,20 @@ export default {
       rarImg: RarImg,
       defaultImg: DefaultImg,
       img: '',
-      rate: 0
+      rate: 0,
+      public_rate: '',
+      rate_disable: true
     }
   },
   methods: {
     gotoDownload: function () {
       var sh = this
+      var post_url = get_url(this.$store.state.dev, '/resource/download_count/')
       window.open(this.$store.state.url)
       $.ajax({
         ContentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        url: '/resource/download_count/',
+        url: post_url,
         type: 'POST',
         data: { 'download_count': sh.$store.state.id },
         success: function (data) {
@@ -145,7 +149,17 @@ export default {
     handle_rate_change: function () {
       var post_url = get_url(this.$store.state.dev, '/resource/evaluate/')
       var post_data = { resource_id: this.$store.state.id, grade: this.rate }
+      console.log(this.rate)
       var _this = this
+      if (this.rate_disable) return
+      if (!this.$store.state.is_login) {
+        this.$message({
+          showClose: true,
+          type: 'error',
+          message: '请先登录再评分'
+        })
+        return
+      }
       $.ajax({
         ContentType: 'application/json; charset=utf-8',
         dataType: 'json',
@@ -199,6 +213,37 @@ export default {
     if (this.$store.state.name[tL - 3].toLowerCase() === 'j' && this.$store.state.name[tL - 2].toLowerCase() === 'p' && this.$store.state.name[tL - 1].toLowerCase() === 'g') {
       this.img = this.jpgImg
     }
+  },
+  beforeCreate: function () {
+    var post_url = get_url(this.$store.state.dev, '/resource/evaluation/grade/count/')
+    var post_data = { resource_id: this.$store.state.id }
+    var _this = this
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: post_url,
+      type: 'POST',
+      data: post_data,
+      success: function (data) {
+        var avg = data['avg_grade']
+        var personal_grade = data['user_grade']
+        _this.rate_count = data['grade_count']
+        if (avg === -1) _this.public_rate = 0
+        else _this.public_rate = avg
+        if (personal_grade === -1) {
+          _this.rate_disable = false
+        } else {
+          _this.rate = personal_grade
+        }
+      },
+      error: function () {
+        _this.$message({
+          showClose: true,
+          type: 'error',
+          message: '无法连接到服务器'
+        })
+      }
+    })
   }
 }
 </script>

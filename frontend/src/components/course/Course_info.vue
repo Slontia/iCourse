@@ -10,7 +10,7 @@
           <div class="info_card">
             <el-card class="box-card">
             <div slot="header" class = "clearfix">
-              <span style="line-height:36px;text-align: left;">
+              <span style="line-height:45px;text-align: left;">
                 <el-row>
                   <el-col :span="12">
                     <p style="padding-top:10px;font-size: xx-large;">{{ course_name }}</p>
@@ -33,23 +33,20 @@
             <div class="text item">
               点击: {{ visit_count }}
             </div>
-            <div class="text item">
-              <el-button type="text" icon="edit" @click="edit_course" style="float: right">我来补充</el-button>
-            </div>
             </el-card>
           </div>     
         </el-col>
 
       <!-- contribution rank -->
       <el-col :span="6" class = "contribution_container">
-        <div class="history_contribution_table">
-        <p style="text-align: center; padding-bottom: 10px"> 历史贡献度排行 </p>
-        <el-table :data="history_contribution_data" highlight-current-row style="width: auto;" height="300">
-          <el-table-column prop="contribution_username" label="用户名"></el-table-column>
-          <el-table-column prop="contribution_score" label="贡献度"></el-table-column>
-          <el-table-column prop="contribution_level" label="等级"></el-table-column>
+        <div class="contribution_table">
+        <p style="text-align: center; padding-bottom: 10px"> 贡献度排行 </p>
+        <el-table :data="contribution_data" highlight-current-row style="width: auto;" height="300">
+          <el-table-column prop="contribution_username" label="用户名" align="center"></el-table-column>
+          <el-table-column prop="contribution_score" label="贡献度" align="center"></el-table-column>
         </el-table>
         </div>
+        <!--
         <div class="month_contribution_table">
         <p style="text-align: center; padding-bottom: 10px"> 近一个月贡献度排行 </p>
         <el-table :data="latest_contribution_data" highlight-current-row style="width: auto;" height="300">
@@ -58,12 +55,13 @@
           <el-table-column prop="contribution_level" label="等级"></el-table-column>
         </el-table>
       </div>
+    -->
       </el-col>
     </el-row>
      <!-- course resource -->
 
      <div class = "course_resource_container">
-      <hr style="margin-top: 20px;width:100%" />
+      <center><hr style="width:100%" /></center>
         <el-row class="course_resource_head" style="margin-bottom: 20px">
           <el-col :span="24" style="margin-top: 20px">
             <el-col :span="10">
@@ -93,23 +91,23 @@
               <el-row>
                 <el-col :span="7" v-bind:style="{visibility:card_data[index][0].show}">
                   <el-col :span="24">
-                    <el-tooltip effect="dark" :content="card_data[index][0].title" placement="right">
+                    <el-tooltip effect="dark" :content="card_data[index][0].title" placement="top">
                   <el-button type="text" class="card_button" @click.native="card_clicked(index,0)">
                   <el-card :body-style="{ padding: '10px'} " class="card">
                     <el-row>
                       <el-col :span="4" style="">
                         <img :src="card_data[index][0].img" style="width: 50px; height:50px;"></img>
                       </el-col>
-                      <el-col :span="16" :offset="2">
-                        <el-row class="text">
-                          <span>资源名：{{ card_data[index][0].title }}</span>
-                        </el-row>
-                        <el-row class="text">
-                          上传者：{{card_data[index][0].uploader}}
-                        </el-row>
-                        <el-row>
-                          下载次数：{{card_data[index][0].frequency}}
-                        </el-row>
+                      <el-col :span="19" :offset="1">
+                        <el-row >
+                          <p class="card_title_text">{{card_data[index][0].title}}</p>
+                        <p class="card_text">
+                          上传者:{{card_data[index][0].uploader}}
+                        </p>
+                        <p class="card_text">
+                          下载量:{{card_data[index][0].frequency}}
+                        </p>
+                      </el-row>
                       </el-col>
                     </el-row>
                   </el-card>
@@ -120,55 +118,54 @@
 
                 <el-col :span="7" :offset="1" v-bind:style="{visibility:card_data[index][1].show}">
                   <el-col :span="24">
-                  <el-tooltip effect="dark" :content="card_data[index][1].title" placement="right">
+                  <el-tooltip effect="dark" :content="card_data[index][1].title" placement="top">
                   <el-button type="text" class="card_button" @click.native="card_clicked(index,1)">
-                  <el-card :body-style="{ padding: '10px'} " class="card">
                     <el-row>
                       <el-col :span="4" style="">
                         <img :src="card_data[index][1].img" style="width: 50px; height:50px;"></img>
                       </el-col>
-                      <el-col :span="16" :offset="2">
-                        <el-row class="text">
-                          <span>资源名：{{card_data[index][1].title}}</span>
-                        </el-row>
-                        <el-row class="text">
-                          上传者：{{card_data[index][1].uploader}}
-                        </el-row>
-                        <el-row>
-                          下载次数：{{card_data[index][1].frequency}}
-                        </el-row>
+                      <el-col :span="19" :offset="1">
+                        <el-row >
+                          <p class="card_title_text">{{card_data[index][1].title}}</p>
+                        <p class="card_text">
+                          上传者:{{card_data[index][1].uploader}}
+                        </p>
+                        <p class="card_text">
+                          下载量:{{card_data[index][1].frequency}}
+                        </p>
+                      </el-row>
                       </el-col>
                     </el-row>
-                  </el-card>
                 </el-button>
               </el-tooltip>
                 </el-col>
                 </el-col>
 
                 <el-col :span="7" :offset="1" v-bind:style="{visibility:card_data[index][2].show}">
-                  <el-tooltip effect="dark" :content="card_data[index][2].title" placement="right">
+                  <el-tooltip effect="dark" :content="card_data[index][2].title" placement="top">
                   <el-button type="text" class="card_button" @click.native="card_clicked(index,2)">
-                  <el-card :body-style="{ padding: '10px'}" class="card">
+                  
                     <el-row>
-                      <el-col :span="4" style="">
+                      <el-col :span="4">
                         <img :src="card_data[index][2].img" style="width: 50px; height:50px;"></img>
                       </el-col>
-                      <el-col :span="16" :offset="2">
-                        <el-row class="text">
-                          <span>资源名：{{card_data[index][2].title}}</span>
-                        </el-row>
-                        <el-row class="text">
-                          上传者：{{card_data[index][2].uploader}}
-                        </el-row>
-                        <el-row>
-                          下载次数：{{card_data[index][2].frequency}}
-                        </el-row>
+                      <el-col :span="19" :offset="1">
+                        <el-row >
+                          <p class="card_title_text">{{card_data[index][2].title}}</p>
+                        <p class="card_text">
+                          上传者:{{card_data[index][2].uploader}}
+                        </p>
+                        <p class="card_text">
+                          下载量:{{card_data[index][2].frequency}}
+                        </p>
+                      </el-row>
                       </el-col>
                     </el-row>
-                  </el-card>
                 </el-button>
               </el-tooltip>
+              <hr style="border: none;border-top: 1px solid rgb(241,242,244)"/>
                 </el-col>
+
       </el-row>
     </template>
     </div>
@@ -273,8 +270,7 @@ export default {
       hours: '',
       intro_info: '',
       visit_count: -1,
-      history_contribution_data: [],
-      latest_contribution_data: [],
+      contribution_data: [],
       uploadDialogVisible: false,
       fileList: [],
       total_resource_line: 3,
@@ -359,7 +355,6 @@ export default {
       this.$router.push({ path: 'forum/' })
     },
     card_clicked (i, j) {
-      console.log(this.card_data[i][j].id)
       this.$store.state.id = this.card_data[i][j].id
       var resourceDialogSelf = this
       var post_url = get_url(this.$store.state.dev, '/resource/information/')
@@ -402,7 +397,7 @@ export default {
   },
   mounted () {
     var course_id = this.$route.params.course_id
-    var postData = { 'course_id': course_id, 'number': this.total_resource_line }
+    var post_data = { 'course_id': course_id, 'number': this.total_resource_line }
     var self = this
     var post_url = get_url(this.$store.state.dev, '/resource/latest/')
     $.ajax({
@@ -410,7 +405,7 @@ export default {
       dataType: 'json',
       url: post_url,
       type: 'POST',
-      data: postData,
+      data: post_data,
       success: function (data) {
         var pos = 2 // pos of latest resource
         var info = data['result']
@@ -435,6 +430,90 @@ export default {
         alert('拉取资源列表失败')
       }
     })
+    var post_url1 = get_url(this.$store.state.dev, '/course/contri/')
+    var post_data1 = { course_id: this.$route.params.course_id }
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: post_url1,
+      type: 'POST',
+      data: post_data1,
+      success: function (data) {
+        var contri_list = data['contri_list']
+        if (contri_list) {
+          for (var i = 0; i < contri_list.length; i++) {
+            var temp = {}
+            temp.contribution_score = contri_list[i].contri
+            temp.contribution_username = contri_list[i].username
+            self.contribution_data.push(temp)
+          }
+        }
+      },
+      error: function () {
+        self.$message({
+          showClose: true,
+          type: 'error',
+          message: '无法连接到服务器'
+        })
+      }
+    })
+    /*
+    var post_url2 = get_url(this.$store.state.dev, '/resource/hot/')
+    var post_data2 = { course_id: this.$route.params.course_id, number: 6 }
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: post_url2,
+      type: 'POST',
+      data: post_data2,
+      success: function (data) {
+        var pos = 0
+        var info = data['result']
+        for (var i = 0; i < 3; i++) {
+          self.card_data[i][pos].title=info[i]['name']
+          self.card_data[i][pos].uploader=info[i]['username']
+          self.card_data[i][pos].frequency=info[i]['download_count']
+          self.card_data[i][pos].id = info[i]['resource_id']
+          self.card_data[i][pos].show = 'visible'
+          var name = info[i]['name'].toLowerCase()
+          for (var t in self.img) {
+            var temp = '.'+t+'$'
+            var reg = new RegExp(temp)
+            if (reg.test(name)) {
+              self.card_data[i][pos].img = self.img[t]
+              break
+            }
+          }
+        }
+        if (info.length > 3) {
+          pos = 1
+          for (i = 3; i < info.length; i++) {
+            self.card_data[i][pos].title=info[i]['name']
+            self.card_data[i][pos].uploader=info[i]['username']
+            self.card_data[i][pos].frequency=info[i]['download_count']
+            self.card_data[i][pos].id = info[i]['resource_id']
+            self.card_data[i][pos].show = 'visible'
+            var name1 = info[i]['name'].toLowerCase()
+            for (var t1 in self.img) {
+              var temp1 = '.'+t+'$'
+              var reg1 = new RegExp(temp1)
+              if (reg1.test(name1)) {
+                self.card_data[i][pos].img = self.img[t1]
+                break
+              }
+            }
+          }
+        }
+      },
+      error: function () {
+        self.$message({
+          showClose: true,
+          type: 'error',
+          message: '无法链接到服务器'
+        })
+      }
+    })
+    */
   }
 }
 </script>
@@ -444,7 +523,7 @@ export default {
   .course_introduction{
     margin-top: 10px;
     padding-left: 20px;
-    height: 70%;
+    height: 100%;
     width: 100%;
   }
   .contribution_container{
@@ -452,18 +531,21 @@ export default {
     left:75%;
     margin-left: 10px;
   }
-  .history_contribution_table{
+  .contribution_table{
     margin-bottom: 50px;
+  }
+  .item{
+    padding-bottom: 5px;
   }
   .course_resource_container{
     position:absolute;
     top:400px;
-    margin-top: 20px;
+    margin-top: 40px;
     padding-left: 20px;
     width: 71%;
   }
   .resource_container{
-    widht:auto;
+    width:auto;
   }
   .hot_resource_container{
     width:auto;
@@ -471,8 +553,8 @@ export default {
   .latest_resource_container{
     width: auto;
   }
-  .card:hover{
-    background-color: #58B7FF;
+  .card_button:hover{
+    color: #58B7FF;
   }
   .card_button{
     padding-top:0px;
@@ -481,10 +563,15 @@ export default {
     width:100%;
     height:100%;
     text-align:left;
-    color: black;
+    color: #58B7FF;
   }
-  .text{
-    padding-bottom: 5px;
+  .card_title_text{
+    padding-bottom: 10px;
     word-break: break-all;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+  }
+  .card_text{
+    color: grey;
   }
 </style>

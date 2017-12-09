@@ -1,4 +1,4 @@
-﻿# Beta阶段接口说明文档
+# Beta阶段接口说明文档
 12.7更新：
 新增“课程收藏”
 
@@ -341,8 +341,8 @@ error|int|0:成功<br>1:失败
 
 ## 3. 资源相关
 ### 3.1 获取某一类别资源（修改）
-**函数名：** resource\_id\_list
-**URL：** /resource/id/list/
+**函数名：** resource\_class\_id\_list
+**URL：** /resource/class/id/list/
 **前端**
 
 变量名|类型|说明
@@ -354,7 +354,7 @@ type|int|资源类别: ppt、doc(txt)、pdf、pict、other、all
 
 变量名|类型|说明
 :-:|:-:|:-:
-resource\_id\_list|list[int]|该课程下的资源id列表
+resource\_class\_id\_list|list[int]|该课程下的资源id列表
 
 ### 3.2 搜索资源
 **函数名：** resource_query
@@ -479,6 +479,27 @@ grade|int|0:未进行好评/差评<br>1:好评<br>-1:差评
 user_id|int|评价者id
 username|str|评价者用户名
 time|datetime|发布时间
+
+### 3.10 获取最多下载量的资源id列表
+**函数名：** most\_download\_resource\_list
+**URL：** /resource/download/most/
+**前端**
+变量名|类型|说明
+:-:|:-:|:-:
+number|int|资源数量
+
+**后端**
+变量名|类型|说明
+:-:|:-:|:-:
+result|list[dict{}]|返回资源信息列表
+
+资源信息字典：
+变量名|类型|说明
+:-:|:-:|:-:
+resource_id|int|资源id
+username|str|上传者
+download_count|int|下载量
+name|str|资源名称
 
 
 ### 资源简介修改
