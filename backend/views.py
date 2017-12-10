@@ -650,6 +650,7 @@ def posting_publish(request):
         content = str(data.get('content'))
         user_id = request.user.id
         editor = int(data.get('editor'))
+        intro = str(data.get('intro'))
         post_form = PostForm({'title':title, 'course_id':course_id, 'category':category})
         if(post_form.is_valid()):
             post = Post()
@@ -657,6 +658,7 @@ def posting_publish(request):
             post.course_id = course_id
             post.category = category
             post.main_follow_id = -1;
+            post.intro = intro;
             post.save()
         else:
             errors.extend(post_form.errors.values())
@@ -817,7 +819,7 @@ def post_infor_list(request):
             if(len(result) != 1):
                 # error
                 continue
-            post = result.values('title', 'category', 'click_count', 'update_time','follow_count', 'main_follow_id')[0]
+            post = result.values('title', 'category', 'click_count', 'update_time','follow_count', 'main_follow_id', 'intro')[0]
             post['grade_sum'] = Follow.objects.filter(post_id=item).aggregate(grade_sum=Sum('pos_eva_count'))['grade_sum']
             main_follow = Follow.objects.get(id=post['main_follow_id'])
             post['user_id'] = main_follow.user_id

@@ -131,6 +131,7 @@ class Post(models.Model):
     update_time = models.DateTimeField(auto_now=True)
     follow_count = models.IntegerField(default=0)
     click_count = models.IntegerField(default=0)
+    intro = models.CharField(max_length=100)
 
     def __str__(self):
         return str(self.id)
