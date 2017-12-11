@@ -1423,3 +1423,23 @@ def most_download_resource_list(request):
             ans.append(dict)
         print(ans)
         return HttpResponse(json.dumps({'result': ans}))
+
+# get most downloaded resource id list of one course
+# URL:
+@csrf_exempt
+def most_download_resource_of_course(request):
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        course_id = int(data.get('course_id'))
+        number = str(data.get('number'))
+        course_code = Course.objects.get(id=course_id).course_code
+        result = Resource.objects.filter(course_code=course_code).order_by('-download_count').values_list('id',flat=True)
+        count = 0
+        id_list = []
+        for item in result:
+            id_list.append(item)
+            count += 1
+            if(count == number):
+                break
+    return HttpResponse(json.dumps({'id_list': id_list}))
