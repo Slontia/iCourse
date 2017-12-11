@@ -53,6 +53,8 @@ urlpatterns = [
     url(r'^course/like/cancel/$', backend_views.course_cancel_like, name='course_cancel_like'),
     url(r'^course/like/count/$', backend_views.course_like_count, name='course_like_count'),
     url(r'^resource/download/most/$', backend_views.most_download_resource_list, name='most_download_resource_list'),
+    url(r'^login_tongpao/$', backend_views.login_tongpao, name='login_tongpao'),
+    url(r'^tongpao/$', backend_views.tongpao, name='tongpao'),
                
     # page
     url(r'^$', TemplateView.as_view(template_name='index.html')), # NEW

@@ -1443,3 +1443,52 @@ def most_download_resource_of_course(request):
             if(count == number):
                 break
     return HttpResponse(json.dumps({'id_list': id_list}))
+
+
+#---------------------------------------------------------------
+# 同袍的登录接口，跳转到同袍的登录界面，感觉不需要POST
+def login_tongpao(request):
+    url = 'https://tongpao.qinix.com/auths/send_params'
+    headers = {'Tongpao-Auth-appid': 'c643da987bdc3ec74efbb0ef7927f7ea', 'Tongpao-Auth-secret': 'GNcP_Pa0Z3nFjjsQa8sd8VCUmUEiIZBa6Rue682LDsMyUIx7iwPplQ'}
+    data = { #需要
+        #"code":"BElkqvTZCkO924Za-hh8YcWmIDwGCwLXo7n3PrrYXD6lItvlX__b4DbZBgiXaV0ySHZytqlH2swvrbDca4X_MD1v6a2TPw",
+        "redirect": "http://127.0.0.1:8000/tongpao/",#https://questionor.cn/problemsets",
+        "need_phone_number": 1,
+        "need_email": 1,
+        "need_personal": 1,
+        "need_school_info": 1,
+        "need_identification": 1
+    }
+    r = requests.post(url, headers = headers,  data=json.dumps(data))
+
+    print(r.text)
+    js = json.loads(r.text)
+    print(js)
+    token = str(js['token'])
+    print(token)
+    return HttpResponseRedirect("https://tongpao.qinix.com/auths/login?token="+token)
+
+#---------------------------------------------------------------
+# 获取同袍用户信息的接口，目前是GET，可以post回信息
+# 可以获取到的信息例如如下：
+# "tongpao_username":"14011100","phone_number":["17801016282"],"email":"291045048@qq.com","real_name":"赵奕","birthday":"1996-10-31","gender":"男","grade":2015,"student_id":"14011100","college":"计算机学院","major":"计算机科学与技术","class_name":"150617","identification":"320982199610312298"}
+def tongpao(request):
+    print("TONGPAO!!!")
+    code = str(request.GET["code"])
+    print("code = ",code)
+    url = 'https://tongpao.qinix.com/auths/get_data'
+    headers = {'Tongpao-Auth-appid': 'c643da987bdc3ec74efbb0ef7927f7ea', 'Tongpao-Auth-secret': 'GNcP_Pa0Z3nFjjsQa8sd8VCUmUEiIZBa6Rue682LDsMyUIx7iwPplQ'}
+    data = {
+        "code":code,
+    }
+#    data_str = str(data)
+#    print(data_str)
+#    data_str = data_str.replace("'", "\"")
+#    print(data_str)
+#    data = eval(data_str)
+    print(data)
+    r = requests.post(url, headers = headers, data=data)
+    print(r.text)
+    return HttpResponseRedirect("/")
+    
+#return HttpResponseRedirect("/")#http://127.0.0.1:8000/")
