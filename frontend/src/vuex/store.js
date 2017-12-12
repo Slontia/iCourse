@@ -17,7 +17,7 @@ const store = new Vuex.Store({
     user_name: '',
     is_login: false,
     // state relating to debug
-    dev: true
+    dev: false
   },
   mutations: {
   }
