@@ -131,7 +131,7 @@ export default {
               for (var i = 0; i < info_list.length; i++) {
                 var type = (info_list[i].type === 1 ? '问题讨论' : (info_list[i].type === 2 ? '学习心得' : '其他'))
               // need to cut description
-                var cut_description = (info_list[i].content.length < 100 ? info_list[i].content : info_list[i].content.substr(0, 100)) + '....'
+                var cut_description = (info_list[i].intro.length < 100 ? info_list[i].intro : info_list[i].intro.substr(0, 100)) + '....'
                 var thread = { id: id_list[i], agree_num: info_list[i].grade_sum, follow_num: info_list[i].follow_count, read_num: info_list[i].read_count, type: type, title: info_list[i].title, description: cut_description, user_name: info_list[i].username, time: info_list[i].update_time }
                 _this.current_threads.push(thread)
               }
