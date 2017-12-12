@@ -745,6 +745,7 @@ def follow_publish(request):
             follow.save()
             post = Post.objects.get(id=post_id) # renew post.follow_count
             post.follow_count += 1
+            post.update_time = datetime.datetime.now()
             post.save()
         else:
             return HttpResponse(json.dumps({'error': 1}))
