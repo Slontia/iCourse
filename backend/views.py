@@ -1481,11 +1481,6 @@ def tongpao(request):
     data = {
         "code":code,
     }
-#    data_str = str(data)
-#    print(data_str)
-#    data_str = data_str.replace("'", "\"")
-#    print(data_str)
-#    data = eval(data_str)
     print(data)
     r = requests.post(url, headers = headers, data=data)
     print(r.text)
@@ -1495,7 +1490,12 @@ def tongpao(request):
     print("$$$", type(profile))
 
     student_id = profile["student_id"]
-    
+
+    students = User.objects.filter(username = student_id)
+    if (len(students) > 0): #之前已经登录过
+        print(student_id, " Has Registered!")
+        return HttpResponse(json.dumps({'error':0}))
+
     tongpao_username = profile["tongpao_username"]
     phone_number = profile["phone_number"]
     print(phone_number)
@@ -1543,25 +1543,6 @@ def tongpao(request):
     tp_u.identification = identification
     tp_u.save()
 
-#    user=User()
-#    user.username = username
-#    user.set_password(password1)
-#            user.email = email
-#            user.is_active = False
-#            user.save()
-#            #用户扩展信息 profile
-#            profile=UserProfile()
-#            profile.user_id = user.id # user_id
-#            profile.gender = gender
-#            profile.nickname = nickname
-#            profile.intro = intro
-#            profile.save()
-#
-#
-#    User =
-#    insert into auth_user (username,password,is_superuser,first_name,last_name,email,is_staff,is_active,date_joined) values('15000000','',0,'TongPao','','123@qq.com',0,1,'');
-#
-#
     return HttpResponseRedirect("/")
     
 #return HttpResponseRedirect("/")#http://127.0.0.1:8000/")
