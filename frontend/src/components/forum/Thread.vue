@@ -351,6 +351,22 @@ export default {
         })
       }
     })
+    post_data = { 'post_id': Number(this.$route.params.thread_id) }
+    post_url = get_url(this.$store.state.dev, '/post/click_count/')
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: post_url,
+      type: 'POST',
+      data: post_data,
+      error: function () {
+        _this.$message({
+          showClose: true,
+          type: 'error',
+          message: '获取点击次数失败'
+        })
+      }
+    })
   },
   data () {
     return {

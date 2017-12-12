@@ -146,6 +146,43 @@ def course_information(request):
         course_id = int(data.get('course_id'))
         course_info = interface.course_information(course_id)
         return HttpResponse(json.dumps({'course_info': course_info}, cls=ComplexEncoder))
+
+# Visit Course Interface
+# REQUIRES: the ajax data should be json data {'post_id': post_id}
+# MODIFIES: Post.click_count
+# EFFECTS: return json data {'click_count': click_count}, click_count is a integer
+# URL: /course/click_count/
+@csrf_exempt
+def refresh_click_post_count(request):
+    def refresh(now_time, post_id):
+        post = Post.objects.get(id=post_id)
+        post.click_count += 1
+        post.save()
+        request.session.modified = True
+        request.session['last_post_click'][post_id] = str(now_time)
+        return HttpResponse(json.dumps({'click_count': post.click_count}))
+
+    if(request.method == "POST"):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        post_id = int(data.get('post_id'))
+
+        last_post_click_dict = request.session.get('last_post_click')
+        now_time = datetime.datetime.now()
+        if (last_post_click_dict == None): # have not clicked any posts
+            request.session['last_post_click'] = {}
+            return refresh(now_time, post_id)
+        else:
+            print('last_post: ', last_post_click_dict)
+            last_post_click = last_post_click_dict.get(str(post_id))
+            if (last_post_click != None): # has clicked the post
+                last_click_time = datetime.datetime.strptime(last_post_click[:-7], "%Y-%m-%d %H:%M:%S")
+                if (now_time >= last_click_time + datetime.timedelta(hours=24)):
+                    return refresh(now_time, post_id)
+            else: # have not clicked the post
+                return refresh(now_time, post_id)
+        return HttpResponse(json.dumps({'click_count': post.objects.get(id=post_id).click_count}))
+
 '''
 def course_visit_count(request):
     if(request.method == "POST"):
@@ -829,6 +866,7 @@ def post_infor_list(request):
             info_list.append(post)
         return HttpResponse(json.dumps({'info_list':info_list},cls=ComplexEncoder))
 
+
 # Get Follow Id List Interface
 # URL: /follow/id/list/
 @csrf_exempt
@@ -882,7 +920,7 @@ def follow_info_list(request):
                 else:
                     follow['evaluated_grade'] = result[0]
             info_list.append(follow)
-            print(info_list)
+            # print(info_list)
         return HttpResponse(json.dumps({'info_list':info_list},cls=ComplexEncoder))
 
 # get follow content by user_id and post_id
