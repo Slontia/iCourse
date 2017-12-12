@@ -39,7 +39,7 @@ def send_register_email(email, send_type="register"):
     # 如果为注册类型
     if send_type == "register":
         email_title = "icourse账号注册激活链接"
-        email_body = "您好，我们是icourse课程平台开发团队，请点击链接激活你的账号:http://127.0.0.1:8000/active/{0}".format(code)
+        email_body = "您好，我们是icourse课程平台开发团队，请点击链接激活你的账号:http://buaaicourse.com/active/{0}".format(code)
         # 发送邮件
         
         print(email_title)
