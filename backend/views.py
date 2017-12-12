@@ -1462,9 +1462,9 @@ def login_tongpao(request):
     r = requests.post(url, headers = headers,  data=json.dumps(data))
 
     print(r.text)
-    js = json.loads(r.text)
-    print(js)
-    token = str(js['token'])
+    json_code = json.loads(r.text)
+    print(json_code)
+    token = str(json_code['token'])
     print(token)
     return HttpResponseRedirect("https://tongpao.qinix.com/auths/login?token="+token)
 
@@ -1489,6 +1489,80 @@ def tongpao(request):
     print(data)
     r = requests.post(url, headers = headers, data=data)
     print(r.text)
+    json_text = json.loads(r.text)
+    profile = json_text["data"]
+    print(profile)
+    print("$$$", type(profile))
+
+    student_id = profile["student_id"]
+    
+    tongpao_username = profile["tongpao_username"]
+    phone_number = profile["phone_number"]
+    print(phone_number)
+    phone_number = int(phone_number[0])
+    print(phone_number)
+    email = profile["email"]
+    real_name = profile["real_name"]
+    birthday = profile["birthday"]
+    gender = profile["gender"]
+    grade = profile["grade"]
+    college = profile["college"]
+    major = profile["major"]
+    class_name = profile["class_name"]
+    identification = profile["identification"]
+
+    user = User()
+    user.username = student_id
+    print("!!!!username=",student_id)
+    user.email = email
+    user.is_active = False
+    user.first_name = "TongPao"
+    user.save()
+
+    user_profile = UserProfile()
+    gender_dict = {"男":0, "女":1}
+    user_profile.user_id = user.id
+    user_profile.gender = gender_dict[gender]
+    print("gender=",gender,"value:",gender_dict[gender])
+    user_profile.nickname = ""
+    user_profile.info = ""
+    user_profile.save()
+
+    tp_u = Tongpao_Userprofile()
+    tp_u.student_id = student_id
+    tp_u.tongpao_username = tongpao_username
+    tp_u.phone_number = phone_number
+    tp_u.email = email
+    tp_u.real_name = real_name
+    tp_u.gender = gender
+    tp_u.birthday = birthday
+    tp_u.grade = grade
+    tp_u.college = college
+    tp_u.major = major
+    tp_u.class_name = class_name
+    tp_u.identification = identification
+    tp_u.save()
+
+#    user=User()
+#    user.username = username
+#    user.set_password(password1)
+#            user.email = email
+#            user.is_active = False
+#            user.save()
+#            #用户扩展信息 profile
+#            profile=UserProfile()
+#            profile.user_id = user.id # user_id
+#            profile.gender = gender
+#            profile.nickname = nickname
+#            profile.intro = intro
+#            profile.save()
+#
+#
+#    User =
+#    insert into auth_user (username,password,is_superuser,first_name,last_name,email,is_staff,is_active,date_joined) values('15000000','',0,'TongPao','','123@qq.com',0,1,'');
+#
+#
     return HttpResponseRedirect("/")
     
 #return HttpResponseRedirect("/")#http://127.0.0.1:8000/")
+
