@@ -181,7 +181,7 @@ def refresh_click_post_count(request):
                     return refresh(now_time, post_id)
             else: # have not clicked the post
                 return refresh(now_time, post_id)
-        return HttpResponse(json.dumps({'click_count': post.objects.get(id=post_id).click_count}))
+        return HttpResponse(json.dumps({'click_count': Post.objects.get(id=post_id).click_count}))
 
 '''
 def course_visit_count(request):
