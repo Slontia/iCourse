@@ -1447,6 +1447,7 @@ def most_download_resource_of_course(request):
 
 #---------------------------------------------------------------
 # 同袍的登录接口，跳转到同袍的登录界面，感觉不需要POST
+#@csrf_exempt
 def login_tongpao(request):
     url = 'https://tongpao.qinix.com/auths/send_params'
     headers = {'Tongpao-Auth-appid': 'c643da987bdc3ec74efbb0ef7927f7ea', 'Tongpao-Auth-secret': 'GNcP_Pa0Z3nFjjsQa8sd8VCUmUEiIZBa6Rue682LDsMyUIx7iwPplQ'}
@@ -1465,8 +1466,8 @@ def login_tongpao(request):
     json_code = json.loads(r.text)
     print(json_code)
     token = str(json_code['token'])
-    print(token)
-    return HttpResponseRedirect("https://tongpao.qinix.com/auths/login?token="+token)
+    print(token) #返回这个token给前端跳？
+    return HttpResponseRedirect("https://tongpao.qinix.com/auths/login?token="+token) #HttpResponse(json.dumps({'error': 0}))
 
 #---------------------------------------------------------------
 # 获取同袍用户信息的接口，目前是GET，可以post回信息
