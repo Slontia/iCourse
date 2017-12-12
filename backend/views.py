@@ -1566,3 +1566,58 @@ def tongpao(request):
     
 #return HttpResponseRedirect("/")#http://127.0.0.1:8000/")
 
+
+# 忘记密码-提交申请-发送邮件
+# URL:/user/forget/password/send/
+@csrf_exempt
+def user_forget_password_send(request):
+    if(request.method == 'POST'):
+        email = str(request.POST.get('email'))
+        send_reset_pswd_email(email, 'reset pswd')
+
+# 忘记密码-重置密码
+# URL:/user/forget/password/set/
+@csrf_exempt
+def user_forget_password_set(request):
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        email = str(data.get('email'))
+        code = str(data.get('code'))
+        new_pw1 = str(data.get('new_pw1'))
+        new_pw2 = str(data.get('new_pw2'))
+        if(new_pw1 != new_pw2):
+            return HttpResponse(json.dumps({'error': 1}))
+        all_records = EmailVerifyRecord.objects.filter(email=email, code=code, send_type='reset pswd')
+        if(len(all_records) < 1):
+            return HttpResponse(json.dumps({'error': 1}))
+        user = User.objects.get(email=email)
+        user.set_password(new_pw1)
+        user.save()
+        return HttpResponse(json.dumps({'error': 0}))
+
+# 修改密码
+# URL: /user/modify/password/
+@csrf_exempt
+def user_modify_password(request):
+    if(request.method == 'POST'):
+        if(not request.user.is_authenticated()):
+            return HttpResponse(json.dumps({'error': 1}))
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        user_id = request.user.id
+        old_pw = str(data.get('old_pw'))
+        new_pw1 = str(data.get('new_pw1'))
+        new_pw2 = str(data.get('new_pw2'))
+        if(new_pw1 != new_pw2):
+            return HttpResponse(json.dumps({'error': 1}))
+        user = User.objects.get(id=user_id)
+        cb = CustomBackend()
+        result = cb.authenticate(username=user.username, password=old_pw)
+        if(result is not None and result.is_active):
+            user.set_password(new_pw1)
+            user.save()
+            auth.logout(request)
+            return HttpResponse(json.dumps({'error': 0}))
+        return HttpResponse(json.dumps({'error': 1}))
+

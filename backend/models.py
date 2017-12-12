@@ -1,6 +1,3 @@
-# 方科栋的代码我暂时先注释了 张安澜 2017.11.1
-# 方科栋的代码我先删除了 方科栋2017.12.08
-
 from django.db import models
 from django.contrib.auth.models import User
 import datetime
