@@ -1485,6 +1485,7 @@ def most_download_resource_of_course(request):
 
 #---------------------------------------------------------------
 # 同袍的登录接口，跳转到同袍的登录界面，感觉不需要POST
+#@csrf_exempt
 def login_tongpao(request):
     url = 'https://tongpao.qinix.com/auths/send_params'
     headers = {'Tongpao-Auth-appid': 'c643da987bdc3ec74efbb0ef7927f7ea', 'Tongpao-Auth-secret': 'GNcP_Pa0Z3nFjjsQa8sd8VCUmUEiIZBa6Rue682LDsMyUIx7iwPplQ'}
@@ -1503,8 +1504,8 @@ def login_tongpao(request):
     json_code = json.loads(r.text)
     print(json_code)
     token = str(json_code['token'])
-    print(token)
-    return HttpResponseRedirect("https://tongpao.qinix.com/auths/login?token="+token)
+    print(token) #返回这个token给前端跳？
+    return HttpResponseRedirect("https://tongpao.qinix.com/auths/login?token="+token) #HttpResponse(json.dumps({'error': 0}))
 
 #---------------------------------------------------------------
 # 获取同袍用户信息的接口，目前是GET，可以post回信息
@@ -1519,11 +1520,6 @@ def tongpao(request):
     data = {
         "code":code,
     }
-#    data_str = str(data)
-#    print(data_str)
-#    data_str = data_str.replace("'", "\"")
-#    print(data_str)
-#    data = eval(data_str)
     print(data)
     r = requests.post(url, headers = headers, data=data)
     print(r.text)
@@ -1533,7 +1529,12 @@ def tongpao(request):
     print("$$$", type(profile))
 
     student_id = profile["student_id"]
-    
+
+    students = User.objects.filter(username = student_id)
+    if (len(students) > 0): #之前已经登录过
+        print(student_id, " Has Registered!")
+        return HttpResponse(json.dumps({'error':0}))
+
     tongpao_username = profile["tongpao_username"]
     phone_number = profile["phone_number"]
     print(phone_number)
@@ -1581,25 +1582,6 @@ def tongpao(request):
     tp_u.identification = identification
     tp_u.save()
 
-#    user=User()
-#    user.username = username
-#    user.set_password(password1)
-#            user.email = email
-#            user.is_active = False
-#            user.save()
-#            #用户扩展信息 profile
-#            profile=UserProfile()
-#            profile.user_id = user.id # user_id
-#            profile.gender = gender
-#            profile.nickname = nickname
-#            profile.intro = intro
-#            profile.save()
-#
-#
-#    User =
-#    insert into auth_user (username,password,is_superuser,first_name,last_name,email,is_staff,is_active,date_joined) values('15000000','',0,'TongPao','','123@qq.com',0,1,'');
-#
-#
     return HttpResponseRedirect("/")
     
 #return HttpResponseRedirect("/")#http://127.0.0.1:8000/")
