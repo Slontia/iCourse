@@ -696,6 +696,7 @@ def posting_publish(request):
             post.category = category
             post.main_follow_id = -1;
             post.intro = intro;
+            print("intro", intro)
             post.save()
         else:
             errors.extend(post_form.errors.values())
@@ -745,6 +746,7 @@ def follow_publish(request):
             follow.save()
             post = Post.objects.get(id=post_id) # renew post.follow_count
             post.follow_count += 1
+            post.update_time = datetime.datetime.now()
             post.save()
         else:
             return HttpResponse(json.dumps({'error': 1}))
@@ -861,6 +863,7 @@ def post_infor_list(request):
             main_follow = Follow.objects.get(id=post['main_follow_id'])
             post['user_id'] = main_follow.user_id
             post['content'] = main_follow.content
+            # print(main_follow.content)
             post['user_name'] = User.objects.get(id=post['user_id']).username
             #post['update_time'] = '2017-11-18'
             info_list.append(post)
@@ -1317,7 +1320,7 @@ def course_like(request):
         data = json.loads(data)
         
         course_id = str(data.get('course_id'))
-        user_id = str(data.get('user_id'))
+        user_id = str(request.user.id)
     
         likes = R_Course_User_Like.objects.filter(course_id = course_id, user_id = user_id) #filter相当于SQL中的WHERE，可设置条件过滤结果
         if (len(likes) > 0): #之前喜欢过，报错
@@ -1343,7 +1346,7 @@ def course_cancel_like(request):
         data = json.loads(data)
         
         course_id = str(data.get('course_id'))
-        user_id = str(data.get('user_id'))
+        user_id = str(request.user.id)
         
         likes = R_Course_User_Like.objects.filter(course_id = course_id, user_id = user_id) #filter相当于SQL中的WHERE，可设置条件过滤结果
         if (len(likes) == 0):
@@ -1361,6 +1364,7 @@ def course_cancel_like(request):
 #                 user_id|int|用户id
 # MODIFIES: None
 # EFFECTS:     like_count|int|收藏数
+        return HttpResponse(json.dumps({'like_count': ans_likes, 'like': user_like}))
 #                   liked|int|0:未收藏 1:已收藏
 @csrf_exempt
 def course_like_count(request):
@@ -1369,13 +1373,19 @@ def course_like_count(request):
         data = json.loads(data)
     
         course_id = str(data.get('course_id'))
-        user_id = str(data.get('user_id'))
-
+        user_id = str(request.user.id)
+        print("user:", user_id)
         likes = R_Course_User_Like.objects.filter(course_id = course_id)
         ans_likes = len(likes)
-        likes = R_Course_User_Like.objects.filter(course_id = course_id, user_id = user_id)
-        user_like = int(len(likes) > 0)
-        return HttpResponse(json.dumps({'like_course': ans_likes, 'like': user_like}))
+        if (user_id != None):
+            likes = R_Course_User_Like.objects.filter(course_id = course_id, user_id = user_id)
+            user_like = (len(likes) > 0) 
+            print("like:", user_like, likes)
+        else:
+            user_like = 0
+            print("user:", user_id)
+
+        return HttpResponse(json.dumps({'like_count': ans_likes, 'liked': user_like}))
 
 class ActiveUserView(View):
     def get(self, request, active_code):
@@ -1486,6 +1496,7 @@ def most_download_resource_of_course(request):
 #---------------------------------------------------------------
 # 同袍的登录接口，跳转到同袍的登录界面，感觉不需要POST
 #@csrf_exempt
+@csrf_exempt
 def login_tongpao(request):
     url = 'https://tongpao.qinix.com/auths/send_params'
     headers = {'Tongpao-Auth-appid': 'c643da987bdc3ec74efbb0ef7927f7ea', 'Tongpao-Auth-secret': 'GNcP_Pa0Z3nFjjsQa8sd8VCUmUEiIZBa6Rue682LDsMyUIx7iwPplQ'}
@@ -1505,12 +1516,14 @@ def login_tongpao(request):
     print(json_code)
     token = str(json_code['token'])
     print(token) #返回这个token给前端跳？
-    return HttpResponseRedirect("https://tongpao.qinix.com/auths/login?token="+token) #HttpResponse(json.dumps({'error': 0}))
+    return HttpResponse(json.dumps({'url': "https://tongpao.qinix.com/auths/login?token="+token}))
+    # return HttpResponseRedirect("https://tongpao.qinix.com/auths/login?token="+token) #HttpResponse(json.dumps({'error': 0}))
 
 #---------------------------------------------------------------
 # 获取同袍用户信息的接口，目前是GET，可以post回信息
 # 可以获取到的信息例如如下：
 # "tongpao_username":"14011100","phone_number":["17801016282"],"email":"291045048@qq.com","real_name":"赵奕","birthday":"1996-10-31","gender":"男","grade":2015,"student_id":"14011100","college":"计算机学院","major":"计算机科学与技术","class_name":"150617","identification":"320982199610312298"}
+@csrf_exempt
 def tongpao(request):
     print("TONGPAO!!!")
     code = str(request.GET["code"])

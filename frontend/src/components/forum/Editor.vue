@@ -107,7 +107,8 @@ export default {
       loading: false,
       overflow: false,
       loading_text: '发布成功，正在跳转',
-      course_name: ''
+      course_name: '',
+      text: ''
     }
   },
   methods: {
@@ -150,7 +151,14 @@ export default {
             type: 'info'
           }).then(() => {
             var content = this.editor.content
-            var post_data = { title: this.title, course_id: this.$route.params.course_id, category: this.category, content: content, editor: 0 }
+            var post_data = {
+              title: this.title,
+              course_id: this.$route.params.course_id,
+              category: this.category,
+              content: content,
+              editor: 0,
+              intro: this.text
+            }
             var post_url = get_url(this.$store.state.dev, '/post/posting/publish/')
             var _this = this
             $.ajax({
@@ -189,6 +197,7 @@ export default {
       this.current_text_length = text.length
       this.overflow = (text.length > this.text_limit)
       this.current_available_text = ((this.text_limit - text.length) < 0 ? 0 : (this.text_limit - text.length))
+      this.text = text.substr(0, 100)
     },
     return_forum_button_clicked: function () {
       this.$router.push({ path: '/course/page/' + this.$route.params.course_id + '/forum' })
