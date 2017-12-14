@@ -1154,6 +1154,8 @@ def course_contri_list(request):
             for j in range(0, len(posts_follow)): #遍历该帖子下的所有跟帖
                 pos_eva_count = posts_follow[j].pos_eva_count
                 neg_eav_count = posts_follow[j].neg_eva_count
+                if ((pos_eva_count+neg_eav_count)==0):
+                    cintinue
                 if (not posts_follow[j].user_id in dict):
                     dict[posts_follow[j].user_id] = float(pos_eva_count*pos_eva_count/(pos_eva_count+neg_eav_count))
                 else:
