@@ -89,7 +89,7 @@ urlpatterns = [
     # home
     url(r'^post/hot/idlist/$', backend_views.post_id_list_by_click_count),
     url(r'^post/latest/idlist/$', backend_views.post_id_list_by_update_time),
-    # url(r'^resource/upload/latest/', backend_views.most_upload_latest_list),
+    url(r'^resource/upload/latest/', backend_views.latest_upload_resource_list),
     url(r'^resource/download/most/$', backend_views.most_download_resource_list),
 
 
