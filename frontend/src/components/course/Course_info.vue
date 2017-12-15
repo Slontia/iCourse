@@ -15,7 +15,16 @@
                   <el-col :span="12">
                     <p style="padding-top:10px;font-size: xx-large;">{{ course_name }}</p>
                   </el-col>
-              </el-row>
+                </el-row>
+                <el-row>
+                  <el-col :span="3">
+                    <el-button type="primary" @click.native="course_like" v-if="liked" >取消收藏</el-button>
+                    <el-button @click.native="course_like" v-else>收 藏</el-button>
+                  </el-col>
+                  <el-col :span="4">
+                    收藏量： {{ like_count }}
+                  </el-col>
+                </el-row>
               </span>
             </div>
             <div class="text item">
@@ -255,6 +264,21 @@ export default {
         alert('点击次数链接异常')
       }
     })
+    post_url = get_url(this.$store.state.dev, '/course/like/count/')
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: post_url,
+      type: 'POST',
+      data: postData,
+      success: function (data) {
+        self.liked = data['liked']
+        self.like_count = data['like_count']
+      },
+      error: function () {
+        alert('收藏量获取异常')
+      }
+    })
     /*
     // loading the contribution_list
     $.ajax({
@@ -267,6 +291,9 @@ export default {
   },
   data () {
     return {
+      course_id: this.$route.params.course_id,
+      like_count: 0,
+      liked: false,
       course_name: '',
       teacher: '',
       academy: '',
@@ -302,6 +329,56 @@ export default {
     }
   },
   methods: {
+    course_like: function () {
+      var post_url = ''
+      var post_data = { course_id: this.course_id }
+      var _this = this
+      if (!this.$store.state.is_login) {
+        this.$message({
+          showClose: true,
+          type: 'error',
+          message: '请先登录再收藏'
+        })
+        return
+      }
+      if (this.liked) {
+        post_url = get_url(this.$store.state.dev, '/course/like/cancel/')
+      } else {
+        post_url = get_url(this.$store.state.dev, '/course/like/add/')
+      }
+      $.ajax({
+        ContentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: post_url,
+        type: 'POST',
+        data: post_data,
+        success: function (data) {
+          if (_this.liked) {
+            _this.$message({
+              showClose: true,
+              type: 'success',
+              message: '取消成功'
+            })
+            _this.liked = false
+            _this.like_count -= 1
+          } else {
+            _this.$message({
+              showClose: true,
+              type: 'success',
+              message: '收藏成功'
+            })
+            _this.liked = true
+            _this.like_count += 1
+          }
+        },
+        error: function () {
+          alert('收藏异常')
+        }
+      })
+    },
+    course_cancel_like: function () {
+
+    },
     return_course_page_clicked: function () {
       this.$router.push({ path: '/course/' })
     },
