@@ -12,7 +12,7 @@
             <div slot="header" class = "clearfix">
               <span style="line-height:45px;text-align: left;">
                 <el-row>
-                  <el-col :span="12">
+                  <el-col :span="24">
                     <p style="padding-top:10px;font-size: xx-large;">{{ course_name }}</p>
                   </el-col>
                 </el-row>

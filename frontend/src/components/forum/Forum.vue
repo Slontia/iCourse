@@ -98,7 +98,6 @@ export default {
   name: 'Forum',
   components: { Header },
   beforeCreate () {
-    this.dev = true
     this.page_size = 10
     var post_url = get_url(this.$store.state.dev, '/post/id/list/')
     var post_data = { course_id: this.$route.params.course_id }
