@@ -112,6 +112,7 @@
 import $ from 'jquery'
 import hp from './../assets/headportrait.jpg'
 import get_url from './general/getUrl.js'
+import college_map from './general/collegeMap.js'
 export default {
   name: 'personal',
   data () {
@@ -205,6 +206,7 @@ export default {
       { label: '15系', value: 15 },
       { label: '16系', value: 16 },
       { label: '17系', value: 17 },
+      { label: '18系', value: 18 },
       { label: '19系', value: 19 },
       { label: '20系', value: 20 },
       { label: '21系', value: 21 },
@@ -279,6 +281,13 @@ export default {
     }
   },
   created: function () {
+    for (var i = 0; i < this.academy_options.length; i++) {
+      var college = this.academy_options[i]
+      if (college_map[college['value']] !== undefined) {
+        // alert(college_map[college['value']])
+        this.academy_options[i]['label'] = college_map[college['value']]
+      }
+    }
     var personalSelf = this
     var post_url = get_url(this.$store.state.dev, '/sign/logged_in/')
     $.ajax({
@@ -303,23 +312,26 @@ export default {
       type: 'POST',
       data: {'username': personalSelf.username},
       success: function (data) {
-        personalSelf.username = data['user_info']['username']
-        personalSelf.nickname = data['user_info']['nickname']
-        personalSelf.form.nickname = data['user_info']['nickname']
-        personalSelf.form.gender = data['user_info']['gender']
-        if (data['user_info']['gender'] === '1') {
+        var user_info = data['user_info']
+        personalSelf.username = user_info['username']
+        personalSelf.nickname = user_info['nickname']
+        personalSelf.form.nickname = user_info['nickname']
+        personalSelf.form.gender = user_info['gender']
+        if (user_info['gender'] === '1') {
           personalSelf.gender = '男'
-        } else if (data['user_info']['gender'] === '2') {
+        } else if (user_info['gender'] === '2') {
           personalSelf.gender = '女'
-        } else if (data['user_info']['gender'] === '0') {
+        } else if (user_info['gender'] === '0') {
           personalSelf.gender = '保密'
         } else {
           personalSelf.gender = ''
         }
-        personalSelf.form.intro = data['user_info']['intro']
-        personalSelf.personalIntro = data['user_info']['intro']
-        personalSelf.college = data['user_info']['college_id']
-        personalSelf.form.college_id = data['user_info']['college_id']
+        personalSelf.form.intro = user_info['intro']
+        personalSelf.personalIntro = user_info['intro']
+        var college_id = user_info['college_id']
+        var college_name = (college_map.hasOwnProperty(college_id)) ? college_map[college_id] : college_id.toString() + '系'
+        personalSelf.college = college_name
+        personalSelf.form.college_id = college_name
       },
       error: function () {
         alert('fail')
