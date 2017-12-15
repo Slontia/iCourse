@@ -124,7 +124,8 @@ export default {
       img: '',
       rate: 0,
       public_rate: '',
-      rate_disable: true
+      rate_disable: true,
+      rate_count: ''
     }
   },
   methods: {
@@ -229,7 +230,7 @@ export default {
         var personal_grade = data['user_grade']
         _this.rate_count = data['grade_count']
         if (avg === -1) _this.public_rate = 0
-        else _this.public_rate = avg
+        else _this.public_rate = String(avg).substr(0, 3)
         if (personal_grade === -1) {
           _this.rate_disable = false
         } else {

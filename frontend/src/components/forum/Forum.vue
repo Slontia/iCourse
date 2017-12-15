@@ -154,7 +154,7 @@ export default {
       }
     })
     post_data = { 'course_id': this.$route.params.course_id }
-    post_url = get_url(this.$store.state.dev, '/course/course_info/')
+    post_url = get_url(this.$store.state.dev, '/post/latest/idlist/')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
@@ -166,7 +166,7 @@ export default {
         _this.course_name = info.name
       },
       error: function () {
-        _this.message({
+        _this.$message({
           showClose: true,
           type: 'error',
           message: '获取课程信息失败'
