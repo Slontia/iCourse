@@ -227,6 +227,7 @@ export default {
       url: post_url,
       type: 'POST',
       data: post_data,
+      async: false,
       success: function (data) {
         var main_id = Number(_this.$route.params.thread_id)
         if (main_id !== -1) {
@@ -238,11 +239,13 @@ export default {
             url: post_url,
             type: 'POST',
             data: post_data,
+            async: false,
             success: function (data) {
               var main_info = data['info_list']
               _this.main.title = main_info[0].title
               var temp = main_info[0].category
               _this.main.type = (temp === 1 ? '问题讨论' : (temp === 2 ? '学习心得' : '其他'))
+              _this.course_id = main_info[0].course_id
             },
             error: function () {
               _this.$message({
@@ -331,14 +334,14 @@ export default {
         })
       }
     })
-    post_data = { 'course_id': this.$route.params.course_id }
     post_url = get_url(this.$store.state.dev, '/course/course_info/')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
       url: post_url,
       type: 'POST',
-      data: post_data,
+      data: { 'course_id': _this.course_id },
+      async: false,
       success: function (data) {
         var info = data['course_info']
         _this.course_name = info.name
@@ -370,6 +373,7 @@ export default {
   },
   data () {
     return {
+      course_id: '',
       course_name: '',
       response_num: 0,
       response_page_size: 10,

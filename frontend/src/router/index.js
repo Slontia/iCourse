@@ -58,7 +58,7 @@ export default new Router({
       component: Editor
     },
     {
-      path: '/course/page/:course_id/forum/:thread_id',
+      path: '/forum/:thread_id',
       name: 'thread',
       component: Thread
     },

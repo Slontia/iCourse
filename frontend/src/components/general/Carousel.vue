@@ -256,7 +256,7 @@ export default {
     handle_tab_clicked: function (tab, event) {
     },
     enter_thread_button_clicked: function (value) {
-      // 这里进入thread
+      this.$router.push({ path: '/forum/' + value + '/' })
     },
     resource_button_clicked: function (value) {
       console.log(value)

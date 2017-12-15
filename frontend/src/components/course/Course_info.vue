@@ -70,6 +70,7 @@
      <!-- course resource -->
 
      <div class = "course_resource_container">
+      <center><hr style="width:100%" /></center>
         <el-row class="course_resource_head" style="margin-bottom: 20px">
           <el-col :span="24" style="margin-top: 20px">
             <el-col :span="10">
@@ -97,11 +98,13 @@
         </el-row>
         <template v-for="(i,index) in total_resource_line">
               <el-row>
-                <el-col :span="7" :offset="0" v-bind:style="{visibility:card_data[index][0].show}">
-                  <el-tooltip effect="dark" :content="card_data[index][0].title" placement="top">
+                <el-col :span="7" v-bind:style="{visibility:card_data[index][0].show}">
+                  <el-col :span="24">
+                    <el-tooltip effect="dark" :content="card_data[index][0].title" placement="top">
                   <el-button type="text" class="card_button" @click.native="card_clicked(index,0)">
+                  <el-card :body-style="{ padding: '10px'} " class="card">
                     <el-row>
-                      <el-col :span="4">
+                      <el-col :span="4" style="">
                         <img :src="card_data[index][0].img" style="width: 50px; height:50px;"></img>
                       </el-col>
                       <el-col :span="19" :offset="1">
@@ -116,15 +119,18 @@
                       </el-row>
                       </el-col>
                     </el-row>
+                  </el-card>
                 </el-button>
               </el-tooltip>
-              <hr style="border: none;border-top: 1px solid rgb(241,242,244)"/>
                 </el-col>
+                </el-col>
+
                 <el-col :span="7" :offset="1" v-bind:style="{visibility:card_data[index][1].show}">
+                  <el-col :span="24">
                   <el-tooltip effect="dark" :content="card_data[index][1].title" placement="top">
-                  <el-button type="text" class="card_button" @click.native="card_clicked(index,2)">
+                  <el-button type="text" class="card_button" @click.native="card_clicked(index,1)">
                     <el-row>
-                      <el-col :span="4">
+                      <el-col :span="4" style="">
                         <img :src="card_data[index][1].img" style="width: 50px; height:50px;"></img>
                       </el-col>
                       <el-col :span="19" :offset="1">
@@ -141,12 +147,13 @@
                     </el-row>
                 </el-button>
               </el-tooltip>
-              <hr style="border: none;border-top: 1px solid rgb(241,242,244)"/>
+                </el-col>
                 </el-col>
 
                 <el-col :span="7" :offset="1" v-bind:style="{visibility:card_data[index][2].show}">
                   <el-tooltip effect="dark" :content="card_data[index][2].title" placement="top">
                   <el-button type="text" class="card_button" @click.native="card_clicked(index,2)">
+                  
                     <el-row>
                       <el-col :span="4">
                         <img :src="card_data[index][2].img" style="width: 50px; height:50px;"></img>

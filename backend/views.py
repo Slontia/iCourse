@@ -859,7 +859,7 @@ def post_infor_list(request):
             if(result.count() != 1): #if(len(result) != 1):
                 # error
                 continue
-            post = result.values('title', 'category', 'click_count', 'update_time','follow_count', 'main_follow_id', 'intro')[0]
+            post = result.values('course_id', 'title', 'category', 'click_count', 'update_time','follow_count', 'main_follow_id', 'intro')[0]
             post['grade_sum'] = Follow.objects.filter(post_id=item).aggregate(grade_sum=Sum('pos_eva_count'))['grade_sum']
             main_follow = Follow.objects.get(id=post['main_follow_id'])
             post['user_id'] = main_follow.user_id

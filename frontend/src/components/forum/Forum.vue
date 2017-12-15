@@ -244,7 +244,7 @@ export default {
       // handle the filter changing of thread
     },
     enter_thread_button_clicked: function (value) {
-      this.$router.push({ path: '/course/page/' + this.$route.params.course_id + '/forum/'+value+'/' })
+      this.$router.push({ path: '/forum/'+value+'/' })
     },
     post_button_clicked: function () {
       if (this.$store.state.is_login === true) {
