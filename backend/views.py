@@ -146,6 +146,43 @@ def course_information(request):
         course_id = int(data.get('course_id'))
         course_info = interface.course_information(course_id)
         return HttpResponse(json.dumps({'course_info': course_info}, cls=ComplexEncoder))
+
+# Visit Course Interface
+# REQUIRES: the ajax data should be json data {'post_id': post_id}
+# MODIFIES: Post.click_count
+# EFFECTS: return json data {'click_count': click_count}, click_count is a integer
+# URL: /course/click_count/
+@csrf_exempt
+def refresh_click_post_count(request):
+    def refresh(now_time, post_id):
+        post = Post.objects.get(id=post_id)
+        post.click_count += 1
+        post.save()
+        request.session.modified = True
+        request.session['last_post_click'][post_id] = str(now_time)
+        return HttpResponse(json.dumps({'click_count': post.click_count}))
+
+    if(request.method == "POST"):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        post_id = int(data.get('post_id'))
+
+        last_post_click_dict = request.session.get('last_post_click')
+        now_time = datetime.datetime.now()
+        if (last_post_click_dict == None): # have not clicked any posts
+            request.session['last_post_click'] = {}
+            return refresh(now_time, post_id)
+        else:
+            print('last_post: ', last_post_click_dict)
+            last_post_click = last_post_click_dict.get(str(post_id))
+            if (last_post_click != None): # has clicked the post
+                last_click_time = datetime.datetime.strptime(last_post_click[:-7], "%Y-%m-%d %H:%M:%S")
+                if (now_time >= last_click_time + datetime.timedelta(hours=24)):
+                    return refresh(now_time, post_id)
+            else: # have not clicked the post
+                return refresh(now_time, post_id)
+        return HttpResponse(json.dumps({'click_count': Post.objects.get(id=post_id).click_count}))
+
 '''
 def course_visit_count(request):
     if(request.method == "POST"):
@@ -708,6 +745,7 @@ def follow_publish(request):
             follow.save()
             post = Post.objects.get(id=post_id) # renew post.follow_count
             post.follow_count += 1
+            post.update_time = datetime.datetime.now()
             post.save()
         else:
             return HttpResponse(json.dumps({'error': 1}))
@@ -829,6 +867,7 @@ def post_infor_list(request):
             info_list.append(post)
         return HttpResponse(json.dumps({'info_list':info_list},cls=ComplexEncoder))
 
+
 # Get Follow Id List Interface
 # URL: /follow/id/list/
 @csrf_exempt
@@ -882,7 +921,7 @@ def follow_info_list(request):
                 else:
                     follow['evaluated_grade'] = result[0]
             info_list.append(follow)
-            print(info_list)
+            # print(info_list)
         return HttpResponse(json.dumps({'info_list':info_list},cls=ComplexEncoder))
 
 # get follow content by user_id and post_id
@@ -1113,6 +1152,8 @@ def course_contri_list(request):
             for j in range(0, len(posts_follow)): #遍历该帖子下的所有跟帖
                 pos_eva_count = posts_follow[j].pos_eva_count
                 neg_eav_count = posts_follow[j].neg_eva_count
+                if ((pos_eva_count+neg_eav_count)==0):
+                    cintinue
                 if (not posts_follow[j].user_id in dict):
                     dict[posts_follow[j].user_id] = float(pos_eva_count*pos_eva_count/(pos_eva_count+neg_eav_count))
                 else:
@@ -1447,6 +1488,7 @@ def most_download_resource_of_course(request):
 
 #---------------------------------------------------------------
 # 同袍的登录接口，跳转到同袍的登录界面，感觉不需要POST
+#@csrf_exempt
 def login_tongpao(request):
     url = 'https://tongpao.qinix.com/auths/send_params'
     headers = {'Tongpao-Auth-appid': 'c643da987bdc3ec74efbb0ef7927f7ea', 'Tongpao-Auth-secret': 'GNcP_Pa0Z3nFjjsQa8sd8VCUmUEiIZBa6Rue682LDsMyUIx7iwPplQ'}
@@ -1465,8 +1507,8 @@ def login_tongpao(request):
     json_code = json.loads(r.text)
     print(json_code)
     token = str(json_code['token'])
-    print(token)
-    return HttpResponseRedirect("https://tongpao.qinix.com/auths/login?token="+token)
+    print(token) #返回这个token给前端跳？
+    return HttpResponseRedirect("https://tongpao.qinix.com/auths/login?token="+token) #HttpResponse(json.dumps({'error': 0}))
 
 #---------------------------------------------------------------
 # 获取同袍用户信息的接口，目前是GET，可以post回信息
@@ -1481,11 +1523,6 @@ def tongpao(request):
     data = {
         "code":code,
     }
-#    data_str = str(data)
-#    print(data_str)
-#    data_str = data_str.replace("'", "\"")
-#    print(data_str)
-#    data = eval(data_str)
     print(data)
     r = requests.post(url, headers = headers, data=data)
     print(r.text)
@@ -1495,7 +1532,12 @@ def tongpao(request):
     print("$$$", type(profile))
 
     student_id = profile["student_id"]
-    
+
+    students = User.objects.filter(username = student_id)
+    if (len(students) > 0): #之前已经登录过
+        print(student_id, " Has Registered!")
+        return HttpResponse(json.dumps({'error':0}))
+
     tongpao_username = profile["tongpao_username"]
     phone_number = profile["phone_number"]
     print(phone_number)
@@ -1543,26 +1585,62 @@ def tongpao(request):
     tp_u.identification = identification
     tp_u.save()
 
-#    user=User()
-#    user.username = username
-#    user.set_password(password1)
-#            user.email = email
-#            user.is_active = False
-#            user.save()
-#            #用户扩展信息 profile
-#            profile=UserProfile()
-#            profile.user_id = user.id # user_id
-#            profile.gender = gender
-#            profile.nickname = nickname
-#            profile.intro = intro
-#            profile.save()
-#
-#
-#    User =
-#    insert into auth_user (username,password,is_superuser,first_name,last_name,email,is_staff,is_active,date_joined) values('15000000','',0,'TongPao','','123@qq.com',0,1,'');
-#
-#
     return HttpResponseRedirect("/")
     
 #return HttpResponseRedirect("/")#http://127.0.0.1:8000/")
+
+
+# 忘记密码-提交申请-发送邮件
+# URL:/user/forget/password/send/
+@csrf_exempt
+def user_forget_password_send(request):
+    if(request.method == 'POST'):
+        email = str(request.POST.get('email'))
+        send_reset_pswd_email(email, 'reset pswd')
+
+# 忘记密码-重置密码
+# URL:/user/forget/password/set/
+@csrf_exempt
+def user_forget_password_set(request):
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        email = str(data.get('email'))
+        code = str(data.get('code'))
+        new_pw1 = str(data.get('new_pw1'))
+        new_pw2 = str(data.get('new_pw2'))
+        if(new_pw1 != new_pw2):
+            return HttpResponse(json.dumps({'error': 1}))
+        all_records = EmailVerifyRecord.objects.filter(email=email, code=code, send_type='reset pswd')
+        if(len(all_records) < 1):
+            return HttpResponse(json.dumps({'error': 1}))
+        user = User.objects.get(email=email)
+        user.set_password(new_pw1)
+        user.save()
+        return HttpResponse(json.dumps({'error': 0}))
+
+# 修改密码
+# URL: /user/modify/password/
+@csrf_exempt
+def user_modify_password(request):
+    if(request.method == 'POST'):
+        if(not request.user.is_authenticated()):
+            return HttpResponse(json.dumps({'error': 1}))
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        user_id = request.user.id
+        old_pw = str(data.get('old_pw'))
+        new_pw1 = str(data.get('new_pw1'))
+        new_pw2 = str(data.get('new_pw2'))
+        if(new_pw1 != new_pw2):
+            return HttpResponse(json.dumps({'error': 1}))
+        user = User.objects.get(id=user_id)
+        cb = CustomBackend()
+        result = cb.authenticate(username=user.username, password=old_pw)
+        if(result is not None and result.is_active):
+            user.set_password(new_pw1)
+            user.save()
+            auth.logout(request)
+            return HttpResponse(json.dumps({'error': 0}))
+        return HttpResponse(json.dumps({'error': 1}))
 

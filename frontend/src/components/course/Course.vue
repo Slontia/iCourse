@@ -72,6 +72,7 @@
 import Header from '../general/Header'
 // 请不要删除和get_url相关的行，如果你真的需要请告诉我下原因。by xindetai
 import get_url from '../general/getUrl'
+import college_map from '../general/collegeMap'
 import $ from 'jquery'
 export default {
   name: 'Course',
@@ -89,33 +90,33 @@ export default {
       },
       {
         label: '开设院系',
-        children: [{ label: '1系' },
-                   { label: '2系' },
-                   { label: '3系' },
-                   { label: '4系' },
-                   { label: '5系' },
-                   { label: '6系' },
-                   { label: '7系' },
-                   { label: '8系' },
-                   { label: '9系' },
-                   { label: '10系' },
-                   { label: '11系' },
-                   { label: '12系' },
-                   { label: '13系' },
-                   { label: '14系' },
-                   { label: '15系' },
-                   { label: '16系' },
-                   { label: '17系' },
-                   { label: '19系' },
-                   { label: '20系' },
-                   { label: '21系' },
-                   { label: '23系' },
-                   { label: '24系' },
-                   { label: '25系' },
-                   { label: '26系' },
-                   { label: '27系' },
-                   { label: '28系' },
-                   { label: '29系' },
+        children: [{ label: '材料科学与工程学院' },
+                   { label: '电子信息工程学院' },
+                   { label: '自动化科学与电气工程学院' },
+                   { label: '能源与动力工程学院' },
+                   { label: '航空科学与工程学院' },
+                   { label: '计算机学院' },
+                   { label: '机械工程及自动化学院' },
+                   { label: '经济管理学院' },
+                   { label: '数学与系统科学学院' },
+                   { label: '生物与医学工程学院' },
+                   { label: '人文社会科学学院' },
+                   { label: '外国语学院' },
+                   { label: '交通科学与工程学院' },
+                   { label: '可靠性与系统工程学院' },
+                   { label: '宇航学院' },
+                   { label: '飞行学院' },
+                   { label: '仪器科学与光电工程学院' },
+                   { label: '物理科学与核能工程学院' },
+                   { label: '法学院' },
+                   { label: '软件学院' },
+                   { label: '高等工程学院' },
+                   { label: '高等工程学院' },
+                   { label: '中法工程师学院' },
+                   { label: '新媒体艺术与设计学院' },
+                   { label: '化学与环境学院' },
+                   { label: '思想政治理论学院' },
+                   { label: '人文与社会科学高等研究' },
                    { label: '30系' },
                    { label: '32系' },
                    { label: '33系' },
@@ -159,7 +160,15 @@ export default {
         this.load_courses = true
         var self = this
         if (node.parent.label === '开设院系') {
-          var temp1 = { 'college_id': node.label.substr(0, node.label.length-1) }
+          var college_name = node.label
+          var college_id = -1
+          for (var id in college_map) {
+            if (college_map[id] === college_name) {
+              college_id = id
+              break
+            }
+          }
+          var temp1 = { 'college_id': (college_id === -1) ? node.label.substr(0, node.label.length-1) : college_id }
           var post_url = get_url(this.$store.state.dev, '/course/college_course/')
           $.ajax({
             ContentType: 'application/json; charset=utf-8',
@@ -174,10 +183,12 @@ export default {
               self.storage = []
               self.total = info_list.length
               for (var i = 0; i < info_list.length; i++) {
+                var college_id = info_list[i]['college_id']
+                var college_info = (college_map.hasOwnProperty(college_id)) ? college_map[college_id] : college_id.toString()
                 var item = {
                   'course_name': info_list[i]['name'],
                   'course_id': info_list[i]['id'],
-                  'course_academy': info_list[i]['college_id'],
+                  'course_academy': college_info,
                   'course_hours': info_list[i]['hours'],
                   'course_credit': info_list[i]['credit'],
                   'course_class': self.course_class_dict[info_list[i]['class_id'] - 1]
@@ -271,10 +282,12 @@ export default {
             self.storage = []
             for (var i = 0; i < data['query_list'].length; i++) {
               var course = data['query_list'][i]
+              var college_id = course['college_id']
+              var college_info = (college_map.hasOwnProperty(college_id)) ? college_map[college_id] : college_id.toString()
               self.storage.push({
                 'course_name': course['name'],
                 'course_id': course['id'],
-                'course_academy': course['college_id'],
+                'course_academy': college_info,
                 'course_hours': course['hours'],
                 'course_credit': course['credit'],
                 'course_class': course['class_id']

@@ -1,6 +1,3 @@
-# 方科栋的代码我暂时先注释了 张安澜 2017.11.1
-# 方科栋的代码我先删除了 方科栋2017.12.08
-
 from django.db import models
 from django.contrib.auth.models import User
 import datetime
@@ -128,7 +125,7 @@ class Post(models.Model):
     category = models.IntegerField(blank=False)
     title = models.CharField(max_length=30, blank=False)
     main_follow_id = models.IntegerField()
-    update_time = models.DateTimeField(auto_now=True)
+    update_time = models.DateTimeField(auto_now_add=True)
     follow_count = models.IntegerField(default=0)
     click_count = models.IntegerField(default=0)
     intro = models.CharField(max_length=100)
@@ -141,7 +138,7 @@ class Follow(models.Model):
     user_id = models.IntegerField(blank=False)
     content = models.TextField(blank=False)
     post_time = models.DateTimeField(auto_now_add=True)
-    edit_time = models.DateTimeField(auto_now=True)
+    edit_time = models.DateTimeField(auto_now_add=True)
     editor = models.IntegerField(blank=False)
     is_main = models.BooleanField(blank=False)
     pos_eva_count = models.IntegerField(default=0)

@@ -210,6 +210,7 @@ import ResourceDialog from '../general/ResourceDialog.vue'
 import $ from 'jquery'
 // 请不要删除和get_url相关的行，如果你真的需要请告诉我下原因。by xindetai
 import get_url from '../general/getUrl.js'
+import college_map from '../general/collegeMap.js'
 
 export default {
   name: 'course_info',
@@ -227,9 +228,11 @@ export default {
       data: postData,
       success: function (data) {
         var info = data['course_info']
+        var college_id = info['college_id']
+        var college_info = (college_map.hasOwnProperty(college_id)) ? college_map[college_id] : college_id.toString()
         self.course_name = info['name']
         self.teacher = undefined
-        self.academy = info['college_id']
+        self.academy = college_info
         self.hours = info['hours']
         self.intro_info = undefined
         self.$store.state.course_code = info['course_code']
