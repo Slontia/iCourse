@@ -512,12 +512,9 @@ export default {
         alert('拉取最新资源列表失败')
       }
     })
-
     // hot resource
-    var id_list = []
-    var post_data = { 'course_id': course_id, 'number': this.total_resource_line*2 }
-    var self = this
-    var post_url = get_url(this.$store.state.dev, '/course/resource/download/most/')
+    post_data = { 'course_id': course_id, 'number': this.total_resource_line*2 }
+    post_url = get_url(this.$store.state.dev, '/course/resource/download/most/info/')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
@@ -525,25 +522,10 @@ export default {
       type: 'POST',
       data: post_data,
       success: function (data) {
-        id_list = data['id_list']
-      },
-      error: function () {
-        alert('拉取热门资源列表失败')
-      }
-    })
-
-
-    $.ajax({
-      ContentType: 'application/json; charset=utf-8',
-      dataType: 'json',
-      url: post_url,
-      type: 'POST',
-      data: post_data,
-      success: function (data) {
-        var info = data['result']
+        var info = data['info_list']
         for (var i = 0; i < info.length; i++) {
-          let col = i%2
-          let row = i/2
+          var col = Math.floor(i % 2)
+          var row = Math.floor(i / 2)
           self.card_data[row][col].title=info[i]['name']
           self.card_data[row][col].uploader=info[i]['username']
           self.card_data[row][col].frequency=info[i]['download_count']
@@ -554,7 +536,7 @@ export default {
             var temp = '.'+t+'$'
             var reg = new RegExp(temp)
             if (reg.test(name)) {
-              self.card_data[i/2][col].img = self.img[t]
+              self.card_data[row][col].img = self.img[t]
               break
             }
           }
@@ -564,7 +546,6 @@ export default {
         alert('拉取热门资源列表失败')
       }
     })
-    
     // course contribution
     var post_url1 = get_url(this.$store.state.dev, '/course/contri/')
     var post_data1 = { course_id: this.$route.params.course_id }

@@ -1102,7 +1102,7 @@ def avg_score(resource_id):
     result2 = Resource_Evaluation.objects.filter(resource_id = resource_id)
     tot_grade = 0
     avg_grade = -1 #没有人评价，平均值默认值为-1
-    if (result2.cout() != 0): #len(result2)
+    if (result2.count() != 0): #len(result2)
         for i in range(0, result2.count()): #len(result2)
             tot_grade += result2[i].grade
             avg_grade = float(tot_grade) / float(result2.count()) #float(len(result2)
@@ -1517,9 +1517,35 @@ def most_download_resource_of_course(request):
     return HttpResponse(json.dumps({'id_list': id_list}))
 
 # get most downloaded resource id list of one course
-# URL:/course/resource/download/most/
+# URL:/course/resource/download/most/info/
 @csrf_exempt
-latest_resource_info
+def most_download_resource_of_course_info(request):
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        course_id = int(data.get('course_id'))
+        number = int(data.get('number'))
+        course_code = Course.objects.get(id=course_id).course_code
+        result = Resource.objects.filter(course_code=course_code).order_by('-download_count')
+        count = 0
+        info_list = []
+        for item in result:
+            info = {}
+            u_id = item.upload_user_id
+            u_i = User.objects.filter(id = u_id)
+            if (u_i.count() == 0):
+                i = i + 1
+                continue
+            u_info = User.objects.get(id = u_id)
+            info["username"] = u_info.username
+            info["download_count"] = item.download_count
+            info["resource_id"] = item.id
+            info["name"] = item.name
+            info_list.append(info)
+            count += 1
+            if(count == number):
+                break
+    return HttpResponse(json.dumps({'info_list': info_list}))
 #---------------------------------------------------------------
 # 同袍的登录接口，跳转到同袍的登录界面，感觉不需要POST
 #@csrf_exempt

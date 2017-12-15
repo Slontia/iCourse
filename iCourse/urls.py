@@ -40,6 +40,8 @@ urlpatterns = [
     url(r'^resource/latest/$',backend_views.latest_resource_info,name='latest_resource_info'),
     url(r'^resourceUpload/$',backend_views.resourceUpload,name='resourceUpload'),
     url(r'^resource/download_count/$',backend_views.refresh_download_resource_count),
+    url(r'^course/resource/download/most/info/$',backend_views.most_download_resource_of_course_info),
+    
     url(r'^user/information/$', backend_views.user_information, name='user_information'),
     url(r'^course/contri/$', backend_views.course_contri_list, name='course_contri_list'),
     # test by ohazyi(GET)
