@@ -1454,6 +1454,7 @@ def upload_user_photo(request):
 # 获取最多下载量的资源id列表
 # REQUIRES:         变量名|类型|说明
 #                   number|int|资源数量
+#               college_id|int|检索范围，即院系代号，-1为全站检索
 # MODIFIES: None
 # EFFECTS:     result|list[dict{}]|返回资源信息列表
 #                   资源信息字典：
@@ -1469,9 +1470,22 @@ def most_download_resource_list(request):
         data = json.dumps(request.POST)
         data = json.loads(data)
         
-        number = int(data.get('number')) #str->int
+        number = int(data.get('number')) #str->int #int(request.GET["number"])
+
+        college_id = int(data.get('college_id')) #int(request.GET["college_id"])
         
-        resources = Resource.objects.filter(~Q(download_count = 0)).order_by('-download_count') #取下载量不等于0的filter,然后按下载量降序排序
+    #    resources = Resource.objects.filter(~Q(download_count = 0)).order_by('-download_count') #取下载量不等于0的filter,然后按下载量降序排序
+
+        college_id_str = str(college_id)
+        if (len(college_id_str)==1):
+            college_id_str = "0" + str(college_id)
+        print(college_id_str)
+        if (college_id == -1): #统计全站的资源
+            resources = Resource.objects.filter().order_by('-download_count') #course_code__contains="01"
+        else:
+            resources = Resource.objects.filter(Q(course_code__regex="^."+college_id_str)|Q(course_code__regex="^..."+college_id_str)).order_by('-download_count') #course_code__contains="01"
+
+
         ans = []
         cnt = 0
         i = 0
@@ -1485,13 +1499,15 @@ def most_download_resource_list(request):
                 i = i+1
                 continue
             u_info = User.objects.get(id = u_id)
-            cnt = cnt+1
-            i = i+1
+
             dict["username"] = User.objects.get(id = u_id).username
             dict["download_count"] = resources[i].download_count
             dict["resource_id"] = resources[i].id
             dict["name"] = resources[i].name
+            print(dict)
             ans.append(dict)
+            cnt = cnt+1
+            i = i+1
         print(ans)
         return HttpResponse(json.dumps({'result': ans}))
 
@@ -1713,6 +1729,7 @@ def get_classification(s):
     if (s[0]=='B'): #B3I063110
         return (s[3:5])  #F06D3750
     return (s[1:3])
+
 #---------------------------------------------------------------
 # 获取最新上传的资源信息列表
 # REQUIRES:         变量名|类型|说明
@@ -1732,16 +1749,16 @@ def get_classification(s):
 #          download_count|int|下载量
 #                    name|str|资源名称
 @csrf_exempt
-def most_upload_latest_list(request):
+def latest_upload_resource_list(request):
     
     if(request.method == 'POST'):
         data = json.dumps(request.POST)
         data = json.loads(data)
         
+        number = int(data.get('number')) #int(request.GET["number"])
+        college_id = int(data.get('college_id')) #int(request.GET["college_id"])
+
         t1 = time.clock()
-        
-        number = int(data.get('number'))
-        college_id = int(data.get('college_id'))
 
         college_id_str = str(college_id)
         if (len(college_id_str)==1):
@@ -1778,13 +1795,14 @@ def most_upload_latest_list(request):
     #        if (c_id != college_id):
     #            i = i+1
     #            continue
-            cnt = cnt+1
-            i = i+1
+
             dict["username"] = User.objects.get(id = u_id).username
             dict["download_count"] = resources[i].download_count
             dict["resource_id"] = resources[i].id
             dict["name"] = resources[i].name
             ans.append(dict)
+            cnt = cnt+1
+            i = i+1
         print(ans)
         t2 = time.clock()
         print("Total Time: ",t2-t1)
