@@ -1,4 +1,12 @@
-# Beta阶段接口说明文档
+﻿# Beta阶段接口说明文档
+12.15更新：
+对以下接口添加了院系的范围限定：
+/post/hot/idlist/
+/post/latest/idlist/
+/resource/upload/latest/
+/resource/download/most/
+补全了接口文档
+
 12.7更新：
 新增“课程收藏”
 
@@ -133,6 +141,36 @@ contri_list|list[dict{}]|个人贡献度字典，按照contri从高到低排序
 course_id|int|课程id
 course_name|str|课程名
 contri|float|贡献度（保留一位小数）
+
+
+
+### 1.8 上传用户头像
+**函数名：** upload\_user\_photo
+**URL：** /user/modify/photo
+**前端**
+上传头像
+
+**后端**
+
+变量名|类型|说明
+:-:|:-:|:-:
+error|int|0:成功 1:失败
+
+### 1.9 登录同袍
+**函数名：** login_tongpao
+**URL：** /login_tongpao/
+**前端**
+无需传递数据
+
+**后端**
+
+变量名|类型|说明
+:-:|:-:|:-:
+url|str|认证地址
+
+### 1.10 获取同袍用户信息接口
+**函数名：** tongpao
+**URL：** /tongpao/
 
 ## 2. 课程相关
 ### 2.1 保存搜索记录
@@ -338,6 +376,21 @@ user_id|int|用户id
 :-:|:-:|:-:
 error|int|0:成功<br>1:失败
 
+### 2.13 获取课程最热资源id列表
+**函数名：** most\_download\_resource\_of\_course
+**URL：** /course/resource/download/most/
+**前端**
+
+变量名|类型|说明
+:-:|:-:|:-:
+course_id|int|课程id
+
+**后端**
+
+变量名|类型|说明
+:-:|:-:|:-:
+id_list|int|资源id列表
+
 
 ## 3. 资源相关
 ### 3.1 获取某一类别资源（修改）
@@ -487,6 +540,51 @@ time|datetime|发布时间
 变量名|类型|说明
 :-:|:-:|:-:
 number|int|资源数量
+college_id|int|检索范围，即院系代号，-1为全站检索
+
+**后端**
+变量名|类型|说明
+:-:|:-:|:-:
+result|list[dict{}]|返回资源信息列表
+
+资源信息字典：
+变量名|类型|说明
+:-:|:-:|:-:
+resource_id|int|资源id
+username|str|上传者
+download_count|int|下载量
+name|str|资源名称
+
+### 3.10 获取最多下载量的资源信息列表
+**函数名：** most\_download\_resource\_list
+**URL：** /resource/download/most/
+**前端**
+变量名|类型|说明
+:-:|:-:|:-:
+number|int|资源数量
+college_id|int|检索范围，即院系代号，-1为全站检索
+
+**后端**
+变量名|类型|说明
+:-:|:-:|:-:
+result|list[dict{}]|返回资源信息列表
+
+资源信息字典：
+变量名|类型|说明
+:-:|:-:|:-:
+resource_id|int|资源id
+username|str|上传者
+download_count|int|下载量
+name|str|资源名称
+
+### 3.11 获取最新上传的资源信息列表
+**函数名：** most\_upload\_latest\_list
+**URL：** /resource/upload/latest/
+**前端**
+变量名|类型|说明
+:-:|:-:|:-:
+number|int|资源数量
+college_id|int|检索范围，即院系代号，-1为全站检索
 
 **后端**
 变量名|类型|说明
@@ -502,23 +600,12 @@ download_count|int|下载量
 name|str|资源名称
 
 
-### 资源简介修改
-**函数名：** 
-**URL：** /
-**前端**
-变量名|类型|说明
-:-:|:-:|:-:
-
-**后端**
-变量名|类型|说明
-:-:|:-:|:-:
-
 ## 4. 消息
 ### 举报
 ### 审核
 
 ## 5. 博文
-### 发表博文
+### 5.1 发表博文
 **函数名：** posting_publish
 **URL：** /post/posting/publish/
 **前端**
@@ -538,7 +625,7 @@ editor|int|编辑器代码，0=quill,1=markdown
 :-:|:-:|:-:
 error|int|0:成功<br>1:失败
 
-### 跟帖
+### 5.2 跟帖
 **函数名：** follow_publish
 **URL：** /post/follow/publish/
 **前端**
@@ -556,7 +643,7 @@ published|bool|是否已经发布
 :-:|:-:|:-:
 error|int|0:成功<br>1:失败
 
-### 评论
+### 5.3 评论
 **函数名：** comment_publish
 **URL：** /post/comment/publish/
 **前端**
@@ -573,7 +660,7 @@ post\_time|datetime|发表时间
 :-:|:-:|:-:
 error|int|0:成功<br>1:失败
 
-### 赞同/反对
+### 5.4 赞同/反对
 **函数名：** follow_evaluate
 **URL：** /post/follow/evaluate
 **前端**
@@ -588,7 +675,7 @@ grade|int|评价，1表赞同，-1表反对
 :-:|:-:|:-:
 error|int|0:成功<br>1:失败
 
-### 获取课程讨论版帖子id列表
+### 5.5 获取课程讨论版帖子id列表
 **函数名：** post\_id\_list
 **URL：** /post/id/list/
 **前端**
@@ -601,7 +688,7 @@ course_id|int|课程id
 :-:|:-:|:-:
 id_list|list[int]|该课程下所有帖子的id列表，按照更新时间排序
 
-### 获取帖子信息列表（评价情况、跟帖数、*顶楼部分内容）
+### 5.6 获取帖子信息列表（评价情况、跟帖数、*顶楼部分内容）
 **函数名：** post\_infor\_list
 **URL：** /post/information/list/
 **前端**
@@ -630,7 +717,7 @@ content|textfield|顶楼内容（纯文本）
 grade_sum|int|所有跟帖的赞同数总和
 follow_count|int|跟帖数（顶楼不算在内）
 
-### 获取跟帖id列表
+### 5.7 获取跟帖id列表
 **函数名：** follow\_id\_list
 **URL：** /follow/id/list/
 **前端**
@@ -645,7 +732,7 @@ main_id|int|主楼id
 id\_list|list[int]|非主楼id列表，按照（赞同数-反对数）排序
 
 
-### 获取跟帖信息列表（内容、评价情况、是否为发布人等）
+### 5.8 获取跟帖信息列表（内容、评价情况、是否为发布人等）
 **函数名：** follow\_info\_list
 **URL：** /follow/info/list/
 **前端**
@@ -671,7 +758,7 @@ post_time|datetime|发布时间
 edit_time|datetime|编辑时间
 content|textfield|内容
 
-### 获取用户跟帖
+### 5.9 获取用户跟帖
 **函数名：** userid\_postid\_get\_follow
 **URL：** /follow/get/userpost/
 **前端**
@@ -686,7 +773,7 @@ user_id|int|用户id
 content|textfield|内容
 editor|int|编辑器编号
 
-### 获取跟帖id列表
+### 5.10 获取跟帖id列表
 **函数名：** comment\_id\_list
 **URL：** /comment/id/list/
 **前端**
@@ -699,7 +786,7 @@ follow_id|int|跟帖id
 :-:|:-:|:-:
 id\_list|list[int]|评论id列表，按照发布时间由新到旧排序
 
-### 获取评论信息列表
+### 5.11 获取评论信息列表
 **函数名：** comment\_info\_list
 **URL：** /comment/info/list/
 **前端**
@@ -722,3 +809,30 @@ to\_username|str|被回复者用户名（冗余）
 post_time|datetime|发布时间
 content|textfield|内容
 
+### 5.12 获取热门post id列表
+**函数名：** post\_id\_list\_by\_click\_count
+**URL：** /post/hot/idlist/
+**前端**
+变量名|类型|说明
+:-:|:-:|:-:
+list_len|int|返回list长度
+college_id|int|院系id，-1为全站
+
+**后端**
+变量名|类型|说明
+:-:|:-:|:-:
+id_list|int|post id列表，按照点击量由高到低排序
+
+### 5.13 获取最新post id列表
+**函数名：** post\_id\_list\_by\_update\_count
+**URL：** /post/latest/idlist/
+**前端**
+变量名|类型|说明
+:-:|:-:|:-:
+list_len|int|返回list长度
+college_id|int|院系id，-1为全站
+
+**后端**
+变量名|类型|说明
+:-:|:-:|:-:
+id\_list|int|post id列表，按照update\_time由高到低排序
