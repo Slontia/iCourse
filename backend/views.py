@@ -736,7 +736,7 @@ def follow_publish(request):
         follow_form = FollowForm({'post_id':post_id, 'user_id':user_id, 'content':content, 'editor':editor})
         if(follow_form.is_valid()):
             result = Follow.objects.filter(post_id=post_id,user_id=user_id)
-            if(len(result) > 0):
+            if(result.count() > 0): #if(len(result) > 0):
                 return HttpResponse(json.dumps({'error': 1}))
             follow = Follow()
             follow.post_id = post_id
@@ -790,7 +790,7 @@ def follow_evaluate(request):
         follow_evaluation_form = FollowEvaluationForm({'user_id':user_id, 'follow_id':follow_id, 'grade':grade})
         if(follow_evaluation_form.is_valid()):
             result = Follow_Evaluation.objects.filter(user_id=user_id, follow_id=follow_id)
-            if(len(result) > 0): # if the user has evaluated the follow
+            if(result.count() > 0): # if the user has evaluated the follow #if(len(result) > 0):
                 return HttpResponse(json.dumps({'error': 1}))
             else:
                 follow_evaluation = Follow_Evaluation()
@@ -856,7 +856,7 @@ def post_infor_list(request):
         for item in id_list:
             item = int(item)
             result = Post.objects.filter(id=item)
-            if(len(result) != 1):
+            if(result.count() != 1): #if(len(result) != 1):
                 # error
                 continue
             post = result.values('title', 'category', 'click_count', 'update_time','follow_count', 'main_follow_id', 'intro')[0]
@@ -879,7 +879,7 @@ def follow_id_list(request):
         post_id = int(request.POST.get('post_id'))
         print(post_id)
         result = Post.objects.filter(id=post_id)
-        if(len(result) != 1):
+        if(result.count() != 1):#if(len(result) != 1):
             return HttpResponse(json.dumps({'main_id':-1, 'id_list':[]}))
         main_id = result[0].main_follow_id
         print(main_id)
@@ -906,7 +906,7 @@ def follow_info_list(request):
         for item in id_list:
             item = int(item)
             result = Follow.objects.filter(id=item)
-            if(len(result) != 1):
+            if(result.count() != 1):#if(len(result) != 1):
                 # error
                 continue
             follow = result.values('user_id', 'post_time', 'edit_time', 'content', 'pos_eva_count', 'neg_eva_count')[0]
@@ -919,7 +919,7 @@ def follow_info_list(request):
                 follow['evaluated_grade'] = 0
             else:
                 result = Follow_Evaluation.objects.filter(user_id=cur_user_id, follow_id=item).values_list('grade', flat=True)
-                if(len(result) == 0):
+                if(result.count() == 0):#if(len(result) == 0):
                     follow['evaluated_grade'] = 0
                 else:
                     follow['evaluated_grade'] = result[0]
@@ -936,7 +936,7 @@ def userid_postid_get_follow(request):
         post_id = int(data.get('post_id'))
         user_id = int(data.get('user_id'))
         result = Follow.objects.filter(post_id=post_id,user_id=user_id).values('content', 'editor')
-        if(len(result) != 1):
+        if(result.count() != 1):#if(len(result) != 1):
             # error
             return HttpResponse(json.dumps({'content':'', 'editor':-1}))
         return HttpResponse(json.dumps({'content':result[0]['content'], 'editor':result[0]['editor']}))
@@ -966,7 +966,7 @@ def comment_info_list(request):
         for item in id_list:
             item = int(item)
             result = Follow_Comment.objects.filter(id=item)
-            if(len(result) != 1):
+            if(result.count() != 1):#if(len(result) != 1):
                 # error
                 continue;
             follow_comment = result.values('user_id', 'to_comment_id', 'post_time', 'content')[0]
@@ -1082,19 +1082,19 @@ def resource_evaluation_grade_count(request):
         result = Resource_Evaluation.objects.filter(resource_id = resource_id, user_id = user_id)
         
         user_grade = -1 #没有人评价，个人评价值默认为-1
-        if (len(result) != 0):
+        if (result.count() != 0):#if (len(result) != 0):
             user_grade = result[0].grade #每个人只允许评价一次，即防止刷评价现象，所以只要去除result[0]
     
         result2 = Resource_Evaluation.objects.filter(resource_id = resource_id)
         
         tot_grade = 0
         avg_grade = -1 #没有人评价，平均值默认值为-1
-        if (len(result2) != 0):
-            for i in range(0, len(result2)):
+        if (result2.count() != 0): #if (len(result2) != 0):
+            for i in range(0, result2.count()): #for i in range(0, len(result2)):
                 tot_grade += result2[i].grade
-                avg_grade = float(tot_grade) / float(len(result2))
+                avg_grade = float(tot_grade) / float(result2.count()) #len(result2)
         print("tot_grade = ",tot_grade,"avg_grade = ", avg_grade)
-        return HttpResponse(json.dumps({'avg_grade': avg_grade, 'user_grade': user_grade, 'grade_count': len(result2)}))
+        return HttpResponse(json.dumps({'avg_grade': avg_grade, 'user_grade': user_grade, 'grade_count': result2.count()})) #len(result2)
 
 
 #求某个资源的评分的平均分
@@ -1102,10 +1102,10 @@ def avg_score(resource_id):
     result2 = Resource_Evaluation.objects.filter(resource_id = resource_id)
     tot_grade = 0
     avg_grade = -1 #没有人评价，平均值默认值为-1
-    if (len(result2) != 0):
-        for i in range(0, len(result2)):
+    if (result2.cout() != 0): #len(result2)
+        for i in range(0, result2.count()): #len(result2)
             tot_grade += result2[i].grade
-            avg_grade = float(tot_grade) / float(len(result2))
+            avg_grade = float(tot_grade) / float(result2.count()) #float(len(result2)
     print("tot_grade = ",tot_grade,"avg_grade = ", avg_grade)
     return avg_grade
 
@@ -1145,9 +1145,9 @@ def course_contri_list(request):
 
         users = User.objects.filter()
         resources = Resource.objects.filter(course_code = course_code)
-        print(len(resources))
+        print(resources.count()) #len(resources)
         dict = {}
-        for i in range(0, len(resources)): #遍历所有资源
+        for i in range(0, resources.count()): #遍历所有资源 #len(resources)
             download_count = resources[i].download_count
             grade = avg_score(resources[i].id)
             if (grade == -1):
@@ -1161,7 +1161,7 @@ def course_contri_list(request):
 
 
         posts = Post.objects.filter(course_id = course_id)
-        for i in range(0, len(posts)): #遍历所有帖子
+        for i in range(0, posts.count()): #遍历所有帖子 #len(posts)
             click_count = posts[i].click_count
             tmp = Follow.objects.filter(id = posts[i].main_follow_id)
             
@@ -1172,7 +1172,7 @@ def course_contri_list(request):
                 dict[post_user_id] = dict[post_user_id] + float(click_count/10.0)
 
             posts_follow = Follow.objects.filter(post_id = posts[i].id)
-            for j in range(0, len(posts_follow)): #遍历该帖子下的所有跟帖
+            for j in range(0, posts_follow.count()): #遍历该帖子下的所有跟帖 #len(posts_follow
                 pos_eva_count = posts_follow[j].pos_eva_count
                 neg_eav_count = posts_follow[j].neg_eva_count
                 if ((pos_eva_count+neg_eav_count)==0):
@@ -1228,7 +1228,7 @@ def resource_class_id_list(request):
             
         resources = Resource.objects.filter(course_code = course_code)
         ans = []
-        for i in range(0, len(resources)):
+        for i in range(0, resources.count()): #len(resources)
             name = resources[i].name
             pos = name.rfind('.')
             if (pos == -1):
@@ -1263,7 +1263,7 @@ def course_type_list(request):
         
         courses = Course.objects.filter(class_id = type_id)
         ans = []
-        for i in range(0, len(courses)):
+        for i in range(0, courses.count()): #len(courses)
             course_info = {}
             course_info["id"] = courses[i].id
             course_info["name"] = courses[i].name
@@ -1297,7 +1297,7 @@ def resource_like(request):
         user_id = str(data.get('user_id'))
         
         likes = R_Resource_User_Like.objects.filter(resource_id = resource_id, user_id = user_id) #filter相当于SQL中的WHERE，可设置条件过滤结果
-        if (len(likes) > 0): #之前喜欢过，报错
+        if (likes.count() > 0): #之前喜欢过，报错 #len(likes)
             return HttpResponse(json.dumps({'error':1}))
         
         like = R_Resource_User_Like()
@@ -1324,9 +1324,9 @@ def resource_like_count(request):
         user_id = str(data.get('user_id'))
                     
         likes = R_Resource_User_Like.objects.filter(resource_id = resource_id)
-        ans_likes = len(likes)
+        ans_likes = likes.count() #len(likes)
         likes = R_Resource_User_Like.objects.filter(resource_id = resource_id, user_id = user_id)
-        user_like = int(len(likes) > 0)
+        user_like = int(likes.count() > 0) #len(likes)
         return HttpResponse(json.dumps({'like_resource': ans_likes, 'like': user_like}))
 
 #---------------------------------------------------------------
@@ -1346,7 +1346,7 @@ def course_like(request):
         user_id = str(request.user.id)
     
         likes = R_Course_User_Like.objects.filter(course_id = course_id, user_id = user_id) #filter相当于SQL中的WHERE，可设置条件过滤结果
-        if (len(likes) > 0): #之前喜欢过，报错
+        if (likes.count() > 0): #之前喜欢过，报错 #len(likes)
             return HttpResponse(json.dumps({'error':1}))
         
         like = R_Course_User_Like()
@@ -1372,7 +1372,7 @@ def course_cancel_like(request):
         user_id = str(request.user.id)
         
         likes = R_Course_User_Like.objects.filter(course_id = course_id, user_id = user_id) #filter相当于SQL中的WHERE，可设置条件过滤结果
-        if (len(likes) == 0):
+        if (liles.count() == 0): #len(likes)
             return HttpResponse(json.dumps({'error':1}))
         
         like = R_Course_User_Like.objects.get(course_id = course_id, user_id = user_id) #GET获取单个对象
@@ -1399,10 +1399,10 @@ def course_like_count(request):
         user_id = request.user.id
         
         likes = R_Course_User_Like.objects.filter(course_id = course_id)
-        ans_likes = int(len(likes))
+        ans_likes = int(likes.count()) #len(likes)
         if (user_id != None):
             likes = R_Course_User_Like.objects.filter(course_id = course_id, user_id = user_id)
-            user_like = (len(likes) > 0) 
+            user_like = (likes.count() > 0) #len(likes)
             print("like:", user_like, likes)
         else:
             user_like = 0
@@ -1475,13 +1475,13 @@ def most_download_resource_list(request):
         ans = []
         cnt = 0
         i = 0
-        while (i < len(resources)):
+        while (i < resources.count()): #len(resources)
             dict = {}
             if (cnt == number):
                 break
             u_id = resources[i].upload_user_id
             u_i = User.objects.filter(id = u_id)
-            if (len(u_i) == 0):
+            if (u_i.count() == 0): #len(u_i)
                 i = i+1
                 continue
             u_info = User.objects.get(id = u_id)
@@ -1566,7 +1566,7 @@ def tongpao(request):
     student_id = profile["student_id"]
 
     students = User.objects.filter(username = student_id)
-    if (len(students) > 0): #之前已经登录过
+    if (students.count() > 0): #之前已经登录过 #len(students)
         print(student_id, " Has Registered!")
         return HttpResponseRedirect("/")
 #        return HttpResponse(json.dumps({'error':0}))
@@ -1645,7 +1645,7 @@ def user_forget_password_set(request):
         if(new_pw1 != new_pw2):
             return HttpResponse(json.dumps({'error': 1}))
         all_records = EmailVerifyRecord.objects.filter(email=email, code=code, send_type='reset pswd')
-        if(len(all_records) < 1):
+        if(all_records.count() < 1): #len(all_records)
             return HttpResponse(json.dumps({'error': 1}))
         user = User.objects.get(email=email)
         user.set_password(new_pw1)
@@ -1735,7 +1735,7 @@ def most_upload_latest_list(request):
                 break
             u_id = resources[i].upload_user_id
             u_i = User.objects.filter(id = u_id)
-            if (len(u_i) == 0):
+            if (u_i.count() == 0): #len(u_i)
                 print('!!!!!!!!!!',resources[i].name,' 的资源上传者不存在，user_id=!',u_id)
                 i = i+1
                 continue
