@@ -985,15 +985,25 @@ def comment_info_list(request):
 def post_id_list_by_update_time(request):
     if(request.method == 'POST'):
         list_len = int(request.POST.get('list_len'))
-        result = Post.objects.all().order_by('-update_time').values_list('id', flat=True)
-        id_list = []
-        count = 0
-        for i in result:
-            id_list.append(i)
-            count = count + 1
-            if(count == list_len):
-                break
-        return HttpResponse(json.dumps({'id_list': id_list}))
+        college_id = int(request.POST.get('college_id'))
+        if(college_id == -1):
+            result = Post.objects.all().order_by('-update_time').values_list('id', flat=True)
+            id_list = []
+            count = 0
+            for i in result:
+                id_list.append(i)
+                count = count + 1
+                if(count == list_len):
+                    break
+            return HttpResponse(json.dumps({'id_list': id_list}))
+        else:
+            result = Post.objects.all().order_by('-update_time').values('id','course_id')
+            course_list = Course.objects.filter(college_id=college_id).values_list('id', flat=True)
+            id_list = []
+            for item in result:
+                if(item['course_id'] in course_list):
+                    id_list.append(item['id'])
+            return HttpResponse(json.dumps({'id_list': id_list}))
 
 # get top list_len post id list order by click count
 # URL: 暂时未定
@@ -1001,15 +1011,25 @@ def post_id_list_by_update_time(request):
 def post_id_list_by_click_count(request):
     if(request.method == 'POST'):
         list_len = int(request.POST.get('list_len'))
-        result = Post.objects.all().order_by('-click_count','-update_time').values_list('id', flat=True)
-        id_list = []
-        count = 0
-        for i in result:
-            id_list.append(i)
-            count = count + 1
-            if(count == list_len):
-                break
-        return HttpResponse(json.dumps({'id_list': id_list}))
+        college_id = int(request.POST.get('college_id'))
+        if(college_id == -1):
+            result = Post.objects.all().order_by('-click_count','-update_time').values_list('id', flat=True)
+            id_list = []
+            count = 0
+            for i in result:
+                id_list.append(i)
+                count = count + 1
+                if(count == list_len):
+                    break
+            return HttpResponse(json.dumps({'id_list': id_list}))
+        else:
+            result = Post.objects.all().order_by('-click_count','-update_time').values('id','course_id')
+            course_list = Course.objects.filter(college_id=college_id).values_list('id', flat=True)
+            id_list = []
+            for item in result:
+                if(item['course_id'] in course_list):
+                    id_list.append(item['id'])
+            return HttpResponse(json.dumps({'id_list': id_list}))
 
 #---------------------------------------------------------------
 # 根据用户对资源的打分进行数据更新
