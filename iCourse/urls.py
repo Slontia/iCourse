@@ -55,6 +55,7 @@ urlpatterns = [
     url(r'^resource/download/most/$', backend_views.most_download_resource_list, name='most_download_resource_list'),
     url(r'^login_tongpao/$', backend_views.login_tongpao, name='login_tongpao'),
     url(r'^tongpao/$', backend_views.tongpao, name='tongpao'),
+    url(r'^resource/upload/latest/$', backend_views.most_upload_latest_list, name='most_upload_latest_list'),
                
     # page
     url(r'^$', TemplateView.as_view(template_name='index.html')), # NEW

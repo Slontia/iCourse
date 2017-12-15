@@ -20,6 +20,7 @@ import datetime
 from datetime import date
 
 import os
+import time
 
 from django.utils.http import urlquote
 
@@ -1468,7 +1469,7 @@ def most_download_resource_list(request):
         data = json.dumps(request.POST)
         data = json.loads(data)
         
-        number = str(data.get('number'))
+        number = int(data.get('number')) #str->int
         
         resources = Resource.objects.filter(~Q(download_count = 0)).order_by('-download_count') #取下载量不等于0的filter,然后按下载量降序排序
         ans = []
@@ -1561,14 +1562,14 @@ def tongpao(request):
     json_text = json.loads(r.text)
     profile = json_text["data"]
     print(profile)
-    print("$$$", type(profile))
 
     student_id = profile["student_id"]
 
     students = User.objects.filter(username = student_id)
     if (len(students) > 0): #之前已经登录过
         print(student_id, " Has Registered!")
-        return HttpResponse(json.dumps({'error':0}))
+        return HttpResponseRedirect("/")
+#        return HttpResponse(json.dumps({'error':0}))
 
     tongpao_username = profile["tongpao_username"]
     phone_number = profile["phone_number"]
@@ -1675,4 +1676,87 @@ def user_modify_password(request):
             auth.logout(request)
             return HttpResponse(json.dumps({'error': 0}))
         return HttpResponse(json.dumps({'error': 1}))
+
+def get_classification(s):
+    if (s[0:3]=="B28"): #B28D2010
+        return s[1:3]
+    if (s[0]=='B'): #B3I063110
+        return (s[3:5])  #F06D3750
+    return (s[1:3])
+#---------------------------------------------------------------
+# 获取最新上传的资源信息列表
+# REQUIRES:         变量名|类型|说明
+#                   number|int|资源数量
+#                   college_id|int|检索范围，即院系代号，-1为全站检索
+# MODIFIES: None
+# EFFECTS:     result|list[dict{}]|返回资源信息列表
+#                   资源信息字典：
+#                   变量名|类型|说明
+#                   :-:|:-:|:-:
+#              result|list[dict{}]|返回资源信息列表
+# 资源信息字典：
+#                   变量名|类型|说明
+#                     :-:|:-:|:-:
+#             resource_id|int|资源id
+#                username|str|上传者
+#          download_count|int|下载量
+#                    name|str|资源名称
+@csrf_exempt
+def most_upload_latest_list(request):
+    
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        
+        t1 = time.clock()
+        
+        number = int(data.get('number'))
+        college_id = int(data.get('college_id'))
+
+        college_id_str = str(college_id)
+        if (len(college_id_str)==1):
+            college_id_str = "0" + str(college_id)
+        print(college_id_str)
+        if (college_id == -1): #统计全站的资源
+            resources = Resource.objects.filter().order_by('-upload_time') #course_code__contains="01"
+        else:
+            resources = Resource.objects.filter(Q(course_code__regex="^."+college_id_str)|Q(course_code__regex="^..."+college_id_str)).order_by('-upload_time') #course_code__contains="01"
+    #    resources = Resource.objects.filter(Q(course_code__regex="^.06")|Q(course_code__regex="^...06")).order_by('-upload_time') #course_code__contains="01"
+
+        ans = []
+        cnt = 0
+        i = 0
+        siz = resources.count() #len(resources)
+        print("siz = ", siz)
+        while (i < siz):
+            
+            dict = {}
+            if (cnt == number):
+                break
+            u_id = resources[i].upload_user_id
+            u_i = User.objects.filter(id = u_id)
+            if (len(u_i) == 0):
+                print('!!!!!!!!!!',resources[i].name,' 的资源上传者不存在，user_id=!',u_id)
+                i = i+1
+                continue
+            print(resources[i].course_code, '   ', resources[i].name,' ')#, resources[i].upload_time)
+
+    #        c_id = get_classification(resources[i].course_code)
+    #        if (not c_id.isdigit()):
+    #            print('@@@@@@',c_id,' ',resources[i].course_code, '   ', resources[i].name, ' ', resources[i].course_code[0:3])
+    #print(resources[i].course_code,'******',int(c_id),'*****',int(college_id))
+    #        if (c_id != college_id):
+    #            i = i+1
+    #            continue
+            cnt = cnt+1
+            i = i+1
+            dict["username"] = User.objects.get(id = u_id).username
+            dict["download_count"] = resources[i].download_count
+            dict["resource_id"] = resources[i].id
+            dict["name"] = resources[i].name
+            ans.append(dict)
+        print(ans)
+        t2 = time.clock()
+        print("Total Time: ",t2-t1)
+        return HttpResponse(json.dumps({'result': ans}))
 
