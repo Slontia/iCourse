@@ -533,28 +533,6 @@ user_id|int|评价者id
 username|str|评价者用户名
 time|datetime|发布时间
 
-### 3.10 获取最多下载量的资源id列表
-**函数名：** most\_download\_resource\_list
-**URL：** /resource/download/most/
-**前端**
-变量名|类型|说明
-:-:|:-:|:-:
-number|int|资源数量
-college_id|int|检索范围，即院系代号，-1为全站检索
-
-**后端**
-变量名|类型|说明
-:-:|:-:|:-:
-result|list[dict{}]|返回资源信息列表
-
-资源信息字典：
-变量名|类型|说明
-:-:|:-:|:-:
-resource_id|int|资源id
-username|str|上传者
-download_count|int|下载量
-name|str|资源名称
-
 ### 3.10 获取最多下载量的资源信息列表
 **函数名：** most\_download\_resource\_list
 **URL：** /resource/download/most/
@@ -578,7 +556,7 @@ download_count|int|下载量
 name|str|资源名称
 
 ### 3.11 获取最新上传的资源信息列表
-**函数名：** most\_upload\_latest\_list
+**函数名：** latest\_upload\_resource\_list
 **URL：** /resource/upload/latest/
 **前端**
 变量名|类型|说明
