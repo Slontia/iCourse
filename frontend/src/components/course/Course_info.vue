@@ -553,7 +553,7 @@ export default {
   .latest_resource_container{
     width: auto;
   }
-  .card_button:hover{
+  .card_title_text:hover{
     color: #58B7FF;
   }
   .card_button{
@@ -563,13 +563,13 @@ export default {
     width:100%;
     height:100%;
     text-align:left;
-    color: #58B7FF;
   }
   .card_title_text{
     padding-bottom: 10px;
     word-break: break-all;
     word-wrap: break-word;
     white-space: pre-wrap;
+    color: black;
   }
   .card_text{
     color: grey;

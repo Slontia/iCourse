@@ -197,7 +197,7 @@
     </el-row>
 
     <!-- 资源详细信息窗口 -->
-    <el-dialog title="资源信息" :visible.sync="dialogVisible" v-if="dialogVisible" size="tiny">
+    <el-dialog title="资源信息" :visible.sync="dialogVisible" v-if="dialogVisible" size="small">
       <ResourceDialog></ResourceDialog>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible=false">取 消</el-button>
