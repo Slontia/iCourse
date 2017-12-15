@@ -980,7 +980,7 @@ def comment_info_list(request):
         return HttpResponse(json.dumps({'info_list': info_list}, cls=ComplexEncoder))
 
 # get top list_len post id list order by update time
-# URL: 暂时未定
+# URL: /post/latest/idlist/
 @csrf_exempt
 def post_id_list_by_update_time(request):
     if(request.method == 'POST'):
@@ -996,7 +996,7 @@ def post_id_list_by_update_time(request):
         return HttpResponse(json.dumps({'id_list': id_list}))
 
 # get top list_len post id list order by click count
-# URL: 暂时未定
+# URL: /post/hot/idlist/
 @csrf_exempt
 def post_id_list_by_click_count(request):
     if(request.method == 'POST'):
@@ -1474,8 +1474,9 @@ def most_download_resource_list(request):
         print(ans)
         return HttpResponse(json.dumps({'result': ans}))
 
+
 # get most downloaded resource id list of one course
-# URL:
+# URL:/course/resource/download/most/
 @csrf_exempt
 def most_download_resource_of_course(request):
     if(request.method == 'POST'):
@@ -1494,7 +1495,10 @@ def most_download_resource_of_course(request):
                 break
     return HttpResponse(json.dumps({'id_list': id_list}))
 
-
+# get most downloaded resource id list of one course
+# URL:/course/resource/download/most/
+@csrf_exempt
+latest_resource_info
 #---------------------------------------------------------------
 # 同袍的登录接口，跳转到同袍的登录界面，感觉不需要POST
 #@csrf_exempt

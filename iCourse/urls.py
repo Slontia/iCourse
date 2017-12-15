@@ -83,6 +83,12 @@ urlpatterns = [
     # notifications
     url(r'^notifications/', include(notifications.urls, namespace='notifications')),
 
+    # home
+    url(r'^post/hot/idlist/$', backend_views.post_id_list_by_click_count),
+    url(r'^post/latest/idlist/$', backend_views.post_id_list_by_update_time),
+    # url(r'^resource/upload/latest/', backend_views.most_upload_latest_list),
+    url(r'^resource/download/most/$', backend_views.most_download_resource_list),
+
 
     #email verify
     url(r'^active/(?P<active_code>.*)/$', backend_views.ActiveUserView.as_view(), name="user_active"),  # 提取出active后的所有字符赋给active_code
