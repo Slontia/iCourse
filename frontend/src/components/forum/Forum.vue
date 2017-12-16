@@ -154,7 +154,7 @@ export default {
       }
     })
     post_data = { 'course_id': this.$route.params.course_id }
-    post_url = get_url(this.$store.state.dev, '/post/latest/idlist/')
+    post_url = get_url(this.$store.state.dev, '/course/course_info/')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
