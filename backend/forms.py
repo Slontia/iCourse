@@ -45,7 +45,7 @@ class RegisterForm(forms.Form):
 
 class LoginForm(forms.Form):
     username = forms.CharField(required=True, max_length=20)
-    password = forms.CharField(required=True, max_length=20)
+    password = forms.CharField(required=True, max_length=30)
 
 
 class ResourceUploadForm(forms.ModelForm):

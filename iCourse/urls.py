@@ -56,7 +56,8 @@ urlpatterns = [
     url(r'^course/like/count/$', backend_views.course_like_count, name='course_like_count'),
     url(r'^resource/download/most/$', backend_views.most_download_resource_list, name='most_download_resource_list'),
     url(r'^login_tongpao/$', backend_views.login_tongpao, name='login_tongpao'),
-    url(r'^tongpao/$', backend_views.tongpao, name='tongpao'),
+    url(r'^passport/auth/$', backend_views.tongpao, name='tongpao'),
+    url(r'^passport/entry/.*$', backend_views.home),
     url(r'^resource/upload/latest/$', backend_views.latest_upload_resource_list, name='latest_upload_resource_list'),
                
     # page
@@ -91,6 +92,7 @@ urlpatterns = [
     url(r'^post/latest/idlist/$', backend_views.post_id_list_by_update_time),
     url(r'^resource/upload/latest/', backend_views.latest_upload_resource_list),
     url(r'^resource/download/most/$', backend_views.most_download_resource_list),
+
 
 
     #email verify

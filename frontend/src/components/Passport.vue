@@ -4,23 +4,19 @@
 /* eslint-disable camelcase */
 /* eslint-disable space-infix-ops */
 import $ from 'jquery'
-import get_url from '../general/getUrl.js'
+import get_url from './general/getUrl.js'
 export default {
-  name: 'Editor',
-  components: { Header },
-  data () {
-    return {
-      
-    }
-  },
+  name: 'Passport',
   mounted () {
     var code = this.$route.query.code
-    var error = 1;
+    alert(code)
+    var error = 1
     var username = ''
     var post_url = get_url(this.$store.state.dev, '/passport/auth/')
     var post_data = {
       'code': code
     }
+    alert('begin')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
@@ -29,31 +25,37 @@ export default {
       data: post_data,
       async: false,
       success: function (data) {
-        username = data['usernmae']
+        username = data['username']
         error = data['error']
+        alert(username)
       },
       error: function () {
         alert('验证大失败，容我笑一会')
       }
     })
-    if (error == 0) {
+    if (error === 0) {
       post_url = get_url(this.$store.state.dev, '/sign/login/')
-      post_data = {
-        'usernmae': username,
-        'password': 111111111111111111111111111111
-      }
       $.ajax({
         ContentType: 'application/json; charset=utf-8',
         dataType: 'json',
         url: post_url,
         type: 'POST',
-        data: post_data,
+        data: {
+          'username': username,
+          'password': '111111111111111111111111111111'
+        },
         async: false,
+        success: function () {
+          alert(username)
+          alert('llogin')
+        },
         error: function () {
           alert('登录失败')
         }
-      }) 
+      })
     }
+    alert('suc')
+    this.$router.push({ path: '/' })
   }
 }
 </script>

@@ -11,7 +11,7 @@ import PersonalData from '@/components/PersonalData'
 import Courseinfo from '@/components/course/Course_info'
 import Forum from '@/components/forum/Forum'
 import Router from 'vue-router'
-import Passport from '@/components/general/Passport'
+import Passport from '@/components/Passport'
 
 Vue.use(ElementUI)
 Vue.use(Router)
@@ -20,7 +20,7 @@ export default new Router({
   mode: 'history',
   routes: [
     {
-      path: '/passport',
+      path: '/passport/entry/',
       name: 'passport',
       component: Passport
     },

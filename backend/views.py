@@ -1571,7 +1571,7 @@ def login_tongpao(request):
     headers = {'Tongpao-Auth-appid': 'c643da987bdc3ec74efbb0ef7927f7ea', 'Tongpao-Auth-secret': 'GNcP_Pa0Z3nFjjsQa8sd8VCUmUEiIZBa6Rue682LDsMyUIx7iwPplQ'}
     data = { #需要
         #"code":"BElkqvTZCkO924Za-hh8YcWmIDwGCwLXo7n3PrrYXD6lItvlX__b4DbZBgiXaV0ySHZytqlH2swvrbDca4X_MD1v6a2TPw",
-        "redirect": "http://127.0.0.1:8000/passport/auth/",#"http://127.0.0.1:8000/tongpao/" #https://questionor.cn/problemsets",
+        "redirect": "http://buaaicourse.com/passport/entry",#"http://127.0.0.1:8000/tongpao/" #https://questionor.cn/problemsets",
         "need_phone_number": 1,
         "need_email": 1,
         "need_personal": 1,
@@ -1625,7 +1625,8 @@ def tongpao(request):
     #        test = requests.post("http://127.0.0.1:8000/sign/login/",data={"error":0, "username":student_id,"password":"111111111111111111111111111111"})
     #        print(test.text)
             print("ENNNDDD")
-            return HttpResponse(json.dumps({"error":0, "username":student_id, "password":"111111111111111111111111111111"}))
+            print("user:", student_id)
+            return HttpResponse(json.dumps({"error":0, "username":student_id}))
     #        request.session['username'] = student_id # store in session
     #        return HttpResponseRedirect("/")
 
