@@ -1571,7 +1571,7 @@ def login_tongpao(request):
     headers = {'Tongpao-Auth-appid': 'c643da987bdc3ec74efbb0ef7927f7ea', 'Tongpao-Auth-secret': 'GNcP_Pa0Z3nFjjsQa8sd8VCUmUEiIZBa6Rue682LDsMyUIx7iwPplQ'}
     data = { #需要
         #"code":"BElkqvTZCkO924Za-hh8YcWmIDwGCwLXo7n3PrrYXD6lItvlX__b4DbZBgiXaV0ySHZytqlH2swvrbDca4X_MD1v6a2TPw",
-        "redirect": "http://buaaicourse.com/passport/entry",#"http://127.0.0.1:8000/tongpao/" #https://questionor.cn/problemsets",
+        "redirect": "http://127.0.0.1:8000/passport/entry",#"http://127.0.0.1:8000/tongpao/" #https://questionor.cn/problemsets",
         "need_phone_number": 1,
         "need_email": 1,
         "need_personal": 1,
@@ -1630,6 +1630,38 @@ def tongpao(request):
     #        request.session['username'] = student_id # store in session
     #        return HttpResponseRedirect("/")
 
+        college_dict = {
+            '材料科学与工程学院':         1,
+            '电子信息工程学院':         2,
+            '自动化科学与电气工程学院':         3,
+            '能源与动力工程学院':         4,
+            '航空科学与工程学院':         5,
+            '计算机学院':         6,
+            '机械工程及自动化学院':         7,
+            '经济管理学院':         8,
+            '数学与系统科学学院':         9,
+            '生物与医学工程学院':        10,
+            '人文社会科学学院':        11,
+            '外国语学院':        12,
+            '交通科学与工程学院':        13,
+            '可靠性与系统工程学院':        14,
+            '宇航学院':        15,
+            '飞行学院':        16,
+            '仪器科学与光电工程学院':        17,
+            '北京学院':        18,
+            '物理科学与核能工程学院':        19,
+            '法学院':        20,
+            '软件学院':        21,
+            '现代远程教育学院':        22,
+            '高等工程学院':        23,
+            '中法工程师学院':        24,
+            '国际学院':        25,
+            '新媒体艺术与设计学院':        26,
+            '化学与环境学院':        27,
+            '思想政治理论学院':        28,
+            '人文与社会科学高等研究':        29
+        }
+
         tongpao_username = profile["tongpao_username"]
         phone_number = profile["phone_number"]
         print(phone_number)
@@ -1659,7 +1691,9 @@ def tongpao(request):
         gender_dict = {"男":1, "女":2}
         user_profile.user_id = user.id
         user_profile.gender = gender_dict[gender]
+        user_profile.college_id = college_dict[college]
         user_profile.intro = "同袍用户"
+        
         print("gender=",gender,"value:",gender_dict[gender])
         user_profile.nickname = ""
         user_profile.info = ""
