@@ -9,7 +9,6 @@ export default {
   name: 'Passport',
   mounted () {
     var code = this.$route.query.code
-    alert(code)
     var error = 1
     var username = ''
     var post_url = get_url(this.$store.state.dev, '/passport/auth/')
@@ -50,7 +49,6 @@ export default {
         }
       })
     }
-    alert('suc')
     this.$router.push({ path: '/' })
   }
 }
