@@ -309,6 +309,7 @@ export default {
         this.get_new_post(10, value)
         this.get_hot_resource(10, value)
         this.get_new_resource(10, value)
+        this.current_value = value
       }
     },
     get_hot_post: function (len, value) {
