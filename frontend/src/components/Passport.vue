@@ -16,7 +16,6 @@ export default {
     var post_data = {
       'code': code
     }
-    alert('begin')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
       dataType: 'json',
@@ -27,10 +26,9 @@ export default {
       success: function (data) {
         username = data['username']
         error = data['error']
-        alert(username)
       },
       error: function () {
-        alert('验证大失败，容我笑一会')
+        alert('验证大失败')
       }
     })
     if (error === 0) {
@@ -46,8 +44,6 @@ export default {
         },
         async: false,
         success: function () {
-          alert(username)
-          alert('llogin')
         },
         error: function () {
           alert('登录失败')
