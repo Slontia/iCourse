@@ -19,6 +19,9 @@
 
 <style type="text/css" scpoed>
 	.line{
+		border:none;
+		border-top: 1px solid #ccc;
+		margin-top: 20px;
 		width: 90%;
 		height: 0px;
 	}
