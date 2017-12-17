@@ -57,7 +57,6 @@ urlpatterns = [
     url(r'^resource/download/most/$', backend_views.most_download_resource_list, name='most_download_resource_list'),
     url(r'^login_tongpao/$', backend_views.login_tongpao, name='login_tongpao'),
     url(r'^passport/auth/$', backend_views.tongpao, name='tongpao'),
-    url(r'^passport/entry/.*$', backend_views.home),
     url(r'^resource/upload/latest/$', backend_views.latest_upload_resource_list, name='latest_upload_resource_list'),
                
     # page
@@ -70,6 +69,10 @@ urlpatterns = [
     url(r'^user/home/.*/$', backend_views.home),
     url(r'^course/page/.*/$', backend_views.home),
     url(r'^course/page/.*/resource/$', backend_views.home),
+    url(r'^course/page/.*/forum/$', backend_views.home),
+    url(r'^course/page/.*/forum/new/$', backend_views.home),
+    url(r'^passport/entry/.*/$', backend_views.home),
+    url(r'^forum/.*/$', backend_views.home),
 
     # post follow follow_comment follow_evaluation
     url(r'^post/posting/publish/$', backend_views.posting_publish, name='posting_publish'),
