@@ -737,7 +737,7 @@ def follow_publish(request):
         if(follow_form.is_valid()):
             result = Follow.objects.filter(post_id=post_id,user_id=user_id)
             if(result.count() > 0): #if(len(result) > 0):
-                return HttpResponse(json.dumps({'error': 1}))
+                return HttpResponse(json.dumps({'error': 2}))
             follow = Follow()
             follow.post_id = post_id
             follow.user_id = user_id
@@ -1372,7 +1372,7 @@ def course_cancel_like(request):
         user_id = str(request.user.id)
         
         likes = R_Course_User_Like.objects.filter(course_id = course_id, user_id = user_id) #filter相当于SQL中的WHERE，可设置条件过滤结果
-        if (liles.count() == 0): #len(likes)
+        if (likes.count() == 0): #len(likes)
             return HttpResponse(json.dumps({'error':1}))
         
         like = R_Course_User_Like.objects.get(course_id = course_id, user_id = user_id) #GET获取单个对象
@@ -1863,3 +1863,17 @@ def latest_upload_resource_list(request):
         print("Total Time: ",t2-t1)
         return HttpResponse(json.dumps({'result': ans}))
 
+
+@csrf_exempt
+def user_like_course_namelist(request):
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+        user_id = request.user.id
+        # user_id = 2
+        course_info_list = []
+        course_id_list = R_Course_User_Like.objects.filter(user_id=user_id).values_list('course_id', flat=True)
+        for course_id in course_id_list:
+            course_info_list.append(interface.course_information(int(course_id))) 
+        print("like:", course_info_list)
+        return HttpResponse(json.dumps({'info_list': course_info_list}))

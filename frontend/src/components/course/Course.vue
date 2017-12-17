@@ -80,13 +80,16 @@ export default {
   data () {
     return {
       tree_data: [{
-        label: '课程类别',
+        /* label: '课程类别',
         children: [{ label: '一般通识课' },
                    { label: '核心通识课' },
                    { label: '核心专业课' },
                    { label: '一般专业课' },
                    { label: '公共必修课' },
                    { label: '公共选修课' }]
+      }, */
+        label: '我的收藏',
+        isLeaf: true
       },
       {
         label: '开设院系',
@@ -253,6 +256,9 @@ export default {
       }
       else {
         this.course_bread_message = node.label
+        if (node.label === '我的收藏') {
+          this.get_liked_courses()
+        }
       }
     },
     search_course_clicked () {
@@ -302,6 +308,43 @@ export default {
         self.load_courses = false
       }
     },
+    get_liked_courses () {
+      this.load_courses = true
+      this.course_bread_message = '我的收藏'
+      var self = this
+      var post_url = get_url(this.$store.state.dev, '/course/like/list/')
+      $.ajax({
+        ContentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        type: 'POST',
+        url: post_url,
+        async: false,
+        success: function (data) {
+          // 初始化storage和courses以及当前页数
+          var info_list = data['info_list']
+          self.storage = []
+          self.total = info_list.length
+          for (var i = 0; i < info_list.length; i++) {
+            var college_id = info_list[i]['college_id']
+            var college_info = (college_map.hasOwnProperty(college_id)) ? college_map[college_id] : college_id.toString()
+            var item = {
+              'course_name': info_list[i]['name'],
+              'course_id': info_list[i]['id'],
+              'course_academy': college_info,
+              'course_hours': info_list[i]['hours'],
+              'course_credit': info_list[i]['credit'],
+              'course_class': self.course_class_dict[info_list[i]['class_id'] - 1]
+            }
+            self.storage.push(item)
+          }
+        },
+        error: function () {
+          alert('拉取信息失败!')
+        }
+      })
+      self.handle_current_change(1)
+      self.load_courses = false
+    },
     add_course_clicked () {
       // todo: add course function
       this.$message({
@@ -311,6 +354,7 @@ export default {
     }
   },
   mounted () {
+    this.get_liked_courses()
   }
 }
 </script>

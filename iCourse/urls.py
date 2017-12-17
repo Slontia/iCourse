@@ -54,6 +54,8 @@ urlpatterns = [
     url(r'^course/like/add/$', backend_views.course_like, name='course_like'),
     url(r'^course/like/cancel/$', backend_views.course_cancel_like, name='course_cancel_like'),
     url(r'^course/like/count/$', backend_views.course_like_count, name='course_like_count'),
+    url(r'^course/like/list/$', backend_views.user_like_course_namelist, name='course_like_list'),
+    
     url(r'^resource/download/most/$', backend_views.most_download_resource_list, name='most_download_resource_list'),
     url(r'^login_tongpao/$', backend_views.login_tongpao, name='login_tongpao'),
     url(r'^passport/auth/$', backend_views.tongpao, name='tongpao'),
