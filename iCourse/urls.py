@@ -73,7 +73,7 @@ urlpatterns = [
     url(r'^course/page/.*/resource/$', backend_views.home),
     url(r'^course/page/.*/forum/$', backend_views.home),
     url(r'^course/page/.*/forum/new/$', backend_views.home),
-    url(r'^passport/entry/.*/$', backend_views.home),
+    url(r'^passport/entry/.*$', backend_views.home),
     url(r'^forum/.*/$', backend_views.home),
 
     # post follow follow_comment follow_evaluation
