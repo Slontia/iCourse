@@ -48,6 +48,7 @@ urlpatterns = [
     url(r'^resource/evaluate/$', backend_views.resource_evaluate, name='resource_evaluate'),
     url(r'^resource/evaluation/grade/count/$', backend_views.resource_evaluation_grade_count, name='resource_evaluation_grade_count'),
     url(r'^resource/class/id/list/$', backend_views.resource_class_id_list, name='resource_class_id_list'),
+    url(r'^resource/other/id/list/$', backend_views.resource_other_id_list, name='resource_other_id_list'),
     url(r'^course/type/list/$', backend_views.course_type_list, name='course_type_list'),
     url(r'^resource/like/add/$', backend_views.resource_like, name='resource_like'),
     url(r'^resource/like/count/$', backend_views.resource_like_count, name='resource_like_count'),

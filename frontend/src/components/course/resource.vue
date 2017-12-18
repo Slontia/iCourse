@@ -17,11 +17,18 @@
       <el-row>
         <el-col :span="24" style="text-align:center;">
           <el-button-group>
-            <el-button type="primary" style="width:250px;">课件</el-button>
-            <el-button type="button" style="width:250px;" @click.native="closed">考题</el-button>
-            <el-button type="button" style="width:250px;" @click.native="closed">习题</el-button>
-            <el-button type="button" style="width:250px;" @click.native="closed">笔记</el-button>
-            <el-button type="button" style="width:250px;" @click.native="closed">其他</el-button>
+            <el-button type="primary" style="width:200px;" @click.native="getAllCourses" v-if="selected['all']">全部</el-button>
+            <el-button type="button" style="width:200px;" @click.native="getAllCourses" v-else>全部</el-button>
+            <el-button type="primary" style="width:200px;" @click.native="get_resources_of_type(['pdf'])" v-if="selected['pdf']">PDF</el-button>
+            <el-button type="button" style="width:200px;" @click.native="get_resources_of_type(['pdf'])" v-else>PDF</el-button>
+            <el-button type="primary" style="width:200px;" @click.native="get_resources_of_type(['doc', 'docx', 'txt'])" v-if="selected['doc']">文本</el-button>
+            <el-button type="button" style="width:200px;" @click.native="get_resources_of_type(['doc', 'docx', 'txt'])" v-else>文本</el-button>
+            <el-button type="primary" style="width:200px;" @click.native="get_resources_of_type(['ppt', 'pptx'])" v-if="selected['ppt']">PPT</el-button>
+            <el-button type="button" style="width:200px;" @click.native="get_resources_of_type(['ppt', 'pptx'])" v-else>PPT</el-button>
+            <el-button type="primary" style="width:200px;" @click.native="get_resources_of_type(['zip', 'rar', '7z'])" v-if="selected['zip']">ZIP/RAR</el-button>
+            <el-button type="button" style="width:200px;" @click.native="get_resources_of_type(['zip', 'rar', '7z'])" v-else>ZIP/RAR</el-button>
+            <el-button type="primary" style="width:200px;" @click.native="get_resources_other" v-if="selected['other']">其他</el-button>
+            <el-button type="button" style="width:200px;" @click.native="get_resources_other" v-else>其他</el-button>
           </el-button-group>
         </el-col>
       </el-row>
@@ -241,6 +248,14 @@ export default {
   components: { Header, ResourceDialog },
   data () {
     return {
+      selected: {
+        'all': true,
+        'pdf': false,
+        'doc': false,
+        'ppt': false,
+        'zip': false,
+        'other': false
+      },
       uploadDialogVisible: false,
       dialogVisible: false,
       course: '软件工程基础',
@@ -278,7 +293,70 @@ export default {
 
   },
   methods: {
+    get_resources_other () {
+      for (var type in this.selected) {
+        this.selected[type] = false
+      }
+      this.selected['other'] = true
+      var _this = this
+      var post_url = get_url(this.$store.state.dev, '/resource/other/id/list/')
+      this.resourcesIdList = []
+      $.ajax({
+        ContentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: post_url,
+        type: 'POST',
+        async: false,
+        data: {
+          'course_id': _this.$route.params.course_id},
+        success: function (data) {
+          _this.resourcesIdList = data['resource_class_id_list']
+          _this.nowPage = 0
+          _this.pageLength = Math.ceil(_this.resourcesIdList.length / 9)
+          if (_this.pageLength !== 0) {
+            _this.nowPage = 1
+          }
+          _this.updateResources()
+        },
+        error: function () {
+          alert('fail')
+        }
+      })
+    },
     closed: function () { alert('还未开放') },
+    get_resources_of_type (type_list) {
+      for (var type in this.selected) {
+        this.selected[type] = false
+      }
+      this.selected[type_list[0]] = true
+      var _this = this
+      var post_url = get_url(this.$store.state.dev, '/resource/class/id/list/')
+      this.resourcesIdList = []
+      for (var index = 0; index < type_list.length; index++) {
+        $.ajax({
+          ContentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          url: post_url,
+          type: 'POST',
+          async: false,
+          data: {'course_id': _this.$route.params.course_id, 'type': type_list[index]},
+          success: function (data) {
+            _this.resourcesIdList = _this.resourcesIdList.concat(data['resource_class_id_list'])
+            if (index === type_list.length - 1) {
+              _this.nowPage = 0
+              _this.pageLength = Math.ceil(_this.resourcesIdList.length / 9)
+              if (_this.pageLength !== 0) {
+                _this.nowPage = 1
+              }
+              _this.updateResources()
+            }
+          },
+          error: function () {
+            alert('fail')
+          }
+        })
+      }
+    },
     return_course_info_page_clicked () {
       this.$router.push({ path: ('/course/page/' + this.$route.params.course_id + '/') })
     },
@@ -361,6 +439,7 @@ export default {
       var post_url = get_url(this.$store.state.dev, '/resource/information/')
       var _this = this
       if (this.pageLength === 0) {
+        ss.resourcesData = []
         ss.jumpHintVisible = false
         return
       }
@@ -470,6 +549,34 @@ export default {
         this.jumpHintVisible = true
         this.updateResources()
       }
+    },
+    getAllCourses: function () {
+      for (var type in this.selected) {
+        this.selected[type] = false
+      }
+      this.selected['all'] = true
+      var post_url = get_url(this.$store.state.dev, '/resource/id/list/')
+      var ss = this
+      $.ajax({
+        ContentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: post_url,
+        type: 'POST',
+        // async: false,
+        data: {'course_id': this.$route.params.course_id},
+        success: function (data) {
+          ss.resourcesIdList = data['resource_id_list']
+          ss.nowPage = 0
+          ss.pageLength = Math.ceil(ss.resourcesIdList.length / 9)
+          if (ss.pageLength !== 0) {
+            ss.nowPage = 1
+          }
+          ss.updateResources()
+        },
+        error: function () {
+          alert('fail')
+        }
+      })
     }
   },
   created: function () {
@@ -480,7 +587,7 @@ export default {
       dataType: 'json',
       url: post_url,
       type: 'POST',
-      async: false,
+      // async: false,
       data: {'course_id': this.$route.params.course_id},
       success: function (data) {
         ss.course = data['course_info']['name']
@@ -490,27 +597,7 @@ export default {
         alert('fail')
       }
     })
-    post_url = get_url(this.$store.state.dev, '/resource/id/list/')
-    $.ajax({
-      ContentType: 'application/json; charset=utf-8',
-      dataType: 'json',
-      url: post_url,
-      type: 'POST',
-      async: false,
-      data: {'course_id': this.$route.params.course_id},
-      success: function (data) {
-        ss.resourcesIdList = data['resource_id_list']
-        ss.nowPage = 0
-        ss.pageLength = Math.ceil(ss.resourcesIdList.length / 9)
-        if (ss.pageLength !== 0) {
-          ss.nowPage = 1
-        }
-        ss.updateResources()
-      },
-      error: function () {
-        alert('fail')
-      }
-    })
+    this.getAllCourses()
   }
 }
 </script>

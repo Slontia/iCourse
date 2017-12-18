@@ -408,6 +408,7 @@ def userLogout(request):
 def isLoggedIn(request):
     if(request.method == "POST"):
         username = interface.get_username(request.session.get('username',default=None))
+        print("UUUUSER:", username)
         return HttpResponse(json.dumps(username))
 
 def http_get(url):
@@ -1235,10 +1236,38 @@ def resource_class_id_list(request):
                 continue
             if (name[pos+1:len(name)] == type):
                 ans.append(resources[i].id)
-
-        print(ans)
         return HttpResponse(json.dumps({'resource_class_id_list': ans}, cls=ComplexEncoder))
 
+
+@csrf_exempt
+def resource_other_id_list(request):
+    if(request.method == 'POST'):
+        data = json.dumps(request.POST)
+        data = json.loads(data)
+    
+        course_id = str(data.get('course_id'))
+        type_list = ['pdf', 'doc', 'docx', 'zip', '7z', 'rar', 'txt', 'ppt', 'pptx']
+        c = interface.course_information(course_id)
+        if (not c): #如果c为空，代表不存在这样id的课程
+            return HttpResponse(json.dumps({'error':1}))
+
+        course_code = c["course_code"]
+            
+        resources = Resource.objects.filter(course_code = course_code)
+        ans = []
+        for i in range(0, resources.count()): #len(resources)
+            name = resources[i].name
+            pos = name.rfind('.')
+            if (pos == -1):
+                continue
+            is_other = True
+            for type in type_list:
+                if (name[pos+1:len(name)] == type):
+                    is_other = False
+                    break
+            if (is_other):
+                ans.append(resources[i].id)
+        return HttpResponse(json.dumps({'resource_class_id_list': ans}, cls=ComplexEncoder))
 
 #---------------------------------------------------------------
 # 根据课程列别获取课程
