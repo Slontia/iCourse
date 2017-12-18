@@ -407,7 +407,11 @@ def userLogout(request):
 @csrf_exempt
 def isLoggedIn(request):
     if(request.method == "POST"):
-        username = interface.get_username(request.session.get('username',default=None))
+        user_session = request.session.get('username',default=None)
+        if (user_session==None):
+            return HttpResponse(json.dumps(None))
+        
+        username = interface.get_username(user_session)
         return HttpResponse(json.dumps(username))
 
 def http_get(url):
