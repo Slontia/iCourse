@@ -1564,19 +1564,19 @@ def most_download_resource_of_course_info(request):
     return HttpResponse(json.dumps({'info_list': info_list}))
 #---------------------------------------------------------------
 # 同袍的登录接口，跳转到同袍的登录界面，感觉不需要POST
-#@csrf_exempt
+# "need_phone_number": 1, , "need_identification": 1
 @csrf_exempt
 def login_tongpao(request):
     url = 'https://tongpao.qinix.com/auths/send_params'
     headers = {'Tongpao-Auth-appid': 'c643da987bdc3ec74efbb0ef7927f7ea', 'Tongpao-Auth-secret': 'GNcP_Pa0Z3nFjjsQa8sd8VCUmUEiIZBa6Rue682LDsMyUIx7iwPplQ'}
     data = { #需要
         #"code":"BElkqvTZCkO924Za-hh8YcWmIDwGCwLXo7n3PrrYXD6lItvlX__b4DbZBgiXaV0ySHZytqlH2swvrbDca4X_MD1v6a2TPw",
-        "redirect": "http://buaaicourse.com/passport/entry",#"http://127.0.0.1:8000/tongpao/" #https://questionor.cn/problemsets",
-        "need_phone_number": 1,
+        "redirect": "http://127.0.0.1:8000/passport/auth/",#"http://127.0.0.1:8000/tongpao/" #https://questionor.cn/problemsets",
+        
         "need_email": 1,
-        "need_personal": 1,
+        
         "need_school_info": 1,
-        "need_identification": 1
+        "need_personal": 1,
     }
     r = requests.post(url, headers = headers,  data=json.dumps(data))
 
@@ -1599,10 +1599,10 @@ def tongpao(request):
     if(request.method == 'POST'):
         data = json.dumps(request.POST)
         data = json.loads(data)
-        
         print("TONGPAO!!!")
         
         code = str(data.get('code'))#code = str(request.GET["code"])
+#        code = str(request.GET["code"])
         print("code = ",code)
         
         url = 'https://tongpao.qinix.com/auths/get_data'
@@ -1616,7 +1616,7 @@ def tongpao(request):
         json_text = json.loads(r.text)
         profile = json_text["data"]
         print(profile)
-
+        print(type(profile))
         student_id = str(profile["student_id"])
         print(type(student_id))
 
@@ -1663,19 +1663,36 @@ def tongpao(request):
         }
 
         tongpao_username = profile["tongpao_username"]
-        phone_number = profile["phone_number"]
-        print(phone_number)
-        phone_number = int(phone_number[0])
-        print(phone_number)
-        email = profile["email"]
-        real_name = profile["real_name"]
-        birthday = profile["birthday"]
-        gender = profile["gender"]
-        grade = profile["grade"]
-        college = profile["college"]
-        major = profile["major"]
-        class_name = profile["class_name"]
-        identification = profile["identification"]
+        birthday = gender = grade = real_name = identification = class_name = major = grade = ""
+        phone_number = 0
+
+        if ("phone_number" in profile):
+            phone_number = profile["phone_number"]
+            print(phone_number)
+            phone_number = int(phone_number[0])
+            print(phone_number)
+        if ("email" in profile):
+            email = profile["email"]
+        if ("real_name" in profile):
+            real_name = profile["real_name"]
+        if ("birthday" in profile):
+            birthday = profile["birthday"]
+        if ("gender" in profile):
+            gender = profile["gender"]
+            print("%#!@##",gender)
+            gender_dict = {"男":1, "女":2}
+            gender = gender_dict[gender]
+            print("@@@@",gender)
+        if ("grade" in profile):
+            grade = profile["grade"]
+        if ("college" in profile):
+            college = profile["college"]
+        if ("major" in profile):
+            major = profile["major"]
+        if ("class_name" in profile):
+            class_name = profile["class_name"]
+        if ("identification" in profile):
+            identification = profile["identification"]
 
         user = User()
         user.username = student_id
@@ -1685,18 +1702,19 @@ def tongpao(request):
         user.is_active = True
         user.email = email
         user.first_name = "TongPao"
+
         user.save()
 
         user_profile = UserProfile()
-        gender_dict = {"男":1, "女":2}
+
         user_profile.user_id = user.id
-        user_profile.gender = gender_dict[gender]
+        user_profile.gender = gender
         user_profile.college_id = college_dict[college]
         user_profile.intro = "同袍用户"
-        
-        print("gender=",gender,"value:",gender_dict[gender])
+
         user_profile.nickname = ""
         user_profile.info = ""
+
         user_profile.save()
 
         tp_u = Tongpao_Userprofile()
@@ -1712,15 +1730,16 @@ def tongpao(request):
         tp_u.major = major
         tp_u.class_name = class_name
         tp_u.identification = identification
+
         tp_u.save()
-        
+
     #    test = requests.post("http://127.0.0.1:8000/sign/login/",data={"username":student_id,"password":"111111111111111111111111111111"})
     #    print(test.text)
     #request.session['username'] = student_id # store in session
         print("OVVVVVEEERRR")
     #    return HttpResponseRedirect("/")
         return HttpResponse(json.dumps({"error":0, "username":student_id, "password":"111111111111111111111111111111"}))
-    
+
 #return HttpResponseRedirect("/")#http://127.0.0.1:8000/")
 
 
