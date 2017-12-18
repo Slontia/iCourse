@@ -182,17 +182,17 @@ class EmailVerifyRecord(models.Model):
 class Tongpao_Userprofile(models.Model):
     student_id = models.CharField(max_length=15,unique=True)
     
-    tongpao_username = models.CharField(max_length=32,blank=True)
-    phone_number = models.BigIntegerField(blank=True)
-    email = models.CharField(max_length=254,blank=True)
-    real_name = models.CharField(max_length=50,blank=True)
+    tongpao_username = models.CharField(max_length=32,null=True)
+    phone_number = models.BigIntegerField(null=True)
+    email = models.CharField(max_length=254,null=True)
+    real_name = models.CharField(max_length=50,null=True)
     birthday = models.DateTimeField()
-    gender = models.CharField(max_length=5,blank=True)
-    grade = models.CharField(max_length=10,blank=True)
-    college = models.CharField(max_length=30,blank=True)
-    major = models.CharField(max_length=20,blank=True)
-    class_name = models.CharField(max_length=20,blank=True)
-    identification = models.CharField(max_length=30,blank=True)
+    gender = models.CharField(max_length=5,null=True)
+    grade = models.CharField(max_length=10,null=True)
+    college = models.CharField(max_length=30,null=True)
+    major = models.CharField(max_length=20,null=True)
+    class_name = models.CharField(max_length=20,null=True)
+    identification = models.CharField(max_length=30,null=True)
     
     def __str__(self):
         return str(self.id)
