@@ -70,18 +70,18 @@
      <!-- course resource -->
 
      <div class = "course_resource_container">
-        <el-row class="course_resource_head" style="margin-bottom: 20px">
+        <el-row class="course_resource_head" style="margin-bottom: 20px;margin-top: 50px;">
           <el-col :span="24" style="margin-top: 20px">
             <el-col :span="10">
               <p style="float: left;font-size: x-large">课程资源</p>
             </el-col> 
             <el-col :span="2" :offset="9">
-              <el-button type="primary" @click="check_all_resource_clicked" style="float: right;">
+              <el-button type="primary" icon="view" @click="check_all_resource_clicked" style="float: right;margin-right: 20px;">
                 查看全部
               </el-button>
             </el-col> 
             <el-col :span="2" :offset="1">
-              <el-button type="primary" @click="uploadDialogVisible=true" style="float: right;">
+              <el-button type="primary" icon="upload2" @click="uploadDialogVisible=true" style="float: right;">
                 上传资源
               </el-button>
             </el-col> 

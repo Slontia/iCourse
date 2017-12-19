@@ -40,7 +40,7 @@
     </el-row>
     <el-row tpye='flex' justify="center">
       <el-col :span="20" class="input" :offset="2">
-        <el-input v-model="title" placeholder="输入标题,4-40个字符">
+        <el-input v-model="title" placeholder="输入标题,4-30个字符">
         </el-input>
       </el-col>
     </el-row>
@@ -119,10 +119,10 @@ export default {
           message: '请先登录',
           type: 'error'
         })
-      } else if (this.title.length > 40 || this.title.length < 4) {
+      } else if (this.title.length > 30 || this.title.length < 4) {
         this.$message({
           showClose: true,
-          message: '请控制标题的长度在4-40个字符以内',
+          message: '请控制标题的长度在4-30个字符以内',
           type: 'error'
         })
       } else if (this.overflow) {

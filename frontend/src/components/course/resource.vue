@@ -8,7 +8,7 @@
     <el-row style="margin:80px 0px 0px 0px;">
       <el-row>
         <el-col :span="8" :offset="1">
-          <el-button type="primary" @click.native="return_course_info_page_clicked()"><i class="el-icon-d-arrow-left"></i>返回课程页面</el-button>
+          <el-button type="primary" icon="d-arrow-left"@click.native="return_course_info_page_clicked()">返回课程页面</el-button>
         </el-col>
         <el-col id="resourceTitle" :span="15">
           {{ course }}-课程资源

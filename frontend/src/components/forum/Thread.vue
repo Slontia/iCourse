@@ -56,7 +56,9 @@
           </el-col>
         </el-row>
         <el-row>
+          <el-col :span="24">
           <span class="content" v-html="main.content"></span>
+        </el-col>
         </el-row>
         <el-row class="footer_row">
           <el-button type="text" class="comment_button" @click="main_comment_button_clicked"> 评论({{ main.comment_num }})</el-button>
@@ -142,7 +144,7 @@
       <el-row class="comment" v-bind:style="response.comment_active">
       <template v-for="comment in response.comments">
         <el-row type="flex" justify="center" class="comment_row">
-          <el-col :span="18" :offset="4">
+          <el-col :span="18" :offset="4" id="content">
           <p>
             <span> {{ comment.user_name }} :</span>
             <span> {{ comment.content }}</span>
@@ -841,5 +843,10 @@ export default {
     float: right;
     margin-bottom: 100px;
     width: 100px;
+  }
+  .content > *{
+    word-wrap:break-word;
+    white-space: pre-wrap;
+    word-break: break-all;
   }
 </style>
