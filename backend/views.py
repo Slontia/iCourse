@@ -1216,7 +1216,7 @@ def course_contri_list(request):
 
         ans = sorted(dict.items(), key=lambda item:item[1],reverse=True)
         dict_list = []
-        print(ans)
+        # print(ans)
 
         for id, score in ans:
             dict_tmp = {}
@@ -1230,7 +1230,7 @@ def course_contri_list(request):
             dict_tmp["contri"] = round(score, 1)
             
             dict_list.append(dict_tmp)
-        print(dict_list)
+        # print(dict_list)
 
         return HttpResponse(json.dumps({'contri_list': dict_list}, cls=ComplexEncoder))
 
