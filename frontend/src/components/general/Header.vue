@@ -290,6 +290,7 @@ export default {
   methods: {
     tongpao: function () {
       var post_url = get_url(this.$store.state.dev, '/login_tongpao/')
+      var self = this
       $.ajax({
         ContentType: 'application/json; charset=utf-8',
         dataType: 'json',
@@ -297,10 +298,9 @@ export default {
         type: 'POST',
         success: function (data) {
           window.location.href = data['url']
-          window.open()
         },
         error: function () {
-          alert('无法连接到同袍')
+          self.message('error', '无法连接到同袍')
         }
       })
     },
@@ -316,6 +316,13 @@ export default {
     personal_space: function () { this.$router.push({ path: ('/user/home/' + this.username) }) },
     register: function () { this.register_form_visible = true },
     logo_clicked: function () { this.$router.push({ path: ('/index') }) },
+    message: function (type, info) {
+      this.$message({
+        showClose: true,
+        type: type,
+        message: info
+      })
+    },
     logout: function () {
       var self = this
       $.ajax({
@@ -328,15 +335,16 @@ export default {
             case 0:
               self.is_login = false
               self.username = null
-              alert('登出成功')
+              self.message('success', '登出成功')
               self.$store.state.is_login = false
               self.$store.state.user_name = ''
+              location.reload()
               break
             case 301:
-              alert('登出失败')
+              self.message('error', '登出失败')
               break
             default:
-              alert('未知错误')
+              self.message('error', '未知错误')
           }
         },
         error: function () {
@@ -369,20 +377,21 @@ export default {
                 self.is_login = true
                 self.$store.state.user_name = self.username
                 self.$store.state.is_login = true
-                alert('登录成功')
+                location.reload()
+                self.message('success', '登录成功')
                 break
               case 101:
-                alert('登录失败：用户名不存在或密码不匹配')
+                self.message('error', '登录失败：用户名不存在或密码不匹配')
                 break
               case 102:
-                alert('登录失败：非法的输入')
+                self.message('error', '登录失败：非法的输入')
                 break
               default:
-                alert('未知错误')
+                self.message('error', '未知错误')
             }
           },
           error: function () {
-            alert('服务器连接异常')
+            self.message('error', '服务器连接异常')
           }
         })
       } else {
@@ -418,20 +427,20 @@ export default {
             switch (data['error']) {
               case 0:
                 self.register_form_visible = false
-                alert('注册成功')
+                self.message('success', '注册成功')
                 break
               case 201:
-                alert('用户名或邮箱已被注册')
+                self.message('error', '用户名或邮箱已被注册')
                 break
               case 202:
-                alert('注册异常')
+                self.message('error', '注册异常')
                 break
               default:
-                alert('未知错误')
+                self.message('error', '未知错误')
             }
           },
           error: function () {
-            alert('服务器连接异常')
+            self.message('error', '服务器连接异常')
           }
         })
       }
