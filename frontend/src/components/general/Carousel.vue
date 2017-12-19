@@ -57,7 +57,9 @@
       <el-row>
        <el-col :span="16" :offset="1">
         <el-button type="text" @click="course_name_clicked(thread.course_id)"> 
-        <p class="course_name"> {{ thread.course_name }} </p>
+       <el-col :span="16" :offset="1">
+        <p style="color:#58B7FF" @click="course_name_clicked(thread.course_id)"> {{ thread.course_name }} </p>
+       </el-col>
         </el-button>
         </el-col>
       </el-row>
@@ -109,7 +111,7 @@
       <el-row>
        <el-col :span="16" :offset="1">
         <p style="color:#58B7FF" @click="course_name_clicked(thread.course_id)"> {{ thread.course_name }} </p>
-        </el-col>
+       </el-col>
       </el-row>
       <center><hr width="90%"style="margin-top: 20px; border: none;border-top: 1px solid rgb(241,242,244)"/></center>
       </template>
