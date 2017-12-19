@@ -56,7 +56,9 @@
       </el-row>
       <el-row>
        <el-col :span="16" :offset="1">
-        <p style="color:#58B7FF"> {{ thread.course_name }} </p>
+        <el-button type="text" @click="course_name_clicked(thread.course_id)"> 
+        <p class="course_name"> {{ thread.course_name }} </p>
+        </el-button>
         </el-col>
       </el-row>
       <center><hr width="90%"style="margin-top: 20px; border: none;border-top: 1px solid rgb(241,242,244)"/></center>
@@ -106,7 +108,7 @@
       </el-row>
       <el-row>
        <el-col :span="16" :offset="1">
-        <p style="color:#58B7FF"> {{ thread.course_name }} </p>
+        <p style="color:#58B7FF" @click="course_name_clicked(thread.course_id)"> {{ thread.course_name }} </p>
         </el-col>
       </el-row>
       <center><hr width="90%"style="margin-top: 20px; border: none;border-top: 1px solid rgb(241,242,244)"/></center>
@@ -263,6 +265,9 @@ export default {
     }
   },
   methods: {
+    course_name_clicked: function (course_id) {
+      this.$router.push({ path: '/course/page/' + course_id + '/' })
+    },
     handle_tab_clicked: function (tab, event) {
     },
     enter_thread_button_clicked: function (value) {
@@ -348,7 +353,7 @@ export default {
                 for (var i = 0; i < info_list.length; i++) {
                   var type = (info_list[i].category === 1 ? '问题讨论' : (info_list[i].category === 2 ? '学习心得' : '其他'))
                   var cut_description = (info_list[i].intro.length < 100 ? info_list[i].intro : info_list[i].intro.substr(0, 100)) + '....'
-                  var thread = { id: id_list[i], agree_num: info_list[i].grade_sum, follow_num: info_list[i].follow_count, read_num: info_list[i].click_count, type: type, title: info_list[i].title, description: cut_description, course_name: info_list[i].course_name }
+                  var thread = { id: id_list[i], agree_num: info_list[i].grade_sum, follow_num: info_list[i].follow_count, read_num: info_list[i].click_count, type: type, title: info_list[i].title, description: cut_description, course_name: info_list[i].course_name, course_id: info_list[i].course_id }
                   _this.hot_threads.push(thread)
                 }
               },
@@ -397,7 +402,7 @@ export default {
                 for (var i = 0; i < info_list.length; i++) {
                   var type = (info_list[i].category === 1 ? '问题讨论' : (info_list[i].category === 2 ? '学习心得' : '其他'))
                   var cut_description = (info_list[i].intro.length < 100 ? info_list[i].intro : info_list[i].intro.substr(0, 100)) + '....'
-                  var thread = { id: id_list[i], agree_num: info_list[i].grade_sum, follow_num: info_list[i].follow_count, read_num: info_list[i].click_count, type: type, title: info_list[i].title, description: cut_description, course_name: info_list[i].course_name }
+                  var thread = { id: id_list[i], agree_num: info_list[i].grade_sum, follow_num: info_list[i].follow_count, read_num: info_list[i].click_count, type: type, title: info_list[i].title, description: cut_description, course_name: info_list[i].course_name, course_id: info_list[i].course_id }
                   _this.new_threads.push(thread)
                 }
               },
@@ -546,5 +551,8 @@ export default {
   }
   .card_title_text{
     font-size: 14px;
+  }
+  .course_name{
+    font-size: 18px;
   }
 </style>
