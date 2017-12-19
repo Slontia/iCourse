@@ -174,6 +174,7 @@
     </center>
     
     <!-- editor -->
+    <el-row>
     <el-row type="flex" justify="center" class="response_info_row" id="follow_row">
       <el-col :span="20">
         <p style="text-align: left; margin-bottom: 20px;">发表你的看法</p>
@@ -200,6 +201,7 @@
         </el-button>
       </el-col>
     </el-row>
+  </el-row>
   </div>
 </template>
 
@@ -214,6 +216,29 @@ import $ from 'jquery'
 export default {
   name: 'Thread',
   components: { Header },
+  created () {
+    var post_url = get_url(this.$store.state.dev, '/follow/get/userpost/')
+    var post_data = { 'post_id': Number(this.$route.params.thread_id) }
+    var _this = this
+    $.ajax({
+      ContentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      url: post_url,
+      type: 'POST',
+      data: post_data,
+      success: function (data) {
+        _this.follow_published = (data['editor'] !== -1)
+        _this.editor.content = data['content']
+      },
+      error: function () {
+        _this.$message({
+          showClose: true,
+          type: 'error',
+          message: '获取用户回帖信息失败'
+        })
+      }
+    })
+  },
   mounted () {
     // todo:load thread and course name,
     this.dev = true
@@ -373,6 +398,7 @@ export default {
   },
   data () {
     return {
+      follow_published: true,
       course_id: '',
       course_name: '',
       response_num: 0,
@@ -459,7 +485,7 @@ export default {
       })
     },
     return_forum_button_clicked: function () {
-      this.$router.push({ path: '/course/page/'+this.$route.params.course_id+'/forum/' })
+      this.$router.push({ path: '/course/page/'+ this.course_id +'/forum/' })
     },
     agree_button_clicked: function (is_main, value, id, index) {
       if (!this.$store.state.is_login) {
@@ -668,13 +694,22 @@ export default {
           type: 'error'
         })
       } else {
-        this.$confirm('确认发布评论？', '发布', {
-          confirmButtonText: '发布',
+        var que = this.follow_published ? '确认修改主帖/跟帖内容？' : '确认发布跟帖？'
+        var act = this.follow_published ? '修改' : '发布'
+        this.$confirm(que, act, {
+          confirmButtonText: act,
           cancelButtonText: '取消',
           type: 'info'
         }).then(() => {
-          var post_url = get_url(this.$store.state.dev, '/post/follow/publish/')
-          var post_data = { post_id: this.$route.params.thread_id, content: this.editor.content, editor: 0 }
+          var post_url = ''
+          var post_data = {}
+          if (this.follow_published) {
+            post_url = get_url(this.$store.state.dev, '/post/follow/edit/')
+            post_data = { post_id: this.$route.params.thread_id, content: this.editor.content }
+          } else {
+            post_url = get_url(this.$store.state.dev, '/post/follow/publish/')
+            post_data = { post_id: this.$route.params.thread_id, content: this.editor.content, editor: 0 }
+          }
           var _this = this
           $.ajax({
             ContentType: 'application/json; charset=utf-8',
@@ -695,7 +730,7 @@ export default {
                 _this.$message({
                   showClose: true,
                   type: 'error',
-                  message: '发布评论失败'
+                  message: '发布失败，请检查内容是否合法'
                 })
               }
             },

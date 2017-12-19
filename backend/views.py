@@ -757,6 +757,28 @@ def follow_publish(request):
             return HttpResponse(json.dumps({'error': 1}))
         return HttpResponse(json.dumps({'error': 0}))
 
+# Edit Follow Interface
+# URL: /post/follow/edit/
+@csrf_exempt
+def follow_edit(request):
+    if(request.method == 'POST'):
+        data = request.POST
+        post_id = int(data.get('post_id'))
+        content = str(data.get('content'))
+        user_id = request.user.id
+        follow = Follow.objects.get(post_id=post_id,user_id=user_id)
+        if(follow == None): # not found
+            return HttpResponse(json.dumps({'error': 2}))
+        # published?
+        follow_form = FollowForm({'post_id':post_id, 'user_id':user_id, 'content':content, 'editor':follow.editor})
+        if(follow_form.is_valid()):
+            follow.content = content
+            follow.edit_time = datetime.datetime.now()
+            follow.save()
+        else:
+            return HttpResponse(json.dumps({'error': 1}))
+        return HttpResponse(json.dumps({'error': 0}))
+
 # Publish Comment Interface
 # URL: /post/comment/publish/
 @csrf_exempt
@@ -870,6 +892,7 @@ def post_infor_list(request):
             post['content'] = main_follow.content
             # print(main_follow.content)
             post['user_name'] = User.objects.get(id=post['user_id']).username
+            post['course_name'] = Course.objects.get(id=post['course_id']).name
             #post['update_time'] = '2017-11-18'
             info_list.append(post)
         return HttpResponse(json.dumps({'info_list':info_list},cls=ComplexEncoder))
@@ -938,11 +961,16 @@ def userid_postid_get_follow(request):
     if(request.method == 'POST'):
         data = request.POST
         post_id = int(data.get('post_id'))
-        user_id = int(data.get('user_id'))
+        user_id = request.user.id
+        if (user_id == None):
+            print("NNNNNNNNNNNNNONE")
+            return HttpResponse(json.dumps({'content':'', 'editor':-1}))
         result = Follow.objects.filter(post_id=post_id,user_id=user_id).values('content', 'editor')
         if(result.count() != 1):#if(len(result) != 1):
             # error
+            print("NNNNNNNNNNNNNNNOT FOUND")
             return HttpResponse(json.dumps({'content':'', 'editor':-1}))
+        print("FFFFFFFFFFFFFFFFFFFOUND")
         return HttpResponse(json.dumps({'content':result[0]['content'], 'editor':result[0]['editor']}))
 
 # Get Comment Id List Interface

@@ -54,6 +54,11 @@
           </el-row>
         </el-col>
       </el-row>
+      <el-row>
+       <el-col :span="16" :offset="1">
+        <p style="color:#58B7FF"> {{ thread.course_name }} </p>
+        </el-col>
+      </el-row>
       <center><hr width="90%"style="margin-top: 20px; border: none;border-top: 1px solid rgb(241,242,244)"/></center>
       </template>
       </el-tab-pane>
@@ -97,6 +102,11 @@
           <el-row style="padding-bottom: 10px;">
             <p class="thread_description"> {{ thread.description }} </p>
           </el-row>
+        </el-col>
+      </el-row>
+      <el-row>
+       <el-col :span="16" :offset="1">
+        <p style="color:#58B7FF"> {{ thread.course_name }} </p>
         </el-col>
       </el-row>
       <center><hr width="90%"style="margin-top: 20px; border: none;border-top: 1px solid rgb(241,242,244)"/></center>
@@ -336,9 +346,9 @@ export default {
               success: function (data) {
                 var info_list = data['info_list']
                 for (var i = 0; i < info_list.length; i++) {
-                  var type = (info_list[i].type === 1 ? '问题讨论' : (info_list[i].type === 2 ? '学习心得' : '其他'))
+                  var type = (info_list[i].category === 1 ? '问题讨论' : (info_list[i].category === 2 ? '学习心得' : '其他'))
                   var cut_description = (info_list[i].intro.length < 100 ? info_list[i].intro : info_list[i].intro.substr(0, 100)) + '....'
-                  var thread = { id: id_list[i], agree_num: info_list[i].grade_sum, follow_num: info_list[i].follow_count, read_num: info_list[i].click_count, type: type, title: info_list[i].title, description: cut_description }
+                  var thread = { id: id_list[i], agree_num: info_list[i].grade_sum, follow_num: info_list[i].follow_count, read_num: info_list[i].click_count, type: type, title: info_list[i].title, description: cut_description, course_name: info_list[i].course_name }
                   _this.hot_threads.push(thread)
                 }
               },
@@ -385,9 +395,9 @@ export default {
               success: function (data) {
                 var info_list = data['info_list']
                 for (var i = 0; i < info_list.length; i++) {
-                  var type = (info_list[i].type === 1 ? '问题讨论' : (info_list[i].type === 2 ? '学习心得' : '其他'))
+                  var type = (info_list[i].category === 1 ? '问题讨论' : (info_list[i].category === 2 ? '学习心得' : '其他'))
                   var cut_description = (info_list[i].intro.length < 100 ? info_list[i].intro : info_list[i].intro.substr(0, 100)) + '....'
-                  var thread = { id: id_list[i], agree_num: info_list[i].grade_sum, follow_num: info_list[i].follow_count, read_num: info_list[i].click_count, type: type, title: info_list[i].title, description: cut_description }
+                  var thread = { id: id_list[i], agree_num: info_list[i].grade_sum, follow_num: info_list[i].follow_count, read_num: info_list[i].click_count, type: type, title: info_list[i].title, description: cut_description, course_name: info_list[i].course_name }
                   _this.new_threads.push(thread)
                 }
               },

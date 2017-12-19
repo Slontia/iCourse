@@ -80,6 +80,7 @@ urlpatterns = [
     # post follow follow_comment follow_evaluation
     url(r'^post/posting/publish/$', backend_views.posting_publish, name='posting_publish'),
     url(r'^post/follow/publish/$', backend_views.follow_publish, name='follow_publish'),
+    url(r'^post/follow/edit/$', backend_views.follow_edit, name='follow_edit'),
     url(r'^post/comment/publish/$', backend_views.comment_publish, name='comment_publish'),
     url(r'^post/follow/evaluate/$', backend_views.follow_evaluate, name='follow_evaluate'),
     url(r'^post/id/list/$', backend_views.post_id_list, name='post_id_list'),
@@ -87,6 +88,7 @@ urlpatterns = [
     url(r'^post/click_count/$', backend_views.refresh_click_post_count),
     url(r'^follow/id/list/$', backend_views.follow_id_list, name='follow_id_list'),
     url(r'^follow/info/list/$', backend_views.follow_info_list, name='follow_info_list'),
+    url(r'^follow/get/userpost/$', backend_views.userid_postid_get_follow, name='userid_postid_get_follow'),
     url(r'^comment/id/list/$', backend_views.comment_id_list,name='comment_id_list'),
     url(r'^comment/info/list/$', backend_views.comment_info_list,name='comment_info_list'),
     url(r'^user/modify/info/$',backend_views.user_modify_info,name='user_modify_info'),
