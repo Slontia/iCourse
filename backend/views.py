@@ -360,9 +360,7 @@ def userLogin(request):
         data = json.loads(data)
         #data = json.loads(requset.body.decode())
         username = str(data.get('username'))
-        print ('username: ' + username)
         password = str(data.get('password'))
-        print ('password:' + password)
         
         loginForm = LoginForm({'username': username, 'password': password})
         
@@ -851,12 +849,12 @@ def post_infor_list(request):
         data = json.dumps(request.POST)
         data = json.loads(data)
         id_list = data.get('id_list')
-        print(id_list)
+        #print(id_list)
         if(',' in id_list):
             id_list = id_list[1:-1].split(',')
         else:
             id_list = [id_list[1:-1]]
-        print(id_list)
+        #print(id_list)
         get_content = str(data.get('get_content'))
         get_grade = str(data.get('get_grade'))
         get_follow_count = str(data.get('get_follow_count'))
@@ -938,6 +936,7 @@ def follow_info_list(request):
                 continue
             follow = result.values('user_id', 'post_time', 'edit_time', 'content', 'pos_eva_count', 'neg_eva_count')[0]
             follow['username'] = User.objects.get(id=follow['user_id']).username
+            follow['self_intro'] = UserProfile.objects.get(user_id=follow['user_id']).intro
             if(follow['user_id'] == cur_user_id):
                 follow['is_poster'] = True
             else:

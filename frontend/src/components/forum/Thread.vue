@@ -14,6 +14,12 @@
         </p>
       </el-col>
     </el-row>
+    <el-row style="margin-bottom: 20px">
+      <el-col :span="21">
+                  <el-button type="primary" size="large" @click="edit_comment_button_clicked" style="float:right">编辑/添加回复
+          </el-button>
+      </el-col>
+    </el-row>
     <center><hr width="80%"/></center>
     <!-- question or passage -->
     <el-row type="flex" justify="center" class="main_container">
@@ -39,8 +45,6 @@
           <p>
             <span class="main_title">{{ main.type }} ·</span>
             <span class="main_title">{{ main.title }}</span>
-          <el-button type="primary" size="large" @click="edit_comment_button_clicked" style="float:right">编辑/添加回复
-          </el-button>
           </p>
         </el-row>
         <el-row class="info_row">
@@ -242,7 +246,6 @@ export default {
     })
   },
   mounted () {
-    // todo:load thread and course name,
     this.dev = true
     this.response_page_size = 10
     var post_url = get_url(this.$store.state.dev, '/follow/id/list/')
@@ -309,7 +312,7 @@ export default {
               _this.main.id = target_list[0]
               _this.main.agree_num = pos // need to add
               _this.main.user_name = info_list[0].username
-              _this.main.self_intro = '' // need
+              _this.main.self_intro = !info_list[0].self_intro ? '没有自我介绍呢' : info_list[0].self_intro // need
               _this.main.avatar = default_img // need
               _this.main.content = info_list[0].content
               _this.main.time = String(info_list[0].edit_time)
@@ -322,7 +325,7 @@ export default {
                 temp.id = target_list[j]
                 temp.agree_num = pos // need
                 temp.user_name = info_list[j].username
-                temp.self_intro = '' // need
+                temp.self_intro = info_list[j].self_intro ? info_list[j].self_intro : '没有自我介绍呢'// need
                 temp.avatar = default_img // need
                 temp.content = info_list[j].content
                 temp.time = String(info_list[j].edit_time)
@@ -686,7 +689,7 @@ export default {
       if (this.editor.overflow || this.editor.text.length < 10) {
         this.$message({
           showClose: true,
-          message: '请控制评论的字符在10-800之内',
+          message: '请控制评论的字符在10-10000之内',
           type: 'error'
         })
       } else if (!this.$store.state.is_login) {
