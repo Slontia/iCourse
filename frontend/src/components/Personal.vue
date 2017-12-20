@@ -47,7 +47,7 @@
             </el-row>
           </el-col>
           <el-col :span="8">
-            <el-button type="button" @click="edit_info_button_clicked"><i class="el-icon-edit"></i>
+            <el-button type="button" @click="edit_info_button_clicked" v-if="is_host"><i class="el-icon-edit"></i>
               编辑资料
             </el-button>
           </el-col>
@@ -154,6 +154,7 @@ export default {
     }
 
     return {
+      is_host: false,
       spaceName: this.username + '的花园',
       signature: '',
       username: '',
@@ -288,6 +289,7 @@ export default {
         this.academy_options[i]['label'] = college_map[college['value']]
       }
     }
+    this.username = this.$route.params.username
     var personalSelf = this
     var post_url = get_url(this.$store.state.dev, '/sign/logged_in/')
     $.ajax({
@@ -297,13 +299,12 @@ export default {
       type: 'POST',
       async: false,
       success: function (data) {
-        personalSelf.username = data['username']
+        personalSelf.is_host = (personalSelf.username === data['username'])
       },
       error: function () {
         alert('加载导航栏连接服务器失败')
       }
     })
-    this.username = this.$route.params.username
     post_url = get_url(this.$store.state.dev, '/user/information/')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
@@ -331,7 +332,7 @@ export default {
         var college_id = user_info['college_id']
         var college_name = (college_map.hasOwnProperty(college_id)) ? college_map[college_id] : college_id.toString() + '系'
         personalSelf.college = college_name
-        personalSelf.form.college_id = college_name
+        personalSelf.form.college_id = college_id
       },
       error: function () {
         alert('fail')
