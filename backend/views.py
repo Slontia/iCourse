@@ -69,7 +69,7 @@ def userRegister(request):
             intro = str(data.get('intro'))
             
             registerForm = RegisterForm({'username':username,'password1':password1,'password2':password2,'email':email,'gender':gender,'nickname':nickname,'intro':intro})
-            
+            print('email: ', email)
             if(not registerForm.is_valid()):
                 return HttpResponse(json.dumps({'error': 201}, cls=ComplexEncoder))
 
@@ -347,6 +347,21 @@ class CustomBackend(ModelBackend):
         except Exception as e:
             return None    # return None if failed
 
+# Email Check Interface
+# URL: /sign/emailcheck/
+@csrf_exempt
+def email_check(request):
+    if (request.method == "POST"):
+        user_id = request.user.id
+        print("User:", user_id)
+        user = User.objects.get(id=user_id)
+        if (user == None):
+            return HttpResponse(json.dumps({'error': 1}))
+        if (user.is_superuser):
+            return HttpResponse(json.dumps({'error': 2}))
+        send_register_email(user.email, "register")
+        return HttpResponse(json.dumps({'error': 0}))
+
 # Login Interface
 # REQUIRES: the ajax data should be json data {'username':username, 'passward':passward
 # MODIFIES: request.user.is_authenticated() == True
@@ -367,7 +382,7 @@ def userLogin(request):
         if(loginForm.is_valid()):
             cb = CustomBackend()
             user = cb.authenticate(username=username, password=password)
-            if(user is not None and user.is_active):
+            if(user is not None):
                 auth.login(request, user)
                 request.session['username'] = username # store in session
                 # print ('success')
@@ -1479,7 +1494,7 @@ class ActiveUserView(View):
                 # 通过邮箱查找到对应的用户
                 user = User.objects.get(email=email)
                 # 激活用户
-                user.is_active = True
+                user.is_superuser = True
                 user.save()
         else:
             return HttpResponse(json.dumps({'error': 104, 'msg':'用户激活失败'})) # activated fail
@@ -1759,6 +1774,7 @@ def tongpao(request):
         # print("!!!!username=",student_id)
         user.set_password("111111111111111111111111111111")
         user.is_active = True
+        user.is_superuser = True
         user.email = email
         user.first_name = "TongPao"
 

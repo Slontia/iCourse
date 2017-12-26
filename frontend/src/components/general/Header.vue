@@ -53,25 +53,25 @@
   <!-- 注册页面 -->
   <el-dialog title="注册" :visible="register_form_visible" :before-close="handle_close_register">
     <el-form :model="register_form" label-position="left" :rules="register_rules" ref="register_form" >
-      <el-form-item tyep="text" label="用户名" :label-width="form_label_width" prop="username" id="register_form1">
+      <el-form-item tyep="text" label="用户名" :label-width="form_label_width" prop="username" id="register_form1" required>
         <el-input v-model="register_form.username" auto_complete="off" placeholder="唯一的用户名,由字母/数字/下划线组成，大小写不敏感，20字符以内"></el-input>
       </el-form-item>
-      <el-form-item type="text" label="昵称" :label-width="form_label_width" prop="nickname" id="register_form2">
+      <el-form-item type="text" label="昵称" :label-width="form_label_width" prop="nickname" id="register_form2"  required>
         <el-input v-model="register_form.nickname" auto_complete="off" placeholder="昵称,20字符以内,支持中文"></el-input>
       </el-form-item>
-      <el-form-item type="select" label="性别" :label-width="form_label_width" prop="gender" id="register_form3">
+      <el-form-item type="select" label="性别" :label-width="form_label_width" prop="gender" id="register_form3"  required>
         <el-select v-model="register_form.gender" placeholder="请选择性别">
           <el-option v-for="item in gender_options" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="密码" :label-width="form_label_width" prop="password" id="register_form4">
+      <el-form-item label="密码" :label-width="form_label_width" prop="password" id="register_form4"  required>
         <el-input type="password" v-model="register_form.password" auto_complete="off" placeholder="8-20位,大小写敏感"></el-input>
       </el-form-item>
-      <el-form-item label="确认密码" :label-width="form_label_width" prop="confirmed_password" id="register_form5">
+      <el-form-item label="确认密码" :label-width="form_label_width" prop="confirmed_password" id="register_form5"  required>
         <el-input type="password" v-model="register_form.confirmed_password" auto_complete="off" placeholder="确认密码"></el-input>
       </el-form-item>
-      <el-form-item type="text" label="北航邮箱" :label-width="form_label_width" prop="email" id="register_form6">
-        <el-input v-model="register_form.email" auto_complete="off" placeholder="合法的北航邮箱"></el-input>
+      <el-form-item type="text" label="邮箱" :label-width="form_label_width" prop="email" id="register_form6">
+        <el-input v-model="register_form.email" auto_complete="off" placeholder="合法的邮箱"></el-input>
       </el-form-item>
     </el-form>
       <span slot="footer" class="dialog-footer">
@@ -218,12 +218,13 @@ export default {
         callback(new Error('邮箱不能为空'))
       }
       setTimeout(() => {
-        var pattern = new RegExp(/^[a-zA-Z0-9_-]+@buaa.edu.cn$/)
+        // var pattern = new RegExp(/^[a-zA-Z0-9_-]+@buaa.edu.cn$/)
+        var pattern = new RegExp(/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/)
         if (pattern.test(value)) {
           callback()
         }
         else {
-          callback(new Error('非法邮箱，邮箱必须是北航邮箱'))
+          callback(new Error('非法邮箱，请验证邮箱格式是否正确'))
         }
       }, 500)
     }

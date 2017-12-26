@@ -21,9 +21,9 @@ class RegisterForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        search = re.search('@buaa.edu.cn$', email)
-        if(search is None):
-            raise forms.ValidationError("注册邮箱不是北航邮箱")
+        # search = re.search('@buaa.edu.cn$', email)
+        # if(search is None):
+        #     raise forms.ValidationError("注册邮箱不是北航邮箱")
         filterResult = User.objects.filter(email=email)
         if(len(filterResult) > 0):
             raise forms.ValidationError("该邮箱已被注册")

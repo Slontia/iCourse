@@ -18,7 +18,7 @@
       <el-col :span="9" :offset="3">
         <el-radio-group v-model="selected_filter" @change="handle_filter_change">
           <template v-for="term in search_terms">
-            <el-radio-button class="button_group_static" :label="term.text">
+            <el-radio-button class="button_group_static" :label="term.text"  disabled=true>
               {{ term.text }}
             </el-radio-button>
           </template>
@@ -30,7 +30,7 @@
         </el-button>
       </el-col>
       <el-col :span="4" :offset="0">
-        <el-input type="text" v-model = "search_text" placeholder="在当前条目下搜索" @keydown.enter.native.prevent="search_button_clicked" icon="search" :on-icon-click="search_button_clicked"></el-input>
+        <el-input type="text" v-model = "search_text" placeholder="在当前条目下搜索" @keydown.enter.native.prevent="search_button_clicked" icon="search" :on-icon-click="search_button_clicked"  disabled=true></el-input>
       </el-col>
     </el-row>
     <template v-for="thread in current_threads">

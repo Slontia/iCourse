@@ -22,7 +22,7 @@
                                     <el-button type="primary" v-on:click="search_course_clicked" icon="search">搜索</el-button>
                                   </el-form-item>
                                   <el-form-item>
-                                    <el-button type="primary" @click="add_course_clicked" icon="plus" style="float:left;">添加课程
+                                    <el-button type="primary" @click="add_course_clicked" icon="plus" style="float:left;" disabled=true>添加课程
                                     </el-button>
                                   </el-form-item>
                                 </el-form>

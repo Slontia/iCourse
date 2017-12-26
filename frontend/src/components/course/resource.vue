@@ -34,22 +34,22 @@
       </el-row>
       <el-row style="margin:20px 0px 0px 0px;">
         <el-col :span="4" :offset="2">
-          <el-select v-model="sortMode" placeholder="请选择排序方式">
+          <el-select v-model="sortMode" placeholder="请选择排序方式"  disabled=true>
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </el-col>
         <el-col :span="2">
-          <el-button type="button" @click.native="closed">升序排序</el-button>
+          <el-button type="button" @click.native="closed" disabled=true>升序排序</el-button>
         </el-col>
         <el-col :span="2">
-          <el-button type="button" @click.native="closed">降序排序</el-button>
+          <el-button type="button" @click.native="closed" disabled=true>降序排序</el-button>
         </el-col>
          <el-col :span="4" :offset="4">
-          <el-input v-model="input" placeholder="资源名称"></el-input>
+          <el-input v-model="input" placeholder="资源名称"  disabled=true></el-input>
         </el-col>        
         <el-col :span="2" :offset="1">
-          <el-button type="button" @click.native="closed">搜索资源</el-button>
+          <el-button type="button" @click.native="closed" disabled=true>搜索资源</el-button>
         </el-col>
         <el-col :span="2">
           <el-button type="button" @click.native="uploadDialogVisible=true">上传资源</el-button>

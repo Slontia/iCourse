@@ -39,12 +39,22 @@
               <el-col :span="4">学院:</el-col>
               <el-col :span="20">{{ college }}</el-col>
             </el-row>
-            <el-row>
+            <el-row v-if="is_host">
+              <el-col :span="4">邮箱:</el-col>
+              <el-col :span="20"> {{ email }} </el-col>
+            </el-row>
+            <el-row v-if="is_host&&!is_superuser">
+              <el-col>
+                <span style="color:red">该邮箱目前未通过验证</span>
+                <el-button type="button" @click="email_check">点此认证</el-button>
+              </el-col>
+            </el-row>
+            <!--el-row>
               <el-col :span="4">关注:</el-col>
               <el-col :span="6">{{ follows }}</el-col>
               <el-col :span="4">粉丝:</el-col>
               <el-col :span="6">{{ fans }}</el-col>
-            </el-row>
+            </el-row-->
           </el-col>
           <el-col :span="8">
             <el-button type="button" @click="edit_info_button_clicked" v-if="is_host"><i class="el-icon-edit"></i>
@@ -80,15 +90,15 @@
   </el-col>
   <el-dialog title="修改个人信息" :visible.sync="dialog_visible">
     <el-form :model="form" label-position="top" ref="form" :rules="form_rules">
-      <el-form-item label="昵称" type="text" :label-width="form_label_width" prop="nickname" >
+      <el-form-item label="昵称" type="text" :label-width="form_label_width" prop="nickname" required>
         <el-input v-model="form.nickname" auto-complete="off" placeholder="昵称,20字符以内,支持中文"></el-input>
       </el-form-item>
-        <el-form-item type="select" label="性别" :label-width="form_label_width" >
+        <el-form-item type="select" label="性别" :label-width="form_label_width" required>
         <el-select v-model="form.gender" placeholder="请选择性别">
           <el-option v-for="item in gender_options" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item type="select" label="所在学院" :label-width="form_label_width">
+      <el-form-item type="select" label="所在学院" :label-width="form_label_width" required>
         <el-select v-model="form.college_id" placeholder="所在学院">
           <el-option v-for="item in academy_options" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
@@ -154,6 +164,8 @@ export default {
     }
 
     return {
+      email: '',
+      is_superuser: false,
       is_host: false,
       spaceName: this.username + '的花园',
       signature: '',
@@ -237,6 +249,39 @@ export default {
     }
   },
   methods: {
+    email_check: function () {
+      var post_url = get_url(this.$store.state.dev, '/sign/emailcheck/')
+      var _this = this
+      $.ajax({
+        ContentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: post_url,
+        type: 'POST',
+        success: function (data) {
+          var code = data['error']
+          if (code === 0) {
+            _this.$message({
+              showClose: true,
+              type: 'success',
+              message: '认证邮件已发送至邮箱'
+            })
+          } else {
+            _this.$message({
+              showClose: true,
+              type: 'error',
+              message: '认证失败'
+            })
+          }
+        },
+        error: function () {
+          _this.$message({
+            showClose: true,
+            type: 'error',
+            message: '邮箱认证：无法连接至服务器'
+          })
+        }
+      })
+    },
     test: function () { alert('还未开放') },
     edit_confirm_clicked: function (form_name) {
       this.$refs[form_name].validate((valid) => {
@@ -333,6 +378,8 @@ export default {
         var college_name = (college_map.hasOwnProperty(college_id)) ? college_map[college_id] : college_id.toString() + '系'
         personalSelf.college = college_name
         personalSelf.form.college_id = college_id
+        personalSelf.email = user_info['email']
+        personalSelf.is_superuser = user_info['is_superuser']
       },
       error: function () {
         alert('fail')

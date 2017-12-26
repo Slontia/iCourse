@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^sign/logout/$', backend_views.userLogout, name='userLogout'),    # for user logout
     url(r'^sign/iprecord/$',backend_views.ip_record),
     url(r'^sign/logged_in/$', backend_views.isLoggedIn, name='isLoggedIn'),
+    url(r'^sign/emailcheck/$', backend_views.email_check),
     url(r'^course/college_course/$', backend_views.course_by_college, name='course_by_college'),    # for searching course list by college_id
     url(r'^course/classification_course/$', backend_views.course_by_class, name='course_by_class'),    # for searching course list by class_id
     url(r'^course/course_info/$', backend_views.course_information, name='course_information'),    # for course information
