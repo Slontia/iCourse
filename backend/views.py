@@ -1498,7 +1498,7 @@ class ActiveUserView(View):
                 user.save()
         else:
             return HttpResponse(json.dumps({'error': 104, 'msg':'用户激活失败'})) # activated fail
-        return HttpResponse(json.dumps({'error': 0, 'msg':'用户激活成功'}))
+        return render(request, 'index.html')
     
     
 # Upload User Photo Interface

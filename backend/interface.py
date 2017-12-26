@@ -114,7 +114,7 @@ def user_information_by_username(username):
         profile = User.objects.get(email=username).userprofile
     else:
         profile = User.objects.get(username=username).userprofile
-    result = result.values('username', 'email')[0]
+    result = result.values('username', 'email', 'is_superuser')[0]
     result['nickname'] = profile.nickname
     result['gender'] = profile.gender
     result['intro'] = profile.intro
@@ -125,7 +125,7 @@ def user_information_by_id(user_id):
     result = User.objects.filter(id=user_id)
     if(len(result) == 0):
         return {}
-    result = result.values('username', 'email')[0]
+    result = result.values('username', 'email', "is_superuser")[0]
     return result
 
 
