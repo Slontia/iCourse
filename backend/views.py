@@ -1974,25 +1974,32 @@ def user_like_course_namelist(request):
 
 
 # Resource Search Interface(by ohazyi)
-# REQUIRES: the ajax data should be json data {'keyword': keyword}
+# REQUIRES: the ajax data should be json data {'keyword': keyword, course_id|int|课程id，-1表示全局搜索}
 # MODIFIES: NONE
 # EFFECTS: return data {'query_list': query_list}
 #          query_list is a list whose element is dicts like (user_id, total scores),
 #          such as {'college_id': 10, 'class_id': 55, 'name': '安卓', 'credit': 5, 'id': 9, 'hours': 10}
 #          the list is ordered by id temporaily (can be modified to revelance)
 @csrf_exempt
-def resource_query(request):
+def resource_query(request): #http://10.2.28.124:8080/solr/mynode2/select?q=%E6%95%B0%E6%8D%AE%E5%BA%93&fq=course_code%3AB3I08224C&rows=1000&wt=json&indent=true
 #    print("UUUUUUUUU")
 #    query = request.GET['keyword']
+#    course_id = request.GET['course_id']
+
     if(request.method == "POST"):
         data = json.dumps(request.POST) # new
         data = json.loads(data)
         #data = json.loads(request.body.decode())
         query = str(data.get('keyword'))
-        # print ('query: ' + query)
+        course_id = str(data.get('course_id'))
 
-        cs_url = 'http://10.2.28.124:8080/solr/mynode2/select?'#q=Bill&wt=json&indent=true' #http://10.2.28.124:8080/solr/index.html#/mynode2/query
-        param  = {'q':query, 'fl':'id,name,score', 'rows':2000, 'wt':'json', 'indent':'true'}
+        cs_url = 'http://10.2.28.124:8080/solr/mynode2/select?'
+        
+        course = Course.objects.get(id=course_id)
+        course_code = course.course_code
+                        
+        fq_str = "course_code:" + course_code
+        param  = {'q':query, 'fl':'id,name,score', 'fq': fq_str, 'rows':2000, 'wt':'json', 'indent':'true'}
         
         r = requests.get(cs_url, params = param)
         
@@ -2003,6 +2010,6 @@ def resource_query(request):
 
         ans = []
         for i in query_list:
-            if (i['score']>=7):
-                ans.append(i)
+            if (i['score']>=5): #排除掉匹配结果太低的
+                ans.append(i['id'])
         return HttpResponse(json.dumps({'query_list': ans}, cls=ComplexEncoder))
