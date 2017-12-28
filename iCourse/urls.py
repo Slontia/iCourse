@@ -62,6 +62,8 @@ urlpatterns = [
     url(r'^login_tongpao/$', backend_views.login_tongpao, name='login_tongpao'),
     url(r'^passport/auth/$', backend_views.tongpao, name='tongpao'),
     url(r'^resource/upload/latest/$', backend_views.latest_upload_resource_list, name='latest_upload_resource_list'),
+      
+    url(r'^resource/searching/$', backend_views.resource_query),
                
     # page
     url(r'^$', TemplateView.as_view(template_name='index.html')), # NEW

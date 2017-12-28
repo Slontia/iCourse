@@ -1971,3 +1971,38 @@ def user_like_course_namelist(request):
             course_info_list.append(interface.course_information(int(course_id))) 
         # print("like:", course_info_list)
         return HttpResponse(json.dumps({'info_list': course_info_list}))
+
+
+# Resource Search Interface(by ohazyi)
+# REQUIRES: the ajax data should be json data {'keyword': keyword}
+# MODIFIES: NONE
+# EFFECTS: return data {'query_list': query_list}
+#          query_list is a list whose element is dicts like (user_id, total scores),
+#          such as {'college_id': 10, 'class_id': 55, 'name': '安卓', 'credit': 5, 'id': 9, 'hours': 10}
+#          the list is ordered by id temporaily (can be modified to revelance)
+@csrf_exempt
+def resource_query(request):
+#    print("UUUUUUUUU")
+#    query = request.GET['keyword']
+    if(request.method == "POST"):
+        data = json.dumps(request.POST) # new
+        data = json.loads(data)
+        #data = json.loads(request.body.decode())
+        query = str(data.get('keyword'))
+        # print ('query: ' + query)
+
+        cs_url = 'http://10.2.28.124:8080/solr/mynode2/select?'#q=Bill&wt=json&indent=true' #http://10.2.28.124:8080/solr/index.html#/mynode2/query
+        param  = {'q':query, 'fl':'id,name,score', 'rows':2000, 'wt':'json', 'indent':'true'}
+        
+        r = requests.get(cs_url, params = param)
+        
+        query_res = http_get(r.url)
+
+        json_r = json.loads(bytes.decode(query_res))
+        query_list = json_r['response']['docs']
+
+        ans = []
+        for i in query_list:
+            if (i['score']>=7):
+                ans.append(i)
+        return HttpResponse(json.dumps({'query_list': ans}, cls=ComplexEncoder))
