@@ -1179,6 +1179,9 @@ def avg_score(resource_id):
 def course_contri_list(request):
     
     if(request.method == 'POST'):
+        
+#        time1 = time.clock()
+#        print("@@!##@$E")
         data = json.dumps(request.POST)
         data = json.loads(data)
         
@@ -1190,24 +1193,42 @@ def course_contri_list(request):
         course_code = c["course_code"]
 
         users = User.objects.filter()
-        resources = Resource.objects.filter(course_code = course_code)
-        # print(resources.count()) #len(resources)
+#        time2 = time.clock()
+#        print('T2', time2-time1)
+
         dict = {}
-        for i in range(0, resources.count()): #遍历所有资源 #len(resources)
+        users_cnt = User.objects.filter().count()
+        
+        for i in range(1, users_cnt+1):
+            dict[i] = 0
+        
+        resources = Resource.objects.filter(course_code = course_code)
+#        time6 = time.clock()
+#        print('T6', time6-time1)
+        # print(resources.count()) #len(resources)
+        
+        r_cnt = resources.count()
+        for i in range(0, r_cnt): #遍历所有资源 #len(resources)
             download_count = resources[i].download_count
             grade = avg_score(resources[i].id)
             if (grade == -1):
                 grade = 5 #没有人评价，评分就设置为5
             contrib_r = float(download_count) * float(grade) / 10.0
+#            time7 = time.clock()
+#            print('T7', time7-time1)
+#            if (not resources[i].upload_user_id in dict):
+#                dict[resources[i].upload_user_id] = contrib_r
+#            else:
+#            print(resources[i].upload_user_id,' ', contrib_r)
+            dict[resources[i].upload_user_id] = dict[resources[i].upload_user_id] + contrib_r#dict[resources[i].upload_user_id] + contrib_r
 
-            if (not resources[i].upload_user_id in dict):
-                dict[resources[i].upload_user_id] = contrib_r
-            else:
-                dict[resources[i].upload_user_id] = dict[resources[i].upload_user_id] + contrib_r
-
+#        time4 = time.clock()
+#        print('T4', time4-time1)
 
         posts = Post.objects.filter(course_id = course_id)
-        for i in range(0, posts.count()): #遍历所有帖子 #len(posts)
+        p_cnt = posts.count()
+        
+        for i in range(0, p_cnt): #遍历所有帖子 #len(posts)
             click_count = posts[i].click_count
             tmp = Follow.objects.filter(id = posts[i].main_follow_id)
             
@@ -1216,9 +1237,10 @@ def course_contri_list(request):
                 dict[post_user_id] = float(click_count/10.0)
             else:
                 dict[post_user_id] = dict[post_user_id] + float(click_count/10.0)
-
+            
             posts_follow = Follow.objects.filter(post_id = posts[i].id)
-            for j in range(0, posts_follow.count()): #遍历该帖子下的所有跟帖 #len(posts_follow
+            p_f_cnt = posts_follow.count()
+            for j in range(0, p_f_cnt): #遍历该帖子下的所有跟帖 #len(posts_follow
                 pos_eva_count = posts_follow[j].pos_eva_count
                 neg_eav_count = posts_follow[j].neg_eva_count
                 if ((pos_eva_count+neg_eav_count)==0):
@@ -1228,13 +1250,28 @@ def course_contri_list(request):
                 else:
                     dict[posts_follow[j].user_id] = dict[posts_follow[j].user_id] + float(2.0*(pos_eva_count)/(pos_eva_count+neg_eav_count))
 
+#        time5 = time.clock()
+#        print('T5', time5-time1)
+
         ans = sorted(dict.items(), key=lambda item:item[1],reverse=True)
         dict_list = []
         # # print(ans)
 
+#        time7 = time.clock()
+#        print('T7', time7-time1)
+
         for id, score in ans:
+            if (score == 0):
+                continue
+#            time8 = time.clock()
+#            print('T8', time8-time1)
             dict_tmp = {}
-            u_name = interface.get_username_by_id(id)
+            #u_name = #interface.get_username_by_id(id)
+            u_name = ""
+            res = User.objects.filter(id = id)
+
+            if (len(res) != 0):
+                u_name = res[0].username
             if (not u_name): #返回的是”“ 即不存在该用户，跳过
                 continue
 #            if (u_name == "iCourse"): #跳过iCourse用户
@@ -1244,8 +1281,11 @@ def course_contri_list(request):
             dict_tmp["contri"] = round(score, 1)
             
             dict_list.append(dict_tmp)
-        # # print(dict_list)
 
+        print(dict_list)
+
+#        time3 = time.clock()
+#        print('T3', time3-time1)
         return HttpResponse(json.dumps({'contri_list': dict_list}, cls=ComplexEncoder))
 
 
