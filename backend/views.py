@@ -1207,11 +1207,9 @@ def course_contri_list(request):
 #        time6 = time.clock()
 #        print('T6', time6-time1)
         # print(resources.count()) #len(resources)
-        
-        r_cnt = resources.count()
-        for i in range(0, r_cnt): #遍历所有资源 #len(resources)
-            download_count = resources[i].download_count
-            grade = avg_score(resources[i].id)
+        for r in resources: #遍历所有资源 #len(resources)
+            download_count = r.download_count
+            grade = avg_score(r.id)
             if (grade == -1):
                 grade = 5 #没有人评价，评分就设置为5
             contrib_r = float(download_count) * float(grade) / 10.0
@@ -1221,18 +1219,16 @@ def course_contri_list(request):
 #                dict[resources[i].upload_user_id] = contrib_r
 #            else:
 #            print(resources[i].upload_user_id,' ', contrib_r)
-            print("user:", resources[i].upload_user_id)
-            dict[resources[i].upload_user_id] = dict[resources[i].upload_user_id] + contrib_r#dict[resources[i].upload_user_id] + contrib_r
+            dict[r.upload_user_id] = dict[r.upload_user_id] + contrib_r#dict[resources[i].upload_user_id] + contrib_r
 
 #        time4 = time.clock()
 #        print('T4', time4-time1)
 
         posts = Post.objects.filter(course_id = course_id)
-        p_cnt = posts.count()
         
-        for i in range(0, p_cnt): #遍历所有帖子 #len(posts)
-            click_count = posts[i].click_count
-            tmp = Follow.objects.filter(id = posts[i].main_follow_id)
+        for p in posts: #遍历所有帖子 #len(posts)
+            click_count = p.click_count
+            tmp = Follow.objects.filter(id = p.main_follow_id)
             
             post_user_id = tmp[0].user_id
             if (not post_user_id in dict):
@@ -1240,17 +1236,16 @@ def course_contri_list(request):
             else:
                 dict[post_user_id] = dict[post_user_id] + float(click_count/10.0)
             
-            posts_follow = Follow.objects.filter(post_id = posts[i].id)
-            p_f_cnt = posts_follow.count()
-            for j in range(0, p_f_cnt): #遍历该帖子下的所有跟帖 #len(posts_follow
-                pos_eva_count = posts_follow[j].pos_eva_count
-                neg_eav_count = posts_follow[j].neg_eva_count
+            posts_follow = Follow.objects.filter(post_id = p.id)
+            for f in posts_follow: #遍历该帖子下的所有跟帖 #len(posts_follow
+                pos_eva_count = f.pos_eva_count
+                neg_eav_count = f.neg_eva_count
                 if ((pos_eva_count+neg_eav_count)==0):
                     continue
-                if (not posts_follow[j].user_id in dict):
-                    dict[posts_follow[j].user_id] = float(pos_eva_count*pos_eva_count/(pos_eva_count+neg_eav_count))
+                if (not f.user_id in dict):
+                    dict[f.user_id] = float(pos_eva_count*pos_eva_count/(pos_eva_count+neg_eav_count))
                 else:
-                    dict[posts_follow[j].user_id] = dict[posts_follow[j].user_id] + float(2.0*(pos_eva_count)/(pos_eva_count+neg_eav_count))
+                    dict[f.user_id] = dict[f.user_id] + float(2.0*(pos_eva_count)/(pos_eva_count+neg_eav_count))
 
 #        time5 = time.clock()
 #        print('T5', time5-time1)
