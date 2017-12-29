@@ -430,7 +430,8 @@ export default {
           success: function (data) {
             switch (data['error']) {
               case 0:
-                /* var post_url_login = get_url(this.$store.state.dev, '/sign/login/')
+                self.register_form_visible = false
+                var post_url_login = get_url(this.$store.state.dev, '/sign/login/')
                 var post_data = {
                   'username': self.register_form['username'],
                   'password': self.register_form['password']
@@ -447,7 +448,6 @@ export default {
                     // login_form_visible = false
                     switch (data['error']) {
                       case 0:
-                        self.login_form_visible = false
                         // self.username = post_data['username']
                         self.username = data['username']
                         self.is_login = true
@@ -469,7 +469,7 @@ export default {
                   error: function () {
                     self.message('error', '服务器连接异常')
                   }
-                }) */
+                })
                 break
               case 201:
                 self.message('error', '用户名或邮箱已被注册')
