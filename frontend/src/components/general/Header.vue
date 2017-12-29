@@ -431,7 +431,7 @@ export default {
             switch (data['error']) {
               case 0:
                 self.register_form_visible = false
-                var post_url_login = get_url(this.$store.state.dev, '/sign/login/')
+                var post_url_login = get_url(self.$store.state.dev, '/sign/login/')
                 var post_data_login = {
                   'username': self.register_form['username'],
                   'password': self.register_form['password']
