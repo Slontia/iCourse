@@ -419,17 +419,57 @@ export default {
           'intro': null
         }
         var self = this
+        var post_url = get_url(this.$store.state.dev, '/sign/register/')
         $.ajax({
           ContentType: 'application/json; charset=utf-8',
           dataType: 'json',
-          url: '/sign/register/',
+          url: post_url,
           type: 'POST',
           data: post_data,
+          async: false,
           success: function (data) {
             switch (data['error']) {
               case 0:
-                self.register_form_visible = false
-                self.message('success', '注册成功')
+                /* var post_url_login = get_url(this.$store.state.dev, '/sign/login/')
+                var post_data = {
+                  'username': self.register_form['username'],
+                  'password': self.register_form['password']
+                }
+                $.ajax({
+                  ContentType: 'application/json; charset=utf-8',
+                  dataType: 'json',
+                  url: post_url_login,
+                  type: 'POST',
+                  data: post_data,
+                  async: false,
+                  success: function (data) {
+                    // data = JSON.parse(data)
+                    // login_form_visible = false
+                    switch (data['error']) {
+                      case 0:
+                        self.login_form_visible = false
+                        // self.username = post_data['username']
+                        self.username = data['username']
+                        self.is_login = true
+                        self.$store.state.user_name = self.username
+                        self.$store.state.is_login = true
+                        location.reload()
+                        self.message('success', '注册成功')
+                        break
+                      case 101:
+                        self.message('error', '登录失败：用户名不存在或密码不匹配')
+                        break
+                      case 102:
+                        self.message('error', '登录失败：非法的输入')
+                        break
+                      default:
+                        self.message('error', '未知错误')
+                    }
+                  },
+                  error: function () {
+                    self.message('error', '服务器连接异常')
+                  }
+                }) */
                 break
               case 201:
                 self.message('error', '用户名或邮箱已被注册')

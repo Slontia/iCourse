@@ -350,7 +350,6 @@ export default {
         alert('加载导航栏连接服务器失败')
       }
     })
-    alert('"123"')
     post_url = get_url(this.$store.state.dev, '/user/information/')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
