@@ -350,6 +350,7 @@ export default {
         alert('加载导航栏连接服务器失败')
       }
     })
+    alert('"123"')
     post_url = get_url(this.$store.state.dev, '/user/information/')
     $.ajax({
       ContentType: 'application/json; charset=utf-8',
@@ -357,6 +358,7 @@ export default {
       url: post_url,
       type: 'POST',
       data: {'username': personalSelf.username},
+      async: false,
       success: function (data) {
         var user_info = data['user_info']
         personalSelf.username = user_info['username']
@@ -375,7 +377,10 @@ export default {
         personalSelf.form.intro = user_info['intro']
         personalSelf.personalIntro = user_info['intro']
         var college_id = user_info['college_id']
-        var college_name = (college_map.hasOwnProperty(college_id)) ? college_map[college_id] : college_id.toString() + '系'
+        var college_name = ''
+        if (college_id !== null) {
+          college_name = (college_map.hasOwnProperty(college_id)) ? college_map[college_id] : college_id.toString() + '系'
+        }
         personalSelf.college = college_name
         personalSelf.form.college_id = college_id
         personalSelf.email = user_info['email']

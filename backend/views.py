@@ -1198,6 +1198,7 @@ def course_contri_list(request):
 
         dict = {}
         users_cnt = User.objects.filter().count()
+        users_cnt = users[users_cnt-1].id
         
         for i in range(1, users_cnt+1):
             dict[i] = 0
@@ -1220,6 +1221,7 @@ def course_contri_list(request):
 #                dict[resources[i].upload_user_id] = contrib_r
 #            else:
 #            print(resources[i].upload_user_id,' ', contrib_r)
+            print("user:", resources[i].upload_user_id)
             dict[resources[i].upload_user_id] = dict[resources[i].upload_user_id] + contrib_r#dict[resources[i].upload_user_id] + contrib_r
 
 #        time4 = time.clock()
