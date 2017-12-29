@@ -432,16 +432,17 @@ export default {
               case 0:
                 self.register_form_visible = false
                 var post_url_login = get_url(this.$store.state.dev, '/sign/login/')
-                var post_data = {
+                var post_data_login = {
                   'username': self.register_form['username'],
                   'password': self.register_form['password']
                 }
+                self.message('success', '认证邮件已发送至邮箱，请查收~')
                 $.ajax({
                   ContentType: 'application/json; charset=utf-8',
                   dataType: 'json',
                   url: post_url_login,
                   type: 'POST',
-                  data: post_data,
+                  data: post_data_login,
                   async: false,
                   success: function (data) {
                     // data = JSON.parse(data)
