@@ -11,6 +11,7 @@
         <el-menu-item index="course" class = "el-menu-item"style="margin-right: 20px">课程</el-menu-item>
         <a target="_blank" class="el-menu-item" href="https://jq.qq.com/?_wv=1027&amp;k=5Iw7oPA"  style="text-decoration: none;">加入QQ群</a>
         <a target="_blank" class="el-menu-item" href="https://www.coolapk.com/apk/171502"  style="text-decoration: none;">下载安卓APP</a>
+        <a target="_blank" class="el-menu-item" href="https://www.wjx.top/jq/19782727.aspx"  style="text-decoration: none;">反馈和建议</a>
         <!--
         <el-menu-item index="about" class = "el-menu-item">联系我们</el-menu-item>
       -->
