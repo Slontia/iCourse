@@ -1136,8 +1136,8 @@ def resource_evaluation_grade_count(request):
         tot_grade = 0
         avg_grade = -1 #没有人评价，平均值默认值为-1
         if (result2.count() != 0): #if (len(result2) != 0):
-            for i in range(0, result2.count()): #for i in range(0, len(result2)):
-                tot_grade += result2[i].grade
+            for r in result2: #for i in range(0, len(result2)):
+                tot_grade += r.grade
                 avg_grade = float(tot_grade) / float(result2.count()) #len(result2)
         # print("tot_grade = ",tot_grade,"avg_grade = ", avg_grade)
         return HttpResponse(json.dumps({'avg_grade': avg_grade, 'user_grade': user_grade, 'grade_count': result2.count()})) #len(result2)
@@ -1149,8 +1149,8 @@ def avg_score(resource_id):
     tot_grade = 0
     avg_grade = -1 #没有人评价，平均值默认值为-1
     if (result2.count() != 0): #len(result2)
-        for i in range(0, result2.count()): #len(result2)
-            tot_grade += result2[i].grade
+        for r in result2: #len(result2)
+            tot_grade += r.grade
             avg_grade = float(tot_grade) / float(result2.count()) #float(len(result2)
     # print("tot_grade = ",tot_grade,"avg_grade = ", avg_grade)
     return avg_grade
@@ -1204,26 +1204,13 @@ def course_contri_list(request):
             dict[i] = 0
         
         resources = Resource.objects.filter(course_code = course_code)
-#        time6 = time.clock()
-#        print('T6', time6-time1)
-        # print(resources.count()) #len(resources)
         for r in resources: #遍历所有资源 #len(resources)
             download_count = r.download_count
             grade = avg_score(r.id)
             if (grade == -1):
                 grade = 5 #没有人评价，评分就设置为5
             contrib_r = float(download_count) * float(grade) / 10.0
-#            time7 = time.clock()
-#            print('T7', time7-time1)
-#            if (not resources[i].upload_user_id in dict):
-#                dict[resources[i].upload_user_id] = contrib_r
-#            else:
-#            print(resources[i].upload_user_id,' ', contrib_r)
             dict[r.upload_user_id] = dict[r.upload_user_id] + contrib_r#dict[resources[i].upload_user_id] + contrib_r
-
-#        time4 = time.clock()
-#        print('T4', time4-time1)
-
         posts = Post.objects.filter(course_id = course_id)
         
         for p in posts: #遍历所有帖子 #len(posts)
@@ -1247,23 +1234,13 @@ def course_contri_list(request):
                 else:
                     dict[f.user_id] = dict[f.user_id] + float(2.0*(pos_eva_count)/(pos_eva_count+neg_eav_count))
 
-#        time5 = time.clock()
-#        print('T5', time5-time1)
-
         ans = sorted(dict.items(), key=lambda item:item[1],reverse=True)
         dict_list = []
-        # # print(ans)
-
-#        time7 = time.clock()
-#        print('T7', time7-time1)
 
         for id, score in ans:
             if (score == 0):
                 continue
-#            time8 = time.clock()
-#            print('T8', time8-time1)
             dict_tmp = {}
-            #u_name = #interface.get_username_by_id(id)
             u_name = ""
             res = User.objects.filter(id = id)
 
@@ -1271,8 +1248,6 @@ def course_contri_list(request):
                 u_name = res[0].username
             if (not u_name): #返回的是”“ 即不存在该用户，跳过
                 continue
-#            if (u_name == "iCourse"): #跳过iCourse用户
-#               continue
             dict_tmp["username"] = u_name
             dict_tmp["user_id"] = id
             dict_tmp["contri"] = round(score, 1)
@@ -1311,13 +1286,13 @@ def resource_class_id_list(request):
             
         resources = Resource.objects.filter(course_code = course_code)
         ans = []
-        for i in range(0, resources.count()): #len(resources)
-            name = resources[i].name
+        for r in resources: #len(resources)
+            name = r.name
             pos = name.rfind('.')
             if (pos == -1):
                 continue
             if (name[pos+1:len(name)] == type):
-                ans.append(resources[i].id)
+                ans.append(r.id)
         return HttpResponse(json.dumps({'resource_class_id_list': ans}, cls=ComplexEncoder))
 
 
@@ -1337,8 +1312,8 @@ def resource_other_id_list(request):
             
         resources = Resource.objects.filter(course_code = course_code)
         ans = []
-        for i in range(0, resources.count()): #len(resources)
-            name = resources[i].name
+        for r in resources: #len(resources)
+            name = r.name
             pos = name.rfind('.')
             if (pos == -1):
                 continue
@@ -1348,7 +1323,7 @@ def resource_other_id_list(request):
                     is_other = False
                     break
             if (is_other):
-                ans.append(resources[i].id)
+                ans.append(r.id)
         return HttpResponse(json.dumps({'resource_class_id_list': ans}, cls=ComplexEncoder))
 
 #---------------------------------------------------------------
@@ -1374,17 +1349,17 @@ def course_type_list(request):
         
         courses = Course.objects.filter(class_id = type_id)
         ans = []
-        for i in range(0, courses.count()): #len(courses)
+        for c in courses: #len(courses)
             course_info = {}
-            course_info["id"] = courses[i].id
-            course_info["name"] = courses[i].name
-            course_info["college_id"] = courses[i].college_id
-            course_info["class_id"] = courses[i].class_id
-            course_info["hours"] = courses[i].hours
-            course_info["course_code"] = courses[i].course_code
-            course_info["visit_count"] = courses[i].visit_count
-            course_info["teacher"] = courses[i].teacher
-            course_info["credit"] = float(courses[i].credit)
+            course_info["id"] = c.id
+            course_info["name"] = c.name
+            course_info["college_id"] = c.college_id
+            course_info["class_id"] = c.class_id
+            course_info["hours"] = c.hours
+            course_info["course_code"] = c.course_code
+            course_info["visit_count"] = c.visit_count
+            course_info["teacher"] = c.teacher
+            course_info["credit"] = float(c.credit)
             ans.append(course_info)
 
         # print(ans)
@@ -1596,29 +1571,27 @@ def most_download_resource_list(request):
         else:
             resources = Resource.objects.filter(Q(course_code__regex="^."+college_id_str)|Q(course_code__regex="^..."+college_id_str)).order_by('-download_count') #course_code__contains="01"
 
-
         ans = []
         cnt = 0
         i = 0
-        while (i < resources.count()): #len(resources)
+        for r in resources:
+        # while (i < resources.count()): #len(resources)
             dict = {}
             if (cnt == number):
                 break
-            u_id = resources[i].upload_user_id
+            u_id = r.upload_user_id
             u_i = User.objects.filter(id = u_id)
             if (u_i.count() == 0): #len(u_i)
-                i = i+1
                 continue
             u_info = User.objects.get(id = u_id)
 
             dict["username"] = User.objects.get(id = u_id).username
-            dict["download_count"] = resources[i].download_count
-            dict["resource_id"] = resources[i].id
-            dict["name"] = resources[i].name
+            dict["download_count"] = r.download_count
+            dict["resource_id"] = r.id
+            dict["name"] = r.name
             # print(dict)
             ans.append(dict)
             cnt = cnt+1
-            i = i+1
         # print(ans)
         return HttpResponse(json.dumps({'result': ans}))
 
@@ -1661,7 +1634,6 @@ def most_download_resource_of_course_info(request):
             u_id = item.upload_user_id
             u_i = User.objects.filter(id = u_id)
             if (u_i.count() == 0):
-                i = i + 1
                 continue
             u_info = User.objects.get(id = u_id)
             info["username"] = u_info.username
@@ -1958,40 +1930,24 @@ def latest_upload_resource_list(request):
 
         ans = []
         cnt = 0
-        i = 0
-        siz = resources.count() #len(resources)
+        # siz = resources.count() #len(resources)
         # print("siz = ", siz)
-        while (i < siz):
-            
+        # while (i < siz):
+        for r in resources:
             dict = {}
             if (cnt == number):
                 break
-            u_id = resources[i].upload_user_id
+            u_id = r.upload_user_id
             u_i = User.objects.filter(id = u_id)
             if (u_i.count() == 0): #len(u_i)
-                # print('!!!!!!!!!!',resources[i].name,' 的资源上传者不存在，user_id=!',u_id)
-                i = i+1
                 continue
-            # print(resources[i].course_code, '   ', resources[i].name,' ')#, resources[i].upload_time)
-
-    #        c_id = get_classification(resources[i].course_code)
-    #        if (not c_id.isdigit()):
-    #            # print('@@@@@@',c_id,' ',resources[i].course_code, '   ', resources[i].name, ' ', resources[i].course_code[0:3])
-    ## print(resources[i].course_code,'******',int(c_id),'*****',int(college_id))
-    #        if (c_id != college_id):
-    #            i = i+1
-    #            continue
-
             dict["username"] = User.objects.get(id = u_id).username
-            dict["download_count"] = resources[i].download_count
-            dict["resource_id"] = resources[i].id
-            dict["name"] = resources[i].name
+            dict["download_count"] = r.download_count
+            dict["resource_id"] = r.id
+            dict["name"] = r.name
             ans.append(dict)
             cnt = cnt+1
-            i = i+1
-        # print(ans)
         t2 = time.clock()
-        # print("Total Time: ",t2-t1)
         return HttpResponse(json.dumps({'result': ans}))
 
 
