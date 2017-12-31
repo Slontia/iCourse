@@ -46,10 +46,10 @@
           <el-button type="button" @click.native="closed" disabled=true>降序排序</el-button>
         </el-col>
          <el-col :span="4" :offset="4">
-          <el-input v-model="input" placeholder="资源名称"  disabled=true></el-input>
+          <el-input v-model="input" placeholder="资源名称" @keydown.enter.native.prevent="search_clicked"></el-input>
         </el-col>        
         <el-col :span="2" :offset="1">
-          <el-button type="button" @click.native="closed" disabled=true>搜索资源</el-button>
+          <el-button type="button" @click.native="search_clicked">搜索资源</el-button>
         </el-col>
         <el-col :span="2">
           <el-button type="button" @click.native="uploadDialogVisible=true">上传资源</el-button>
@@ -248,6 +248,7 @@ export default {
   components: { Header, ResourceDialog },
   data () {
     return {
+      input: '',
       selected: {
         'all': true,
         'pdf': false,
@@ -293,6 +294,33 @@ export default {
 
   },
   methods: {
+    search_clicked () {
+      for (var type in this.selected) {
+        this.selected[type] = false
+      }
+      var _this = this
+      var post_url = get_url(this.$store.state.dev, '/resource/searching/')
+      var post_data = {'keyword': this.input, 'course_id': this.$route.params.course_id}
+      $.ajax({
+        ContentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: post_url,
+        type: 'POST',
+        data: post_data,
+        success: function (data) {
+          _this.resourcesIdList = data['query_list']
+          _this.nowPage = 0
+          _this.pageLength = Math.ceil(_this.resourcesIdList.length / 9)
+          if (_this.pageLength !== 0) {
+            _this.nowPage = 1
+          }
+          _this.updateResources()
+        },
+        error: function () {
+          alert('fail')
+        }
+      })
+    },
     get_resources_other () {
       for (var type in this.selected) {
         this.selected[type] = false

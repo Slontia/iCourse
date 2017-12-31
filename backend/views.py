@@ -2003,6 +2003,6 @@ def resource_query(request): #http://10.2.28.124:8080/solr/mynode2/select?q=%E6%
 
         ans = []
         for i in query_list:
-            if (i['score']>=5): #排除掉匹配结果太低的
+            if (i['score']>=0): #排除掉匹配结果太低的
                 ans.append(i['id'])
         return HttpResponse(json.dumps({'query_list': ans}, cls=ComplexEncoder))
