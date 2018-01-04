@@ -1742,7 +1742,16 @@ def tongpao(request):
             '新媒体艺术与设计学院':        26,
             '化学与环境学院':        27,
             '思想政治理论学院':        28,
-            '人文与社会科学高等研究':        29
+            '人文与社会科学高等研究':        29,
+            '空间与环境学院':           30,
+            '国际通用工程学院':         35,
+            '北航学院':         37,
+            '士谔书院':         73,
+            '冯如书院':         74,
+            '士嘉书院':         75,
+            '守锷书院':         76,
+            '致真书院':         77,
+            '知行书院':         79
         }
 
         tongpao_username = profile["tongpao_username"]
@@ -1793,7 +1802,9 @@ def tongpao(request):
 
         user_profile.user_id = user.id
         user_profile.gender = gender
-        user_profile.college_id = college_dict[college]
+        user_profile.college_id = 0
+        if (college in college_dict):
+            user_profile.college_id = college_dict[college]
         user_profile.intro = "同袍用户"
 
         user_profile.nickname = ""
