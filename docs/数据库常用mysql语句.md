@@ -76,3 +76,9 @@ select name from R where exists (select * from backend_resource_evaluation where
 ```
 
 
+#### 统计下载次数最多的资源
+
+```
+select sum(download_count),course_code,count(*) from R group by course_code order by sum(download_count) desc limit 10;
+```
+
